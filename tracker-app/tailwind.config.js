@@ -1,4 +1,4 @@
-import { colors, spacing, typography, borderRadius, shadows } from './src/styles/design-tokens';
+import { colors, spacing, typography, borderRadius, shadows } from './src/styles/design-tokens.js';
 
 /** @type {import('tailwindcss').Config} */
 export default {
@@ -17,6 +17,10 @@ export default {
         error: colors.error,
         info: colors.info,
         border: colors.border,
+        priority: colors.priority,
+        status: colors.status,
+        ai: colors.ai,
+        milestone: colors.milestone,
       },
       spacing: spacing,
       fontFamily: typography.fontFamily,
