@@ -579,22 +579,6 @@ const Tooltip = ({ visible, content, x, y }) => {
   );
 };
 
-function useDebounce(value, delay) {
-  const [debouncedValue, setDebouncedValue] = useState(value);
-
-  useEffect(() => {
-    const handler = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(handler);
-    };
-  }, [value, delay]);
-
-  return debouncedValue;
-}
-
 const LinkingArrow = ({ from, to }) => {
   if (!from || !to) return null;
   
