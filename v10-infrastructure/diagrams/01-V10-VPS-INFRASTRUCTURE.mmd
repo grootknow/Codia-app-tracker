@@ -1,0 +1,228 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E3F2FD',
+    'primaryTextColor': '#1565C0',
+    'primaryBorderColor': '#1976D2',
+    'lineColor': '#424242',
+    'secondaryColor': '#FFF3E0',
+    'tertiaryColor': '#E8F5E9',
+    'clusterBkg': '#FAFAFA',
+    'clusterBorder': '#9E9E9E',
+    'fontSize': '14px'
+  }
+}}%%
+
+graph TB
+    %% ============================================================================
+    %% V10 VPS INFRASTRUCTURE - 3-VPS OPTIMIZED
+    %% ============================================================================
+    %% Version: 10.0 ULTIMATE
+    %% Focus: 3-VPS Architecture with Observability + AI Agents
+    %% Date: 2025-11-04
+    
+    subgraph VPS1["🖥️ VPS1: CONTROL + OBSERVABILITY (24GB RAM, $15/mo)"]
+        direction TB
+        
+        subgraph INFRA["🏭️ INFRASTRUCTURE CORE (5.8GB)"]
+            COOLIFY["🚀 COOLIFY<br/>━━━━━━━━━━━━━━━━━━━━<br/>PaaS Manager<br/>2GB RAM | Port 8000"]
+            LOGTO["🔐 LOGTO<br/>━━━━━━━━━━━━━━━━━━━━<br/>SSO Auth<br/>1GB RAM | Port 3002"]
+            VAULTWARDEN["🔑 VAULTWARDEN<br/>━━━━━━━━━━━━━━━━━━━━<br/>Secrets Manager<br/>500MB | Port 8200"]
+            CORE_PG["🗄️ CORE POSTGRESQL<br/>━━━━━━━━━━━━━━━━━━━━<br/>Operational DB<br/>2GB RAM | Port 5432"]
+            HEADSCALE["🌐 HEADSCALE<br/>━━━━━━━━━━━━━━━━━━━━<br/>VPN Mesh<br/>200MB | Port 8080"]
+            KOPIA["💾 KOPIA<br/>━━━━━━━━━━━━━━━━━━━━<br/>Backup Tool<br/>500MB | Port 51515"]
+        end
+        
+        subgraph AUTOMATION["⚙️ AUTOMATION (800MB) ⭐ V10"]
+            WINDMILL["🌪️ WINDMILL<br/>━━━━━━━━━━━━━━━━━━━━<br/>🐍 Code-First Automation<br/>Python/TS/Go/Rust<br/>800MB RAM | Port 8000"]
+        end
+        
+        subgraph REALTIME["📊 REAL-TIME & DASHBOARD (1.3GB) ⭐ V10"]
+            SUPABASE["⚡ SUPABASE REALTIME<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔌 WebSocket Sync<br/>500MB RAM | Port 4000"]
+            REFLEX["🌐 REFLEX DASHBOARD<br/>━━━━━━━━━━━━━━━━━━━━<br/>🐍 Python Real-Time UI<br/>800MB RAM | Port 3000"]
+        end
+        
+        subgraph OBSERVABILITY["📊 OBSERVABILITY STACK (8GB) ⭐ V10"]
+            GRAFANA["📊 GRAFANA<br/>━━━━━━━━━━━━━━━━━━━━<br/>Dashboards<br/>1GB RAM | Port 3000"]
+            PROMETHEUS["📈 PROMETHEUS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Metrics (3 VPS)<br/>2GB RAM | Port 9090"]
+            LOKI["📝 LOKI<br/>━━━━━━━━━━━━━━━━━━━━<br/>Log Aggregation<br/>2GB RAM | Port 3100"]
+            PROMTAIL1["📤 PROMTAIL<br/>━━━━━━━━━━━━━━━━━━━━<br/>Log Shipper<br/>200MB | Port 9080"]
+            SENTRY["🐛 SENTRY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Error Tracking<br/>1GB RAM | Port 9000"]
+            TEMPO["🔍 TEMPO<br/>━━━━━━━━━━━━━━━━━━━━<br/>Distributed Tracing<br/>1GB RAM | Port 3200"]
+            ALERTA["🚨 ALERTA<br/>━━━━━━━━━━━━━━━━━━━━<br/>Alert Hub<br/>800MB | Port 8080"]
+        end
+        
+        subgraph DEVOPS["🔧 DEVOPS & SECURITY (2.4GB) ⭐ V10"]
+            GITEA["🔄 GITEA ACTIONS<br/>━━━━━━━━━━━━━━━━━━━━<br/>CI/CD Pipeline<br/>1GB RAM | Port 3001"]
+            TRIVY["🛡️ TRIVY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Security Scanner<br/>500MB | On-demand"]
+            ZOT["📦 ZOT REGISTRY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Docker Registry<br/>500MB | Port 5000"]
+            WATCHTOWER1["🔄 WATCHTOWER<br/>━━━━━━━━━━━━━━━━━━━━<br/>Auto-updater<br/>200MB"]
+            INFISICAL["🔐 INFISICAL<br/>━━━━━━━━━━━━━━━━━━━━<br/>🤖 Secrets for Machines<br/>500MB | Port 8080"]
+            FALCO["🚨 FALCO<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔍 Runtime Security<br/>300MB | Port 8765"]
+            UPTIME["🟢 UPTIME KUMA<br/>━━━━━━━━━━━━━━━━━━━━<br/>📊 Status Page<br/>200MB | Port 3001"]
+        end
+        
+        subgraph MCP_GATEWAY["🌐 MCP GATEWAY (1GB) ⭐ V10"]
+            CONTEXTFORGE["🔧 CONTEXTFORGE<br/>━━━━━━━━━━━━━━━━━━━━<br/>🌐 IBM MCP Gateway<br/>REST→MCP + gRPC→MCP<br/>1GB RAM | Port 8500"]
+        end
+    end
+    
+    subgraph VPS2["🖥️ VPS2: ALL DATABASES (24GB RAM, $15/mo) ⭐ UPGRADED"]
+        direction TB
+        
+        subgraph PRODUCT_DBS["💼 PRODUCT DATABASES (12GB)"]
+            NEO4J_INT["🔵 NEO4J INTERNAL<br/>━━━━━━━━━━━━━━━━━━━━<br/>2M triples<br/>4GB RAM | Port 7474"]
+            NEO4J_SUPER["🔵 NEO4J SUPERAPP<br/>━━━━━━━━━━━━━━━━━━━━<br/>19M triples<br/>4GB RAM | Port 7475"]
+            LANCEDB_PROD["🚀 LANCEDB PRODUCT<br/>━━━━━━━━━━━━━━━━━━━━<br/>10M vectors (Embedded!)<br/>500MB RAM | Port 6333"]
+            PG_APP["🗄️ POSTGRESQL APP<br/>━━━━━━━━━━━━━━━━━━━━<br/>4 databases<br/>2GB RAM | Port 5433"]
+            REDIS_PROD["🔴 REDIS PRODUCT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Cache + Queue<br/>1.5GB RAM | Port 6379"]
+            NOCODB["📋 NOCODB<br/>━━━━━━━━━━━━━━━━━━━━<br/>Database UI<br/>1GB | Port 8080"]
+        end
+        
+        subgraph AGENT_DBS["🤖 AGENT DATABASES (4.8GB) ⭐ V10"]
+            NEO4J_AGENT["🔵 NEO4J AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>1M triples<br/>2GB RAM | Port 7476"]
+            LANCEDB_AGENT["🚀 LANCEDB AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>400k vectors (Embedded!)<br/>300MB RAM | Port 6334"]
+            PG_AGENT["🗄️ POSTGRESQL AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>2 databases<br/>1GB RAM | Port 5434"]
+            REDIS_AGENT["🔴 REDIS AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Task Queue<br/>1.5GB | Port 6380"]
+        end
+        
+        subgraph LAKEHOUSE["🏘️ LAKEHOUSE & ETL (2.2GB) ⭐ V10"]
+            DUCKDB["🦆 DUCKDB<br/>━━━━━━━━━━━━━━━━━━━━<br/>Analytics Engine<br/>500MB RAM | Port 8080"]
+            AIRBYTE["✈️ AIRBYTE<br/>━━━━━━━━━━━━━━━━━━━━<br/>ETL Pipelines<br/>500MB RAM | Port 8000"]
+            DBT["🛠️ DBT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Data Transform<br/>200MB RAM | Port 8080"]
+            UNSTRUCTURED["📄 UNSTRUCTURED.IO<br/>━━━━━━━━━━━━━━━━━━━━<br/>Document ETL<br/>500MB RAM | Port 8000"]
+            ICEBERG["❄️ ICEBERG<br/>━━━━━━━━━━━━━━━━━━━━<br/>Table Format<br/>500MB RAM"]
+        end
+        
+        PROMTAIL2["📤 PROMTAIL<br/>━━━━━━━━━━━━━━━━━━━━<br/>Log Shipper<br/>200MB"]
+    end
+    
+    subgraph VPS4["💻 VPS4: CODE EXECUTION (8GB RAM, $7-10/mo) ⭐ NEW"]
+        direction TB
+        
+        subgraph SKYPILOT["🚀 SKYPILOT CODE SANDBOX (8GB)"]
+            K3S["☸️ K3S KUBERNETES<br/>━━━━━━━━━━━━━━━━━━━━<br/>Lightweight K8s<br/>500MB RAM"]
+            SKYPILOT_CTRL["🛠️ SKYPILOT CONTROL<br/>━━━━━━━━━━━━━━━━━━━━<br/>Orchestrator<br/>500MB RAM | Port 8600"]
+            POD_PYTHON["🐍 Python Pod<br/>━━━━━━━━━━━━━━━━━━━━<br/>Warm pool: 2 containers"]
+            POD_JS["📜 JavaScript Pod<br/>━━━━━━━━━━━━━━━━━━━━<br/>Warm pool: 2 containers"]
+            POD_MULTI["🌐 Multi-Lang Pod<br/>━━━━━━━━━━━━━━━━━━━━<br/>Java, C++, Go, R"]
+        end
+    end
+    
+    subgraph VPS3["🖥️ VPS3: PRODUCT AI + AGENT AI (12GB RAM, $7.95/mo)"]
+        direction TB
+        
+        subgraph PRODUCT_AI["🎯 PRODUCT AI (6GB) - User-facing"]
+            LOBECHAT["💬 LOBECHAT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Chat Interface<br/>1GB RAM | Port 3000"]
+            LG_PROD["🧠 LANGGRAPH PRODUCT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔌 MCP Client → ContextForge<br/>2GB RAM | Port 8001"]
+            ZEP_PROD["🧩 ZEP PRODUCT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Memory System<br/>2GB RAM | Port 8002"]
+            SKILLS["📚 SKILLS LIBRARY<br/>━━━━━━━━━━━━━━━━━━━━<br/>100+ Skills<br/>500MB | /opt/trm/skills/"]
+            WEBSOCKET["🔌 WEBSOCKET<br/>━━━━━━━━━━━━━━━━━━━━<br/>Real-time Sync<br/>200MB | Port 8004"]
+        end
+        
+        subgraph PRODUCT_APPS["📱 PRODUCT APPS (2GB)"]
+            METAMCP["🎭 METAMCP<br/>━━━━━━━━━━━━━━━━━━━━<br/>MCP Manager<br/>1GB RAM | Port 8005"]
+            POSTIZ["📱 POSTIZ<br/>━━━━━━━━━━━━━━━━━━━━<br/>Social Media<br/>500MB | Port 8006"]
+        end
+        
+        subgraph AGENT_AI["🤖 AGENT AI (3GB) ⭐ V10 - System Operations"]
+            LG_AGENT["🧠 LANGGRAPH AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔌 MCP Client → ContextForge<br/>🛠️ Uses FastMCP framework<br/>1GB RAM | Port 8010"]
+            ZEP_AGENT["🧩 ZEP AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Agent Memory<br/>500MB | Port 8011"]
+            
+            subgraph AGENTS["🤖 8 AI AGENTS (1.5GB)"]
+                AG1["🔧 DevOps<br/>190MB"]
+                AG2["📊 Data<br/>190MB"]
+                AG3["🚨 Alert<br/>190MB"]
+                AG4["💰 Finance<br/>190MB"]
+                AG5["📝 Doc<br/>190MB"]
+                AG6["⚖️ Compliance<br/>190MB"]
+                AG7["🧪 Test<br/>190MB"]
+                AG8["🎓 Learning<br/>190MB"]
+            end
+        end
+        
+        AGENT_GRAFANA["📊 AGENT GRAFANA<br/>━━━━━━━━━━━━━━━━━━━━<br/>Agent Metrics<br/>200MB"]
+        PROMTAIL3["📤 PROMTAIL<br/>━━━━━━━━━━━━━━━━━━━━<br/>Log Shipper<br/>200MB"]
+        WATCHTOWER3["🔄 WATCHTOWER<br/>━━━━━━━━━━━━━━━━━━━━<br/>Auto-updater<br/>200MB"]
+    end
+    
+    %% Connections - VPS1 Infrastructure
+    LOGTO --> COOLIFY
+    LOGTO --> WINDMILL
+    LOGTO --> GRAFANA
+    
+    %% VPS3 Product AI → VPS4 Code Execution ⭐ NEW
+    LG_PROD --> SKYPILOT_CTRL
+    LG_PROD -.->|Execute Python| POD_PYTHON
+    LG_PROD -.->|Execute JS| POD_JS
+    CONTEXTFORGE -.->|MCP wrapper| SKYPILOT_CTRL
+    
+    %% Connections - VPS1 Observability
+    PROMETHEUS --> NEO4J_INT
+    PROMETHEUS --> NEO4J_SUPER
+    PROMETHEUS --> LANCEDB_PROD
+    PROMETHEUS --> NEO4J_AGENT
+    PROMETHEUS --> LANCEDB_AGENT
+    GRAFANA --> PROMETHEUS
+    LOKI --> PROMTAIL1
+    LOKI --> PROMTAIL2
+    LOKI --> PROMTAIL3
+    ALERTA --> PROMETHEUS
+    ALERTA --> SENTRY
+    
+    %% Connections - VPS1 DevOps
+    COOLIFY --> LOBECHAT
+    COOLIFY --> LG_PROD
+    COOLIFY --> LG_AGENT
+    GITEA --> ZOT
+    GITEA --> TRIVY
+    
+    %% Connections - Product AI to Product DBs
+    LG_PROD --> NEO4J_INT
+    LG_PROD --> NEO4J_SUPER
+    LG_PROD --> LANCEDB_PROD
+    LG_PROD --> PG_APP
+    LG_PROD --> REDIS_PROD
+    ZEP_PROD --> NEO4J_INT
+    ZEP_PROD --> LANCEDB_PROD
+    LOBECHAT --> LG_PROD
+    LOBECHAT --> WEBSOCKET
+    
+    %% Connections - Agent AI to Agent DBs
+    LG_AGENT --> NEO4J_AGENT
+    LG_AGENT --> LANCEDB_AGENT
+    LG_AGENT --> PG_AGENT
+    LG_AGENT --> REDIS_AGENT
+    ZEP_AGENT --> NEO4J_AGENT
+    ZEP_AGENT --> LANCEDB_AGENT
+    
+    %% Connections - 8 Agents to Orchestrator
+    AG1 --> LG_AGENT
+    AG2 --> LG_AGENT
+    AG3 --> LG_AGENT
+    AG4 --> LG_AGENT
+    AG5 --> LG_AGENT
+    AG6 --> LG_AGENT
+    AG7 --> LG_AGENT
+    AG8 --> LG_AGENT
+    
+    %% Connections - Alert Agent to Alerta
+    AG3 --> ALERTA
+    ALERTA -.->|Read alerts| AG3
+    
+    %% Connections - DevOps Agent to Infrastructure
+    AG1 --> COOLIFY
+    AG1 --> HEADSCALE
+    
+    %% Styling
+    classDef vps1Style fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef vps2Style fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef vps3Style fill:#E1F5FE,stroke:#0277BD,stroke-width:3px
+    classDef observabilityStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef agentStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    
+    class COOLIFY,LOGTO,VAULTWARDEN,WINDMILL,CORE_PG,GITEA,TRIVY,HEADSCALE,ZOT,WATCHTOWER1,KOPIA,INFISICAL,FALCO,UPTIME vps1Style
+    class NEO4J_INT,NEO4J_SUPER,LANCEDB_PROD,PG_APP,REDIS_PROD,NOCODB,NEO4J_AGENT,LANCEDB_AGENT,PG_AGENT,REDIS_AGENT,PROMTAIL2,DUCKDB,AIRBYTE,DBT,UNSTRUCTURED,ICEBERG vps2Style
+    class LOBECHAT,LG_PROD,ZEP_PROD,SKILLS,WEBSOCKET,METAMCP,POSTIZ,PROMTAIL3,WATCHTOWER3,SUPABASE,REFLEX vps3Style
+    class GRAFANA,PROMETHEUS,LOKI,PROMTAIL1,SENTRY,TEMPO,ALERTA observabilityStyle
+    class LG_AGENT,ZEP_AGENT,CONTEXTFORGE_AGENT,FASTMCP,AG1,AG2,AG3,AG4,AG5,AG6,AG7,AG8,AGENT_GRAFANA agentStyle

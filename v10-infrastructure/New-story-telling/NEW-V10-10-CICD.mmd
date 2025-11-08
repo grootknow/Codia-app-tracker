@@ -1,0 +1,49 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#42A5F5','secondaryColor':'#F3E5F5','tertiaryColor':'#E8F5E9'}}}%%
+
+%% TRM AI V10 - CI/CD PIPELINE
+%% Philosophy: "AI CÓ MÁY TÍNH RIÊNG" - AI auto-deploys code
+%% Link: See NEW-V10-00-MASTER-OVERVIEW.mmd
+
+graph TB
+    subgraph SOURCE["📦 SOURCE"]
+        GITHUB["🦊 GitHub<br/>Git repository"]
+    end
+    
+    subgraph CI["🔄 CI PIPELINE"]
+        GITEA["🦊 Gitea Actions<br/>800MB | Self-hosted CI"]
+        TRIVY["🛡️ Trivy<br/>300MB | Security scan"]
+        ZOT["📦 Zot Registry<br/>500MB | OCI registry"]
+    end
+    
+    subgraph CD["🚀 CD PIPELINE"]
+        COOLIFY["🐳 Coolify<br/>2GB | Auto-deploy"]
+        KAMAL["🚀 Kamal<br/>200MB | IaC deploy"]
+    end
+    
+    subgraph SECURITY["🔒 SECURITY"]
+        INFISICAL["🔐 Infisical<br/>500MB | Secrets"]
+        FALCO["👁️ Falco<br/>300MB | Runtime security"]
+    end
+    
+    GITHUB -->|"Push code"| GITEA
+    GITEA -->|"Build image"| TRIVY
+    TRIVY -->|"Scan vulnerabilities"| ZOT
+    ZOT -->|"Store image"| COOLIFY
+    INFISICAL -->|"Inject secrets"| COOLIFY
+    COOLIFY -->|"Deploy"| KAMAL
+    KAMAL -->|"Monitor runtime"| FALCO
+    
+    BENEFITS["🎯 BENEFITS:<br/>✅ AI auto-deploys<br/>✅ Security scan built-in<br/>✅ <5min deploy time<br/>✅ Zero downtime"]
+    COOLIFY -.-> BENEFITS
+    
+    classDef sourceStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef ciStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px
+    classDef cdStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef securityStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef benefitStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px
+    
+    class GITHUB sourceStyle
+    class GITEA,TRIVY,ZOT ciStyle
+    class COOLIFY,KAMAL cdStyle
+    class INFISICAL,FALCO securityStyle
+    class BENEFITS benefitStyle

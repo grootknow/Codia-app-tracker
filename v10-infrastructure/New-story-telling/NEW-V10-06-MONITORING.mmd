@@ -1,0 +1,128 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#42A5F5','secondaryColor':'#F3E5F5','tertiaryColor':'#E8F5E9'}}}%%
+
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+%% TRM AI PRODUCTION SYSTEM V10 - MONITORING & OBSERVABILITY
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+%% Philosophy: "AI CÓ MÁY TÍNH RIÊNG" - AI monitors itself, 90% self-healing
+%% Link: See NEW-V10-00-MASTER-OVERVIEW.mmd for full context
+%% Date: 2025-01-05
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+graph TB
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 1: DATA SOURCES (4 VPS)
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph SOURCES["📊 MONITORING SOURCES"]
+        VPS1["🏢 VPS1<br/>Infrastructure metrics"]
+        VPS2["🗄️ VPS2<br/>Database metrics"]
+        VPS3["🤖 VPS3<br/>AI metrics"]
+        VPS4["⚡ VPS4<br/>Code execution metrics"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 2: COLLECTION LAYER
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph COLLECTION["📥 DATA COLLECTION"]
+        PROMETHEUS["📈 Prometheus<br/>3GB RAM<br/>⚡ Metrics collection<br/>⚡ 15s scrape interval"]
+        LOKI["📝 Loki<br/>1.5GB RAM<br/>⚡ Log aggregation<br/>⚡ Label-based indexing"]
+        TEMPO["⏱️ Tempo<br/>500MB RAM<br/>⚡ Distributed tracing<br/>⚡ OpenTelemetry"]
+        SENTRY["🐛 Sentry<br/>1GB RAM<br/>⚡ Error tracking<br/>⚡ Performance monitoring"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 3: VISUALIZATION & ALERTING
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph VISUALIZATION["📊 VISUALIZATION"]
+        GRAFANA["📊 Grafana<br/>2GB RAM<br/>⚡ Unified dashboards<br/>⚡ Real-time updates"]
+        REFLEX["🎨 Reflex Dashboard<br/>800MB RAM<br/>⚡ AI-generated UI<br/>⚡ Python-based"]
+    end
+    
+    subgraph ALERTING["🚨 ALERTING"]
+        ALERTA["📢 Alerta<br/>500MB RAM<br/>⚡ Alert aggregation<br/>⚡ De-duplication"]
+        UPTIME["📊 Uptime Kuma<br/>500MB RAM<br/>⚡ Status page<br/>⚡ Health checks"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 4: AI AGENTS (Self-Healing)
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph AI_AGENTS["🤖 AI AGENTS (90% Self-Healing)"]
+        MONITOR_AGENT["👁️ Monitor Agent<br/>⚡ Watches all metrics"]
+        INCIDENT_AGENT["🚨 Incident Agent<br/>⚡ Auto-responds to alerts"]
+        COST_AGENT["💰 Cost Agent<br/>⚡ Optimizes resources"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 5: DATA FLOWS
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    %% Sources → Collection
+    VPS1 -->|"Metrics"| PROMETHEUS
+    VPS2 -->|"Metrics"| PROMETHEUS
+    VPS3 -->|"Metrics"| PROMETHEUS
+    VPS4 -->|"Metrics"| PROMETHEUS
+    
+    VPS1 -->|"Logs"| LOKI
+    VPS2 -->|"Logs"| LOKI
+    VPS3 -->|"Logs"| LOKI
+    VPS4 -->|"Logs"| LOKI
+    
+    VPS3 -->|"Traces"| TEMPO
+    VPS4 -->|"Traces"| TEMPO
+    
+    VPS3 -->|"Errors"| SENTRY
+    VPS4 -->|"Errors"| SENTRY
+    
+    %% Collection → Visualization
+    PROMETHEUS -->|"Query"| GRAFANA
+    LOKI -->|"Query"| GRAFANA
+    TEMPO -->|"Query"| GRAFANA
+    SENTRY -->|"Query"| GRAFANA
+    
+    PROMETHEUS -->|"Real-time"| REFLEX
+    
+    %% Collection → Alerting
+    PROMETHEUS -->|"Alert rules"| ALERTA
+    LOKI -->|"Log alerts"| ALERTA
+    SENTRY -->|"Error alerts"| ALERTA
+    
+    UPTIME -->|"Health status"| ALERTA
+    
+    %% Alerting → AI Agents
+    ALERTA -->|"Incidents"| INCIDENT_AGENT
+    GRAFANA -->|"Metrics"| MONITOR_AGENT
+    PROMETHEUS -->|"Cost data"| COST_AGENT
+    
+    %% AI Agents → Actions
+    INCIDENT_AGENT -.->|"Auto-fix"| VPS1
+    MONITOR_AGENT -.->|"Optimize"| VPS2
+    COST_AGENT -.->|"Scale down"| VPS3
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 6: BENEFITS
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    BENEFITS["🎯 MONITORING BENEFITS:<br/>✅ 90% self-healing (AI fixes issues)<br/>✅ <1min incident response<br/>✅ Unified observability (metrics+logs+traces)<br/>✅ Real-time dashboards<br/>✅ Cost optimization (auto-scale)<br/>✅ Zero manual intervention"]
+    
+    AI_AGENTS -.->|"Delivers"| BENEFITS
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% STYLING
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    classDef sourceStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px,color:#0D47A1
+    classDef collectionStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px,color:#4A148C
+    classDef vizStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px,color:#1B5E20
+    classDef alertStyle fill:#FFEBEE,stroke:#C62828,stroke-width:3px,color:#B71C1C
+    classDef aiStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px,color:#E65100
+    classDef benefitStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px,color:#880E4F
+    
+    class VPS1,VPS2,VPS3,VPS4 sourceStyle
+    class PROMETHEUS,LOKI,TEMPO,SENTRY collectionStyle
+    class GRAFANA,REFLEX vizStyle
+    class ALERTA,UPTIME alertStyle
+    class MONITOR_AGENT,INCIDENT_AGENT,COST_AGENT aiStyle
+    class BENEFITS benefitStyle

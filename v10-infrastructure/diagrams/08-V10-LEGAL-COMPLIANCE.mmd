@@ -1,0 +1,120 @@
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#FFFDE7','primaryTextColor':'#F57F17','primaryBorderColor':'#F57F17','lineColor':'#424242','fontSize':'14px'}}}%%
+
+graph TB
+    %% ============================================================================
+    %% V9 LEGAL & COMPLIANCE TIMELINE - US Company Formation
+    %% ============================================================================
+    
+    subgraph COMPANY_STRUCTURE["🏢 COMPANY STRUCTURE"]
+        direction LR
+        
+        ENTITY["🏛️ ENTITY TYPE<br/>━━━━━━━━━━━━━━━━━━━━<br/>Delaware C-Corporation<br/>Name: RootKnow Inc.<br/>Founders: 2 (Vietnam-based)<br/>Ownership: 50/50 split"]
+        
+        LOCATION["📍 LOCATIONS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Registered: Delaware<br/>Virtual Office: Delaware/US<br/>Operations: Vietnam<br/>Servers: Singapore"]
+    end
+    
+    subgraph FORMATION_TIMELINE["📅 FORMATION TIMELINE (8-12 weeks)"]
+        direction TB
+        
+        WEEK1_2["📋 WEEK 1-2: PRE-FORMATION<br/>━━━━━━━━━━━━━━━━━━━━<br/>✅ Choose company name<br/>✅ Prepare founder info<br/>✅ Choose registered agent<br/>✅ Decide stock allocation<br/>Service: Stripe Atlas ($500)"]
+        
+        WEEK3_4["📄 WEEK 3-4: FORMATION<br/>━━━━━━━━━━━━━━━━━━━━<br/>✅ File Certificate of Incorporation<br/>✅ Appoint registered agent<br/>✅ Issue founder stock<br/>✅ Adopt bylaws<br/>✅ First board meeting<br/>⚠️ File 83(b) within 30 days!<br/>Cost: $700"]
+        
+        WEEK5_6["💳 WEEK 5-6: EIN & BANKING<br/>━━━━━━━━━━━━━━━━━━━━<br/>✅ Apply for EIN (IRS)<br/>✅ Open Mercury account<br/>✅ Open Wise Business account<br/>Timeline: 1-2 weeks approval<br/>Cost: $0"]
+        
+        WEEK7_8["💰 WEEK 7-8: TAX SETUP<br/>━━━━━━━━━━━━━━━━━━━━<br/>✅ File 83(b) election<br/>✅ Choose accounting method<br/>✅ Choose fiscal year<br/>✅ Setup QuickBooks Online<br/>Cost: $30/mo"]
+        
+        WEEK9_10["📋 WEEK 9-10: COMPLIANCE<br/>━━━━━━━━━━━━━━━━━━━━<br/>✅ Setup annual requirements<br/>✅ Prepare for Delaware reports<br/>✅ Hire CPA ($1,500-3,000/year)<br/>✅ Setup compliance calendar"]
+        
+        WEEK11_12["⚖️ WEEK 11-12: OPERATIONAL<br/>━━━━━━━━━━━━━━━━━━━━<br/>✅ Founder Agreement<br/>✅ Employee Offer Letters<br/>✅ Contractor Agreements<br/>✅ Terms of Service<br/>✅ Privacy Policy (GDPR)<br/>Tool: Docusign ($10/mo)"]
+    end
+    
+    subgraph ANNUAL_COMPLIANCE["📅 ANNUAL COMPLIANCE CALENDAR"]
+        direction TB
+        
+        MARCH["📅 MARCH 1<br/>━━━━━━━━━━━━━━━━━━━━<br/>Delaware Annual Report: $50<br/>Delaware Franchise Tax: $450<br/>Total: $500"]
+        
+        APRIL["📅 APRIL 15<br/>━━━━━━━━━━━━━━━━━━━━<br/>Federal Tax Return (Form 1120)<br/>Personal Tax Returns (K-1)<br/>CPA Fee: $1,500-3,000"]
+        
+        QUARTERLY["📅 QUARTERLY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Board Meetings<br/>Financial Reports<br/>Estimated Taxes (if owe >$500)"]
+        
+        MONTHLY["📅 MONTHLY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Reconcile bank accounts<br/>Categorize expenses<br/>Review P&L statement"]
+    end
+    
+    subgraph COST_BREAKDOWN["💰 COST BREAKDOWN"]
+        direction LR
+        
+        ONE_TIME["💵 ONE-TIME COSTS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Stripe Atlas: $500<br/>Delaware filing: $89<br/>Registered agent (1yr): $100-300<br/>Total: ~$700"]
+        
+        ANNUAL["💵 ANNUAL COSTS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Delaware Compliance: $600-800<br/>CPA/Accountant: $1,500-3,000<br/>QuickBooks: $360<br/>Legal: $500-1,000<br/>Total: ~$3,000-5,000/year"]
+    end
+    
+    subgraph GDPR_COMPLIANCE["🌍 GDPR & DATA PRIVACY"]
+        direction TB
+        
+        PRIVACY_POLICY["📋 PRIVACY POLICY<br/>━━━━━━━━━━━━━━━━━━━━<br/>✅ Data collection disclosure<br/>✅ Purpose of usage<br/>✅ User rights (access, delete, export)<br/>✅ Cookie consent<br/>Tool: Termly ($10/mo)"]
+        
+        USER_RIGHTS["👤 USER RIGHTS<br/>━━━━━━━━━━━━━━━━━━━━<br/>✅ Right to access data<br/>✅ Right to delete data<br/>✅ Right to export data<br/>✅ Right to opt-out<br/>Implementation: Windmill workflows"]
+        
+        DATA_BREACH["🚨 DATA BREACH NOTIFICATION<br/>━━━━━━━━━━━━━━━━━━━━<br/>⚠️ Notify users within 72 hours<br/>⚠️ Notify authorities if >500 users<br/>Process: Automated (Windmill + Slack)"]
+    end
+    
+    subgraph DATA_STORAGE["🗄️ DATA STORAGE & RESIDENCY"]
+        direction TB
+        
+        VPS_LOCATION["🌏 VPS LOCATION<br/>━━━━━━━━━━━━━━━━━━━━<br/>Primary: Singapore<br/>Backup: Cloudflare R2 (Global)<br/>Note: Singapore has PDPA<br/>(adequate data protection)"]
+        
+        DATA_CLASSIFICATION["🔐 DATA CLASSIFICATION<br/>━━━━━━━━━━━━━━━━━━━━<br/>Public: R2 (public bucket)<br/>Internal: Notion<br/>Confidential: PostgreSQL (encrypted)<br/>Secret: Vaultwarden<br/>Top Secret: Vaultwarden + Physical safe"]
+        
+        RETENTION["⏱️ DATA RETENTION<br/>━━━━━━━━━━━━━━━━━━━━<br/>User Data: Indefinite (active)<br/>Deleted Accounts: 30 days<br/>Financial Data: 7 years (IRS)<br/>Logs: 7-30 days<br/>Backups: 30 days"]
+    end
+    
+    subgraph LEGAL_CONTACTS["📞 LEGAL CONTACTS"]
+        direction LR
+        
+        REGISTERED_AGENT["🏢 REGISTERED AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Northwest Registered Agent<br/>Cost: $125/year<br/>Contact: support@nwra.com"]
+        
+        CPA["💼 CPA/ACCOUNTANT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Find: Upwork, Fiverr<br/>Cost: $1,500-3,000/year<br/>Services: Tax filing, bookkeeping"]
+        
+        LAWYER["⚖️ LAWYER (if needed)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Find: Stripe Atlas network<br/>Cost: $300-500/hour<br/>Use: Contracts, disputes"]
+        
+        STRIPE_ATLAS["💳 STRIPE ATLAS SUPPORT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Email: atlas@stripe.com<br/>Response: 24-48 hours<br/>Free: Included in $500 fee"]
+    end
+    
+    %% Timeline flow
+    WEEK1_2 --> WEEK3_4
+    WEEK3_4 --> WEEK5_6
+    WEEK5_6 --> WEEK7_8
+    WEEK7_8 --> WEEK9_10
+    WEEK9_10 --> WEEK11_12
+    
+    %% Compliance flow
+    WEEK11_12 -.->|Setup| MONTHLY
+    MONTHLY -->|Every month| QUARTERLY
+    QUARTERLY -->|Every quarter| MARCH
+    MARCH -->|Annual| APRIL
+    
+    %% GDPR implementation
+    PRIVACY_POLICY -.->|Implement| USER_RIGHTS
+    USER_RIGHTS -.->|Monitor| DATA_BREACH
+    
+    %% Data storage
+    VPS_LOCATION -.->|Store| DATA_CLASSIFICATION
+    DATA_CLASSIFICATION -.->|Manage| RETENTION
+    
+    %% Styling
+    classDef structureStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:2px
+    classDef timelineStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:2px
+    classDef complianceStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef costStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    classDef gdprStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef dataStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    classDef contactStyle fill:#FFFDE7,stroke:#F57F17,stroke-width:2px
+    
+    class ENTITY,LOCATION structureStyle
+    class WEEK1_2,WEEK3_4,WEEK5_6,WEEK7_8,WEEK9_10,WEEK11_12 timelineStyle
+    class MARCH,APRIL,QUARTERLY,MONTHLY complianceStyle
+    class ONE_TIME,ANNUAL costStyle
+    class PRIVACY_POLICY,USER_RIGHTS,DATA_BREACH gdprStyle
+    class VPS_LOCATION,DATA_CLASSIFICATION,RETENTION dataStyle
+    class REGISTERED_AGENT,CPA,LAWYER,STRIPE_ATLAS contactStyle

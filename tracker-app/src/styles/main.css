@@ -1,0 +1,21 @@
+:root {
+  /* Backgrounds */
+  --color-background-primary: #F5F7FA;
+  --color-background-secondary: #FFFFFF;
+  --color-background-tertiary: #E9EEF3;
+
+  /* Text */
+  --color-text-primary: #20232A;
+  --color-text-secondary: #5A6B83;
+  --color-text-tertiary: #8C9BAB;
+  --color-text-onPrimary: #FFFFFF;
+
+  /* Brand */
+  --color-brand-primary: #2563EB;
+  --color-brand-primaryHover: #1D4ED8;
+  --color-brand-primaryLight: #DBEAFE;
+
+  /* Borders */
+  --color-border-default: #D1D9E2;
+  --color-border-subtle: #E9EEF3;
+}

@@ -1,0 +1,56 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#42A5F5','secondaryColor':'#F3E5F5','tertiaryColor':'#E8F5E9'}}}%%
+
+%% TRM AI V10 - 8 AUTONOMOUS AGENTS
+%% Philosophy: "AI OPERATIONS" - 90% automation, 70% self-healing
+%% Link: See NEW-V10-00-MASTER-OVERVIEW.mmd
+
+graph TB
+    subgraph AGENT_AI["🤖 AI OPERATIONS (3GB)"]
+        LANGGRAPH_AGENT["🧠 LangGraph Agent<br/>1GB | Orchestrator"]
+        ZEP_AGENT["💾 Zep Agent<br/>500MB | Memory"]
+    end
+    
+    subgraph AGENTS["8 AUTONOMOUS AGENTS"]
+        DEPLOY_AGENT["🚀 Deploy Agent<br/>Auto-deploy via Coolify"]
+        MONITOR_AGENT["👁️ Monitor Agent<br/>Watch all metrics"]
+        INCIDENT_AGENT["🚨 Incident Agent<br/>Auto-fix issues"]
+        COST_AGENT["💰 Cost Agent<br/>Optimize resources"]
+        SECURITY_AGENT["🔒 Security Agent<br/>Scan vulnerabilities"]
+        BACKUP_AGENT["💾 Backup Agent<br/>Manage backups"]
+        DOCS_AGENT["📚 Docs Agent<br/>Update documentation"]
+        OPTIMIZE_AGENT["⚡ Optimize Agent<br/>Performance tuning"]
+    end
+    
+    subgraph TOOLS["🔧 AGENT TOOLS"]
+        CF_CORE["🔌 ContextForge<br/>145+ MCP tools"]
+        COOLIFY["🐳 Coolify<br/>Deploy control"]
+        GRAFANA["📊 Grafana<br/>Metrics"]
+        KOPIA["💾 Kopia<br/>Backups"]
+    end
+    
+    LANGGRAPH_AGENT --> DEPLOY_AGENT
+    LANGGRAPH_AGENT --> MONITOR_AGENT
+    LANGGRAPH_AGENT --> INCIDENT_AGENT
+    LANGGRAPH_AGENT --> COST_AGENT
+    LANGGRAPH_AGENT --> SECURITY_AGENT
+    LANGGRAPH_AGENT --> BACKUP_AGENT
+    LANGGRAPH_AGENT --> DOCS_AGENT
+    LANGGRAPH_AGENT --> OPTIMIZE_AGENT
+    
+    DEPLOY_AGENT --> CF_CORE
+    MONITOR_AGENT --> GRAFANA
+    INCIDENT_AGENT --> COOLIFY
+    BACKUP_AGENT --> KOPIA
+    
+    BENEFITS["🎯 BENEFITS:<br/>✅ 90% automation<br/>✅ 70% self-healing<br/>✅ <1min incident response<br/>✅ Zero manual ops"]
+    AGENTS -.-> BENEFITS
+    
+    classDef aiStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef agentStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px
+    classDef toolStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef benefitStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px
+    
+    class LANGGRAPH_AGENT,ZEP_AGENT aiStyle
+    class DEPLOY_AGENT,MONITOR_AGENT,INCIDENT_AGENT,COST_AGENT,SECURITY_AGENT,BACKUP_AGENT,DOCS_AGENT,OPTIMIZE_AGENT agentStyle
+    class CF_CORE,COOLIFY,GRAFANA,KOPIA toolStyle
+    class BENEFITS benefitStyle

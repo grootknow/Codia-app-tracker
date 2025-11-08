@@ -1,0 +1,148 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E3F2FD',
+    'primaryTextColor': '#1565C0',
+    'primaryBorderColor': '#1976D2',
+    'lineColor': '#424242',
+    'secondaryColor': '#F3E5F5',
+    'tertiaryColor': '#E8F5E9',
+    'fontSize': '16px'
+  }
+}}%%
+
+graph TB
+    %% ============================================================================
+    %% VPS3: DUAL AI SYSTEMS - "AI CÓ MÁY TÍNH RIÊNG" 🔥
+    %% ============================================================================
+    %% PARENT: 00-MASTER-OVERVIEW.mmd
+    %% PHILOSOPHY: AI không chỉ chat, mà EXECUTE CODE thật!
+    %% BREAKTHROUGH: 2 AI systems isolated - Product AI + Agent AI
+    
+    %% ============================================================================
+    %% FOUNDER INTERFACE
+    %% ============================================================================
+    
+    FOUNDER["👤 FOUNDER<br/>Chat natural language"]
+    LOBECHAT["💬 LOBECHAT<br/>AI Chat Interface<br/>2GB RAM"]
+    WEBSOCKET["⚡ WEBSOCKET<br/>Real-time Push<br/>200MB RAM"]
+    
+    %% ============================================================================
+    %% PRODUCT AI - "AI CÓ MÁY TÍNH RIÊNG"
+    %% ============================================================================
+    
+    subgraph PRODUCT_AI_SYSTEM["💻 PRODUCT AI (6GB) - AI CHO USER"]
+        direction TB
+        
+        LG_PRODUCT["🔄 LANGGRAPH PRODUCT<br/>━━━━━━━━━━━━━━<br/>Cognitive Engine<br/>2GB RAM<br/>━━━━━━━━━━━━━━<br/>✅ Understand natural language<br/>✅ Generate Python/JS code<br/>✅ Query 22M triples<br/>✅ Access 145+ MCP tools<br/>✅ NO LIMITS!"]
+        
+        ZEP_PRODUCT["🧩 ZEP PRODUCT<br/>━━━━━━━━━━━━━━<br/>Memory Management<br/>500MB RAM<br/>━━━━━━━━━━━━━━<br/>✅ Long-term memory<br/>✅ Session management<br/>✅ Context window optimization"]
+        
+        SKILLS_LIB["📚 SKILLS LIBRARY<br/>━━━━━━━━━━━━━━<br/>100+ Workflows<br/>500MB RAM<br/>━━━━━━━━━━━━━━<br/>✅ Research reports<br/>✅ Content generation<br/>✅ Data analysis<br/>✅ Brand guidelines<br/>✅ Company workflows"]
+        
+        CF_GATEWAY["🌐 CONTEXTFORGE<br/>━━━━━━━━━━━━━━<br/>MCP Gateway<br/>500MB RAM<br/>━━━━━━━━━━━━━━<br/>145+ MCP tools<br/>━━━━━━━━━━━━━━<br/>Virtual MCPs:<br/>Coolify, Gitea, Windmill<br/>Grafana, Prometheus<br/>━━━━━━━━━━━━━━<br/>Custom MCPs:<br/>Infrastructure, Database<br/>Backup, Lakehouse"]
+    end
+    
+    %% ============================================================================
+    %% AGENT AI - "AI OPERATIONS"
+    %% ============================================================================
+    
+    subgraph AGENT_AI_SYSTEM["🤖 AGENT AI (3GB) - AI CHO HỆ THỐNG"]
+        direction TB
+        
+        LG_AGENT["🔄 LANGGRAPH AGENT<br/>━━━━━━━━━━━━━━<br/>Agent Orchestrator<br/>1GB RAM<br/>━━━━━━━━━━━━━━<br/>✅ Coordinate 8 agents<br/>✅ Auto-triage alerts<br/>✅ Self-healing workflows<br/>✅ 90% automation"]
+        
+        ZEP_AGENT["🧩 ZEP AGENT<br/>━━━━━━━━━━━━━━<br/>Agent Memory<br/>300MB RAM<br/>━━━━━━━━━━━━━━<br/>✅ Incident history<br/>✅ Pattern recognition<br/>✅ Learning from fixes"]
+        
+        subgraph EIGHT_AGENTS["🤖 8 AUTONOMOUS AGENTS (1.5GB)"]
+            direction LR
+            
+            AGENT_DEVOPS["🚀 DevOps Agent<br/>Auto-deploy<br/>Auto-fix"]
+            AGENT_DATA["📊 Data Agent<br/>Monitor CDC<br/>Trigger backups"]
+            AGENT_ALERT["🚨 Alert Agent<br/>Triage alerts<br/>Auto-respond"]
+            AGENT_FINANCE["💰 Finance Agent<br/>Cost monitoring<br/>Budget alerts"]
+            AGENT_DOC["📝 Doc Agent<br/>Auto-generate docs<br/>Keep updated"]
+            AGENT_COMPLIANCE["✅ Compliance Agent<br/>Security audits<br/>GDPR compliance"]
+            AGENT_TEST["🧪 Test Agent<br/>Auto-test<br/>Regression checks"]
+            AGENT_LEARNING["🎓 Learning Agent<br/>Analyze patterns<br/>Suggest optimizations"]
+        end
+        
+        ALERTA["🚨 ALERTA<br/>━━━━━━━━━━━━━━<br/>Alert Hub<br/>800MB RAM<br/>━━━━━━━━━━━━━━<br/>✅ Aggregate all alerts<br/>✅ Auto-triage by AI<br/>✅ Route to agents<br/>✅ Escalate if needed"]
+    end
+    
+    %% ============================================================================
+    %% EXTERNAL SERVICES
+    %% ============================================================================
+    
+    AI_MODELS["🧠 AI MODELS<br/>━━━━━━━━━━━━━━<br/>Claude 4.5 Sonnet<br/>Grok 4 Fast<br/>Gemini 2.0<br/>━━━━━━━━━━━━━━<br/>✅ Pluggable<br/>✅ Swap anytime"]
+    
+    %% ============================================================================
+    %% CONNECTIONS - PRODUCT AI FLOWS
+    %% ============================================================================
+    
+    %% Founder → Product AI
+    FOUNDER -->|Chat| LOBECHAT
+    LOBECHAT -->|Parse| LG_PRODUCT
+    LG_PRODUCT -->|Response| LOBECHAT
+    LOBECHAT -->|Display| FOUNDER
+    WEBSOCKET -->|Push updates| FOUNDER
+    
+    %% Product AI Internal
+    LG_PRODUCT --> ZEP_PRODUCT
+    LG_PRODUCT --> SKILLS_LIB
+    LG_PRODUCT --> CF_GATEWAY
+    
+    %% Product AI → External
+    LG_PRODUCT --> AI_MODELS
+    
+    %% ============================================================================
+    %% CONNECTIONS - AGENT AI FLOWS
+    %% ============================================================================
+    
+    %% Agent Orchestration
+    LG_AGENT --> ZEP_AGENT
+    LG_AGENT --> ALERTA
+    
+    %% 8 Agents → Orchestrator
+    AGENT_DEVOPS --> LG_AGENT
+    AGENT_DATA --> LG_AGENT
+    AGENT_ALERT --> LG_AGENT
+    AGENT_FINANCE --> LG_AGENT
+    AGENT_DOC --> LG_AGENT
+    AGENT_COMPLIANCE --> LG_AGENT
+    AGENT_TEST --> LG_AGENT
+    AGENT_LEARNING --> LG_AGENT
+    
+    %% Agents → MCP Gateway
+    AGENT_DEVOPS --> CF_GATEWAY
+    AGENT_DATA --> CF_GATEWAY
+    AGENT_ALERT --> CF_GATEWAY
+    
+    %% Agent AI → External
+    LG_AGENT --> AI_MODELS
+    
+    %% ============================================================================
+    %% ISOLATION - CRITICAL!
+    %% ============================================================================
+    
+    %% Note: Product AI and Agent AI are COMPLETELY ISOLATED
+    %% - Separate LangGraph instances
+    %% - Separate databases (on VPS2)
+    %% - Separate Docker resource limits
+    %% - Different AI models (Product=Claude, Agent=Grok)
+    
+    %% ============================================================================
+    %% STYLING
+    %% ============================================================================
+    
+    classDef founderStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef interfaceStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    classDef productAIStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:4px
+    classDef agentAIStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:4px
+    classDef externalStyle fill:#FFCCBC,stroke:#E64A19,stroke-width:2px
+    
+    class FOUNDER founderStyle
+    class LOBECHAT,WEBSOCKET interfaceStyle
+    class LG_PRODUCT,ZEP_PRODUCT,SKILLS_LIB,CF_GATEWAY productAIStyle
+    class LG_AGENT,ZEP_AGENT,AGENT_DEVOPS,AGENT_DATA,AGENT_ALERT,AGENT_FINANCE,AGENT_DOC,AGENT_COMPLIANCE,AGENT_TEST,AGENT_LEARNING,ALERTA agentAIStyle
+    class AI_MODELS externalStyle

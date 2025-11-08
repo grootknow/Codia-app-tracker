@@ -1,0 +1,56 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#42A5F5','secondaryColor':'#F3E5F5','tertiaryColor':'#E8F5E9'}}}%%
+
+%% TRM AI V10 - LEGAL & COMPLIANCE
+%% Philosophy: "AI CÓ MÁY TÍNH RIÊNG" - AI ensures compliance
+%% Link: See NEW-V10-00-MASTER-OVERVIEW.mmd
+
+graph TB
+    subgraph SECURITY["🔒 SECURITY"]
+        TRIVY["🛡️ Trivy<br/>Vulnerability scan"]
+        FALCO["👁️ Falco<br/>Runtime security"]
+        INFISICAL["🔐 Infisical<br/>Secrets management"]
+    end
+    
+    subgraph DATA["📊 DATA PRIVACY"]
+        ENCRYPTION["🔒 Encryption<br/>At rest + in transit"]
+        BACKUP["💾 Backup<br/>4-tier strategy"]
+        SOVEREIGNTY["🏠 Data Sovereignty<br/>100% self-hosted"]
+    end
+    
+    subgraph AUDIT["📋 AUDIT"]
+        LOKI["📝 Loki<br/>Audit logs"]
+        NEO4J["🕸️ Neo4j<br/>Access graph"]
+        GRAFANA["📊 Grafana<br/>Compliance dashboard"]
+    end
+    
+    subgraph COMPLIANCE["✅ COMPLIANCE"]
+        GDPR["🇪🇺 GDPR<br/>Data protection"]
+        SOC2["📜 SOC2<br/>Security controls"]
+        ISO27001["🔐 ISO27001<br/>Info security"]
+    end
+    
+    TRIVY --> LOKI
+    FALCO --> LOKI
+    INFISICAL --> LOKI
+    ENCRYPTION --> NEO4J
+    BACKUP --> NEO4J
+    LOKI --> GRAFANA
+    NEO4J --> GRAFANA
+    GRAFANA --> GDPR
+    GRAFANA --> SOC2
+    GRAFANA --> ISO27001
+    
+    BENEFITS["🎯 BENEFITS:<br/>✅ Auto-compliance<br/>✅ Audit trail<br/>✅ 100% data ownership<br/>✅ Zero vendor lock-in"]
+    COMPLIANCE -.-> BENEFITS
+    
+    classDef securityStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef dataStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px
+    classDef auditStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef complianceStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef benefitStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px
+    
+    class TRIVY,FALCO,INFISICAL securityStyle
+    class ENCRYPTION,BACKUP,SOVEREIGNTY dataStyle
+    class LOKI,NEO4J,GRAFANA auditStyle
+    class GDPR,SOC2,ISO27001 complianceStyle
+    class BENEFITS benefitStyle

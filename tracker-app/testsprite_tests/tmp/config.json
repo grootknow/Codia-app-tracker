@@ -1,0 +1,16 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "executionArgs": {
+    "projectName": "codia-tracker-app",
+    "projectPath": "e:\\tạo document cho hoạch định thiết kế vps\\tạo document cho hoạch hoạch định thiết kế vps\\codia-tracker-app",
+    "testIds": [],
+    "additionalInstruction": "Focus on frontend E2E testing: navigation, dropdowns, Setup Wizard flow, task status updates, mermaid diagram rendering",
+    "envs": {
+      "API_KEY": "sk-user-gFIrn_hlPXiIeAjA6SFpSQ5Xi9mh29ywbHx5EbWLpugCcn93kpn1CEJryHgbGB_sHYSaI7kHk6FazrgnXWpCns6tPFx4jhh6LmvittY8RApdjLj2sFw2DczDIFp3AtOqEZs"
+    }
+  },
+  "proxy": "http://5d3db18d-d6d4-4b57-b18b-5ed36e0fd30f:TJmmg124e8xRH8TP1MEwkN6TEqKe9sdy@tun.testsprite.com:8080"
+}

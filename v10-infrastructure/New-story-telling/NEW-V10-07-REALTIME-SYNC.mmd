@@ -1,0 +1,122 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#42A5F5','secondaryColor':'#F3E5F5','tertiaryColor':'#E8F5E9'}}}%%
+
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+%% TRM AI PRODUCTION SYSTEM V10 - REAL-TIME SYNC & DASHBOARD
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+%% Philosophy: "AI CÓ MÁY TÍNH RIÊNG" - <200ms sync across 4 screens
+%% Link: See NEW-V10-00-MASTER-OVERVIEW.mmd for full context
+%% Date: 2025-01-05
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+graph TB
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 1: FOUNDER (4 SCREENS)
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph FOUNDER["👤 FOUNDER (4 Screens)"]
+        SCREEN1["💻 Screen 1<br/>LobeChat<br/>⚡ Chat with AI"]
+        SCREEN2["📊 Screen 2<br/>Reflex Dashboard<br/>⚡ Real-time metrics"]
+        SCREEN3["📝 Screen 3<br/>Notion<br/>⚡ Documents"]
+        SCREEN4["💬 Screen 4<br/>Slack<br/>⚡ Team chat"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 2: REAL-TIME SYNC HUB
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph SYNC_HUB["🔄 REAL-TIME SYNC HUB"]
+        SUPABASE["🔄 Supabase Realtime<br/>500MB RAM<br/>⚡ WebSocket hub<br/>⚡ <200ms latency<br/>⚡ Postgres CDC"]
+        REFLEX_ENGINE["🎨 Reflex Engine<br/>800MB RAM<br/>⚡ Python → React<br/>⚡ Auto-generated UI<br/>⚡ State management"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 3: DUAL AI SYSTEMS
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph AI_SYSTEMS["🤖 DUAL AI SYSTEMS"]
+        PRODUCT_AI["🤖 AI CÓ MÁY TÍNH RIÊNG<br/>6GB RAM<br/>⚡ Works FOR USER<br/>⚡ Research, content, analysis"]
+        AGENT_AI["🤖 AI OPERATIONS<br/>3GB RAM<br/>⚡ Works FOR SYSTEM<br/>⚡ Auto-deploy, monitoring"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 4: DATA SOURCES
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph DATA_SOURCES["🗄️ DATA SOURCES"]
+        POSTGRES["🐘 PostgreSQL<br/>⚡ Structured data<br/>⚡ CDC enabled"]
+        NEO4J["🕸️ Neo4j<br/>⚡ Knowledge graph<br/>⚡ Real-time queries"]
+        REDIS["⚡ Redis<br/>⚡ Session cache<br/>⚡ Pub/Sub"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 5: EXTERNAL INTEGRATIONS
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph EXTERNAL["🌐 EXTERNAL INTEGRATIONS"]
+        NOTION_API["📝 Notion API<br/>⚡ Webhooks"]
+        SLACK_API["💬 Slack API<br/>⚡ Events API"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 6: DATA FLOWS
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    %% Founder → Sync Hub
+    SCREEN1 <-->|"WebSocket<br/><200ms"| SUPABASE
+    SCREEN2 <-->|"WebSocket<br/><200ms"| REFLEX_ENGINE
+    SCREEN3 <-->|"Webhook"| NOTION_API
+    SCREEN4 <-->|"Events API"| SLACK_API
+    
+    %% Sync Hub → AI Systems
+    SUPABASE <-->|"Real-time events"| PRODUCT_AI
+    SUPABASE <-->|"Real-time events"| AGENT_AI
+    REFLEX_ENGINE <-->|"State updates"| PRODUCT_AI
+    
+    %% AI Systems → Data Sources
+    PRODUCT_AI <-->|"Query/Update"| POSTGRES
+    PRODUCT_AI <-->|"Query/Update"| NEO4J
+    PRODUCT_AI <-->|"Cache"| REDIS
+    
+    AGENT_AI <-->|"Monitor"| POSTGRES
+    AGENT_AI <-->|"Monitor"| NEO4J
+    
+    %% Data Sources → Sync Hub (CDC)
+    POSTGRES -->|"CDC<br/>Change events"| SUPABASE
+    NEO4J -->|"Query results"| SUPABASE
+    REDIS -->|"Pub/Sub"| SUPABASE
+    
+    %% External → Sync Hub
+    NOTION_API -->|"Webhooks"| SUPABASE
+    SLACK_API -->|"Events"| SUPABASE
+    
+    %% Sync Hub → All Screens (Broadcast)
+    SUPABASE -.->|"Broadcast<br/><200ms"| SCREEN1
+    SUPABASE -.->|"Broadcast<br/><200ms"| SCREEN2
+    SUPABASE -.->|"Broadcast<br/><200ms"| SCREEN3
+    SUPABASE -.->|"Broadcast<br/><200ms"| SCREEN4
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 7: BENEFITS
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    BENEFITS["🎯 REAL-TIME BENEFITS:<br/>✅ <200ms sync across 4 screens<br/>✅ AI understands context from ALL apps<br/>✅ Change in Notion → AI sees it instantly<br/>✅ Slack message → AI responds in LobeChat<br/>✅ Dashboard updates → All screens sync<br/>✅ Zero manual refresh needed"]
+    
+    SUPABASE -.->|"Delivers"| BENEFITS
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% STYLING
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    classDef founderStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px,color:#0D47A1
+    classDef syncStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px,color:#4A148C
+    classDef aiStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px,color:#E65100
+    classDef dataStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px,color:#1B5E20
+    classDef externalStyle fill:#E0F2F1,stroke:#00796B,stroke-width:3px,color:#004D40
+    classDef benefitStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px,color:#880E4F
+    
+    class SCREEN1,SCREEN2,SCREEN3,SCREEN4 founderStyle
+    class SUPABASE,REFLEX_ENGINE syncStyle
+    class PRODUCT_AI,AGENT_AI aiStyle
+    class POSTGRES,NEO4J,REDIS dataStyle
+    class NOTION_API,SLACK_API externalStyle
+    class BENEFITS benefitStyle

@@ -1,0 +1,312 @@
+{
+  "meta": {
+    "project": "CODIA Tracker",
+    "date": "2025-11-04",
+    "prepared_by": "Software Development Manager"
+  },
+  "product_overview": "CODIA Tracker is a real-time, database-first project tracking web application designed to unify human and AI task management through a dynamic interactive master map, hierarchical task checklists with dependencies, and rich visualizations such as Gantt charts and Kanban boards. It enables seamless synchronization and progress tracking across multiple phases to empower adaptive execution of code and media projects.",
+  "core_goals": [
+    "Provide a single source of truth for task and project progress synchronized in real-time between users and AI agents.",
+    "Visualize complex task dependencies and workflows through interactive master maps, timelines, and Gantt charts.",
+    "Facilitate flexible task management with phase-based hierarchical checklists, status updates, and blocker tracking.",
+    "Enable AI and human collaboration through shared views and auto-updating progress logs.",
+    "Support an adaptive execution workflow aligned with CODIA and V10 philosophies for scalable code and media development."
+  ],
+  "key_features": [
+    "Master Map dashboard showing overall and phase-wise project progress with real-time updating progress bars, KPIs, and deliverables.",
+    "Phase-based Checklist with hierarchical task structures, status dropdowns, blocker/dependency tracking, and real-time synchronization.",
+    "Interactive Timeline View and Visual Gantt Chart illustrating tasks over time with status indicators and dependency flows.",
+    "Drag-and-drop Kanban Board for intuitive task status updates across Pending, In Progress, Done, and Blocked columns.",
+    "Comprehensive Setup Wizard guiding users through business, infrastructure, financial, and AI model configuration.",
+    "Founder Guide providing detailed step-by-step instructions on setup across accounts, domain, finance, security, dev tools, and legal.",
+    "Visual Master Map graph displaying task dependencies and relationships for holistic project insight.",
+    "Mermaid Diagram Viewer for rendering interactive source truth diagrams stored in the database.",
+    "Real-time Activity Logs tracking system and user events with live feed updates.",
+    "Robust Supabase backend integration with PostgreSQL and real-time websocket sync for live data updates across clients."
+  ],
+  "user_flow_summary": [
+    "User logs into the CODIA Tracker app and lands on the Master Map screen to get an overview of current phase progress and KPIs.",
+    "User navigates to the Checklist tab to view and update task statuses, add notes, and observe blockers in a hierarchical phase-based structure.",
+    "Real-time task updates instantly reflect across all views, including Master Map, Timeline, Gantt charts, and Kanban Board.",
+    "User utilizes Timeline and Gantt Chart views to plan and track task schedules visually and explores dependencies between tasks.",
+    "Activity Logs provide users with transparent visibility into recent system and task events, updated live without refresh.",
+    "AI agents read current progress from Master Map and Checklist, suggest tasks, and update statuses automatically, which reflect in real-time for the user.",
+    "Users can configure the system using the Setup Wizard and refer to the Founder Guide for comprehensive assistance during onboarding and execution."
+  ],
+  "validation_criteria": [
+    "All task updates sync in real-time across multiple clients with no data loss or delay.",
+    "Master Map accurately reflects the current overall and phase progress data, updating automatically on task changes.",
+    "Task dependencies and blocker relationships enforce status update constraints correctly throughout the app.",
+    "Timeline, Gantt, Kanban, and Master Map visualizations are consistent and display accurate task statuses and relationships.",
+    "Setup Wizard saves configuration accurately to localStorage and can pre-populate milestone data from the database.",
+    "Founder Guide content is accessible and sections expand/collapse correctly.",
+    "Activity Logs capture and display task and system events with accurate timestamps and live updates.",
+    "The Supabase backend supports all required API endpoints and real-time websocket subscriptions with secure, performant queries."
+  ],
+  "code_summary": {
+    "tech_stack": [
+      "JavaScript",
+      "React 18",
+      "Vite 5.4",
+      "Supabase (PostgreSQL + Realtime)",
+      "TailwindCSS",
+      "Lucide React (Icons)",
+      "Mermaid (Diagrams)"
+    ],
+    "features": [
+      {
+        "name": "GAP Analysis Dashboard",
+        "description": "Real-time dashboard showing project progress metrics: completed tasks, in-progress, pending, overall GAP percentage, human vs AI task breakdown, time tracking",
+        "files": [
+          "src/components/GapDashboard.jsx",
+          "src/lib/supabase.js"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "GET",
+              "endpoint": "/gap_analysis",
+              "description": "Fetch real-time GAP analysis metrics from Supabase view",
+              "response": {
+                "total_tasks": 177,
+                "completed": 2,
+                "in_progress": 3,
+                "pending": 172,
+                "gap_percentage": 98.87
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Task Management (Phase-based Checklist)",
+        "description": "Hierarchical task list organized by phases (0-5), with status updates for human tasks via dropdown, milestone highlighting, priority badges, real-time sync",
+        "files": [
+          "src/components/Checklist.jsx",
+          "src/lib/supabase.js"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "GET",
+              "endpoint": "/tracker_app_data",
+              "description": "Get all tasks with enriched data (parent, children, dependencies)",
+              "parameters": {
+                "phase_id": "integer"
+              }
+            },
+            {
+              "method": "PUT",
+              "endpoint": "/tasks/{id}",
+              "description": "Update task status (PENDING, IN_PROGRESS, DONE, BLOCKED)",
+              "body": {
+                "status": "string",
+                "started_at": "timestamp",
+                "completed_at": "timestamp"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Setup Wizard",
+        "description": "5-step configuration wizard: Business Info, Infrastructure, Financial, AI Models, Review. Loads milestones from database, saves config to localStorage",
+        "files": [
+          "src/components/SetupWizard.jsx",
+          "src/lib/supabase.js"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "GET",
+              "endpoint": "/tracker_app_data?is_milestone=true",
+              "description": "Load milestone tasks to display in wizard"
+            },
+            {
+              "method": "POST",
+              "endpoint": "localStorage",
+              "description": "Save wizard configuration locally",
+              "body": {
+                "businessName": "string",
+                "domain": "string",
+                "vpsProvider": "string",
+                "bank": "string",
+                "aiModels": [
+                  "array"
+                ]
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Founder Guide",
+        "description": "685-line comprehensive setup guide with 6 sections: Accounts, Domain, Finance, Security, Dev Tools, Legal. Collapsible sections with detailed instructions",
+        "files": [
+          "src/components/FounderGuide.jsx"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "GET",
+              "endpoint": "static_content",
+              "description": "Display static founder guide content"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Visual Gantt Chart",
+        "description": "Interactive timeline visualization with zoom (50-200%), hover tooltips, click for detail modal, task bars color-coded by status",
+        "files": [
+          "src/components/VisualGantt.jsx",
+          "src/lib/supabase.js"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "GET",
+              "endpoint": "/tasks",
+              "description": "Get all tasks for timeline visualization"
+            },
+            {
+              "method": "GET",
+              "endpoint": "/phases",
+              "description": "Get phase information for timeline sections"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Kanban Board",
+        "description": "Drag-and-drop kanban board with columns: Pending, In Progress, Done, Blocked. Shows task cards with metadata",
+        "files": [
+          "src/components/KanbanBoard.jsx",
+          "src/lib/supabase.js"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "GET",
+              "endpoint": "/tasks",
+              "description": "Get tasks organized by status"
+            },
+            {
+              "method": "PUT",
+              "endpoint": "/tasks/{id}",
+              "description": "Update task status on drag-drop"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Master Map",
+        "description": "Visual network graph showing task dependencies and relationships",
+        "files": [
+          "src/components/MasterMap.jsx",
+          "src/lib/supabase.js"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "GET",
+              "endpoint": "/tasks",
+              "description": "Get tasks with depends_on relationships for graph visualization"
+            }
+          ]
+        }
+      },
+      {
+        "name": "V10 Diagrams Viewer",
+        "description": "Mermaid diagram viewer with Visual/Code toggle. Renders .mmd files from database as interactive SVG diagrams",
+        "files": [
+          "src/components/SourceTruthViewer.jsx",
+          "src/lib/supabase.js"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "GET",
+              "endpoint": "/documents",
+              "description": "Fetch mermaid diagram content from database",
+              "parameters": {
+                "doc_type": "mmd",
+                "filename": "string"
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Timeline View",
+        "description": "Chronological timeline showing task progression and milestones",
+        "files": [
+          "src/components/Timeline.jsx",
+          "src/lib/supabase.js"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "GET",
+              "endpoint": "/tasks",
+              "description": "Get tasks ordered by date for timeline"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Activity Logs",
+        "description": "Real-time activity log showing system events and task changes",
+        "files": [
+          "src/components/Logs.jsx",
+          "src/lib/supabase.js"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "GET",
+              "endpoint": "/logs",
+              "description": "Fetch activity logs ordered by timestamp",
+              "parameters": {
+                "limit": 50
+              }
+            }
+          ]
+        }
+      },
+      {
+        "name": "Gantt Chart",
+        "description": "Traditional Gantt chart view with task dependencies",
+        "files": [
+          "src/components/GanttChart.jsx",
+          "src/lib/supabase.js"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "GET",
+              "endpoint": "/tasks",
+              "description": "Get tasks for traditional Gantt view"
+            }
+          ]
+        }
+      },
+      {
+        "name": "Real-time Sync",
+        "description": "WebSocket-based real-time synchronization for all task updates across clients",
+        "files": [
+          "src/lib/supabase.js"
+        ],
+        "api_doc": {
+          "operations": [
+            {
+              "method": "SUBSCRIBE",
+              "endpoint": "supabase_realtime_channel",
+              "description": "Subscribe to task changes via WebSocket"
+            }
+          ]
+        }
+      }
+    ]
+  }
+}

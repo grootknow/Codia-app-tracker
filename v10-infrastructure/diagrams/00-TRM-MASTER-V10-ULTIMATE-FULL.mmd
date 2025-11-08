@@ -1,0 +1,1069 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E3F2FD',
+    'primaryTextColor': '#1565C0',
+    'primaryBorderColor': '#1976D2',
+    'lineColor': '#424242',
+    'secondaryColor': '#F3E5F5',
+    'tertiaryColor': '#E8F5E9',
+    'background': '#FFFFFF',
+    'mainBkg': '#BBDEFB',
+    'secondBkg': '#C5CAE9',
+    'tertiaryBkg': '#C8E6C9',
+    'clusterBkg': '#F5F5F5',
+    'clusterBorder': '#9E9E9E',
+    'titleColor': '#212121',
+    'edgeLabelBackground': '#FFFFFF',
+    'nodeTextColor': '#212121',
+    'fontSize': '14px'
+  }
+}}%%
+
+graph TB
+    %% ============================================================================
+    %% TRM AI PRODUCTION SYSTEM V10 ULTIMATE - PERFECT DESIGN & COMPLETE
+    %% ============================================================================
+    %% Version: 10.0 ULTIMATE + MCP GATEWAY (AI Control Infrastructure)
+    %% Last Updated: 2025-11-04
+    %% Architecture: 3-VPS Optimized (Control+Monitor | All Databases | Product+Agent AI)
+    %% Infrastructure: 3-VPS Setup (24GB + 24GB + 12GB RAM)
+    %% Total RAM: 60GB (optimized allocation)
+    %% Monthly Cost: $155/mo (avg)
+    %% Data Capacity: 22M triples + 10.4M vectors
+    %% Models: Claude 4.5 + Grok 4 Fast + Gemini 2.0 (API calls)
+    %% Deployment: 3 VPS (Contabo) + 8 AI Agents + Complete Observability
+    %% MCP Gateway: ContextForge (IBM) - 145+ MCP tools - AI control 95% infrastructure
+    %% 
+    %% 🎯 ULTIMATE DESIGN PRINCIPLES:
+    %% - Perfect Visual Hierarchy: Clear layer separation
+    %% - Zero Blind Spots: Every component connected
+    %% - Optimal Layout: No scattered elements
+    %% - Professional Styling: Color-coded by function
+    %% 
+    %% 🎯 CORE INNOVATION V10:
+    %% - 3-VPS Optimized: Smart resource allocation (Heavy DBs on VPS2, Light AI on VPS3)
+    %% - Complete Observability: Sentry + Loki + Tempo + Prometheus + Alerta
+    %% - 8 Autonomous AI Agents: DevOps, Data, Alert, Finance, Doc, Compliance, Test, Learning
+    %% - Dual AI Systems: Product AI (user-facing) vs Agent AI (internal ops) - ISOLATED
+    %% - MCP Gateway Layer: ContextForge (IBM) - AI control infrastructure via 145+ MCP tools
+    %%   • Virtual MCPs: REST→MCP auto-conversion (Coolify, Gitea, Windmill, Grafana, Prometheus)
+    %%   • Custom MCPs: FastMCP (Infrastructure, Database, Backup, Lakehouse)
+    %%   • External MCPs: Apify, TwelveLabs, Perplexity, Replicate
+    %%   • Features: Multi-tenant, RBAC, Federation, OpenTelemetry observability
+    %% - Lakehouse Architecture: Bronze/Silver/Gold + DuckDB + Iceberg + CDC
+    %% - Multi-Tier Backup: R2 + Google Drive + R2 Glacier + GitHub (4 tiers)
+    %% - CI/CD Pipeline: Gitea Actions + Trivy + Auto-deploy
+    %% - VPN Mesh: Headscale (secure internal network)
+    %% - Alert Hub: Alerta (aggregate all alerts, auto-triage by AI)
+    %% 
+    %% 🚀 KEY DIFFERENTIATORS V10:
+    %% - Purpose: AI-powered startup with 90% autonomous operations
+    %% - Scale: 8 AI agents, 100+ skills, 15+ MCPs, 10 databases, 35+ apps
+    %% - Cost-Optimized: 3-VPS + API calls ($155/month avg, +$15 from V9)
+    %% - Autonomous: AI agents handle deploy, monitor, alert, backup, docs, compliance
+    %% - Observability: Full stack (metrics, logs, errors, traces, alerts)
+    %% - Security: Zero Trust + VPN Mesh + Security Scan + Compliance Guardian
+    %% - Performance: <200ms realtime sync, <100ms CDC, 99.9% uptime
+    %% - Data: 22M triples (Neo4j), 10.4M vectors (LanceDB), Lakehouse (R2)
+    %% 
+    %% Created: 03/11/2025 (V7) | V9: 04/11/2025 | V10: 04/11/2025
+    %% ============================================================================
+
+    %% ============================================================================
+    %% 🎯 CORE PHILOSOPHY: "AI CÓ MÁY TÍNH RIÊNG"
+    %% ============================================================================
+    %% 
+    %% KHÔNG PHẢI: Thuê AI (ChatGPT, Claude.ai) để làm task
+    %% MÀ LÀ: SỞ HỮU INFRASTRUCTURE + DATA + KNOWLEDGE + PLATFORM
+    %% 
+    %% Sở hữu:
+    %%   ✅ Infrastructure: 3 VPS (60GB RAM), databases, storage
+    %%   ✅ Data: 22M triples (Neo4j), 10.4M vectors (LanceDB)
+    %%   ✅ Knowledge: Knowledge graph compounds forever
+    %%   ✅ Skills: 100+ workflows documented, shareable
+    %%   ✅ Platform: Foundation for future products
+    %% 
+    %% Kết quả:
+    %%   ✅ Replace 13 workers: $76,000/mo → $155/mo (490x ROI)
+    %%   ✅ Data ownership: 100% (your servers, your data)
+    %%   ✅ Cost predictable: $155/mo fixed (vs $500-5000 variable)
+    %%   ✅ No limits: Unlimited time, unlimited data, unlimited queries
+    %%   ✅ Vendor independence: Swap AI models anytime (Claude → Grok → Gemini)
+    %%   ✅ Build competitive moat: Skills library + Knowledge graph (unreplicable)
+    %% 
+    %% V10 DUAL AI SYSTEMS:
+    %%   1. "AI CÓ MÁY TÍNH" (Product AI - V7 Core):
+    %%      - Purpose: AI làm việc CHO USER
+    %%      - Location: VPS3 Product AI (6GB RAM)
+    %%      - Components: LangGraph Product, Skills Library (100+), MCPs, LobeChat
+    %%      - Use cases: Research, content generation, data analysis, user-facing tasks
+    %%      - Philosophy: Thay thế SaaS tools, tự chủ về data
+    %% 
+    %%   2. "AI OPERATIONS" (Agent AI - V10 New):
+    %%      - Purpose: AI làm việc CHO HỆ THỐNG
+    %%      - Location: VPS3 Agent AI (3GB RAM)
+    %%      - Components: 8 Autonomous Agents, LangGraph Agent, Agent databases, Alerta
+    %%      - Use cases: Auto-deploy, auto-fix, cost monitoring, docs, security, optimization
+    %%      - Philosophy: Autonomous operations, self-healing, 90% automation
+    %% 
+    %%   CRITICAL: HOÀN TOÀN TÁCH BIỆT (ISOLATED):
+    %%      - Separate LangGraph instances
+    %%      - Separate databases (Neo4j, LanceDB, PostgreSQL, Redis)
+    %%      - Separate Docker resource limits
+    %%      - Different AI models (Product=Claude primary, Agent=Grok primary)
+    %% 
+    %% Analogy: "Cloud AI is renting an apartment. Own infrastructure is buying a house.
+    %%           Both have uses, but one builds equity: Knowledge, Skills, Platform."
+    %% 
+    %% ============================================================================
+
+    %% ============================================================================
+    %% LAYER 0: OPERATIONS & IDENTITY - FOUNDERS LAYER
+    %% ============================================================================
+    
+    subgraph LAYER0_OPERATIONS["🏛️ LAYER 0: OPERATIONS & IDENTITY - Founders & Devices"]
+        direction TB
+        
+        %% Founders
+        subgraph FOUNDERS_GROUP["👥 FOUNDERS (2)"]
+            direction LR
+            
+            FOUNDER1["👤 FOUNDER 1<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 Admin/CEO<br/>📧 admin@rootknow.com<br/>🔑 FULL Access (All VPS)<br/>🖥️ 4 Devices (2 laptops + 2 phones)<br/>🌐 Hub: Notion + LobeChat"]
+            
+            FOUNDER2["👤 FOUNDER 2<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 Dev/Marketing<br/>📧 dev@rootknow.com<br/>🔑 LIMITED (VPS3 only)<br/>🖥️ 4 Devices (2 laptops + 2 phones)<br/>🌐 Hub: LobeChat + Postiz"]
+        end
+        
+        %% Google Workspace
+        subgraph GOOGLE_WORKSPACE["📧 GOOGLE WORKSPACE - SSOT for Identity"]
+            direction LR
+            
+            ADMIN_ACCOUNT["📧 admin@rootknow.com<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 Primary Account<br/>🔐 Logto SSO + Zero Trust<br/>📊 Gmail + Drive (100GB)<br/>💰 FREE"]
+            
+            DEV_ACCOUNT["📧 dev@rootknow.com<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 Secondary Account<br/>🔐 Logto SSO (Limited)<br/>📊 Gmail + Drive (15GB)<br/>💰 FREE"]
+        end
+        
+        %% Notion Databases (SSOT for Operations)
+        subgraph NOTION_DATABASES["📊 NOTION DATABASES - SSOT for Operations"]
+            direction TB
+            
+            DB_ACCOUNTS["💳 DATABASE 1: ACCOUNTS MASTER<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 Centralized Credentials<br/>📊 100+ records (VPS, SaaS, APIs)<br/>🔄 Sync: Vaultwarden<br/>⚡ Access: Founder 1 only"]
+            
+            DB_ACCESS["🔐 DATABASE 2: ACCESS CONTROL MATRIX<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 Permissions Management<br/>📊 20+ users (Founders + Contractors)<br/>🔄 Trigger: Windmill → Logto<br/>⚡ Auto-provision"]
+            
+            DB_IP_ASSETS["🏛️ DATABASE 3: DATA & IP ASSETS<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 IP & Data Governance<br/>📊 500+ assets (Code, Docs, Media)<br/>📊 4 levels: Public → Secret<br/>⚡ GDPR ready"]
+        end
+    end
+    
+    %% ============================================================================
+    %% LAYER 7: ZERO TRUST SECURITY
+    %% ============================================================================
+    
+    subgraph LAYER7_SECURITY["🔒 LAYER 7: ZERO TRUST & CLOUDFLARE"]
+        direction TB
+        
+        CF_TUNNEL["☁️ CLOUDFLARE TUNNEL<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 Secure Access Gateway<br/>🔧 Outbound-only + Auto SSL<br/>🌐 3 Tunnels (Coolify, Logto, Chat)<br/>🔐 Flow: User → CF → Logto → VPS<br/>💰 FREE"]
+        
+        CF_ZERO_TRUST["🛡️ CLOUDFLARE ZERO TRUST<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 Identity-based Access<br/>🔧 Device Posture + IP Whitelist<br/>📊 5 Policies (VPS1-3, Notion, Chat)<br/>💰 FREE (50 users)"]
+        
+        CF_WAF["🔥 CLOUDFLARE WAF<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 Web Application Firewall<br/>🔧 SQL/XSS/CSRF Protection<br/>📊 OWASP + Custom Rules<br/>💰 FREE"]
+    end
+
+    %% ============================================================================
+    %% SECTION 1: USER LAYER - ENTRY POINTS & INTERFACES
+    %% ============================================================================
+    
+    subgraph USER_LAYER["👥 USER LAYER - Entry Points & Interfaces"]
+        direction TB
+        
+        %% Founder Node
+        FOUNDER["👤 FOUNDER (TRM CEO)<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 Admin Access | OAuth2 + 2FA"]
+        
+        %% User Interfaces Subgraph
+        subgraph UI_INTERFACES["💻 USER INTERFACES"]
+            direction LR
+            
+            NOTION["📝 NOTION<br/>━━━━━━━━━━━━━━━━━━━━<br/>🏢 Operations Hub<br/>📊 4 DBs | $10/mo"]
+            
+            LOBECHAT["💬 LOBECHAT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🤖 AI Chat Interface<br/>2GB RAM | Port 3210 | FREE"]
+        end
+        
+        %% API Gateway
+        API_GATEWAY["🚪 API GATEWAY<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔐 OAuth2 + Rate Limiting<br/>1GB RAM | Port 8080"]
+    end
+
+    %% ============================================================================
+    %% SECTION 2: VPS2 - AI ORCHESTRATION LAYER
+    %% ============================================================================
+
+    subgraph VPS2_LAYER["🗄️ VPS2: ALL DATABASES - Contabo 24GB RAM (194.233.84.112) - $15/mo ⭐ UPGRADED"]
+        direction TB
+        
+        subgraph PRODUCT_DBS["💼 [VPS2] PRODUCT DATABASES (12GB)"]
+            NEO4J_INTERNAL["📊 NEO4J INTERNAL<br/>━━━━━━━━━━━━━━━━━━━━<br/>⚡ 2M triples<br/>4GB RAM | Ports 7474,7687"]
+            
+            NEO4J_SUPERAPP["📊 NEO4J SUPERAPP<br/>━━━━━━━━━━━━━━━━━━━━<br/>🏢 19M triples ⭐ BIGGEST<br/>4GB RAM | Ports 7475,7688"]
+            
+            LANCEDB_PRODUCT["🚀 LANCEDB PRODUCT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 10M vectors (Embedded!)<br/>500MB RAM | Port 6333"]
+            
+            APP_POSTGRES["🗄️ POSTGRESQL APP<br/>━━━━━━━━━━━━━━━━━━━━<br/>💾 App DB (Zep, NocoDB)<br/>2GB RAM | Port 5432"]
+            
+            REDIS_CLUSTER["⚡ REDIS PRODUCT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🚀 Cache + Queue + Pub/Sub<br/>1.5GB RAM | Port 6379"]
+            
+            NOCODB_APP["📊 NOCODB<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 Database UI<br/>1GB | Port 8080"]
+        end
+        
+        subgraph AGENT_DBS["🤖 [VPS2] AGENT DATABASES (4.8GB) ⭐ V10"]
+            NEO4J_AGENT["📊 NEO4J AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🤖 1M triples (Incident graph)<br/>2GB RAM | Ports 7476,7689"]
+            
+            LANCEDB_AGENT["🚀 LANCEDB AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 400k vectors (Embedded!)<br/>300MB RAM | Port 6334"]
+            
+            AGENT_POSTGRES["🗄️ POSTGRESQL AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>💾 Agent state/logs<br/>1GB RAM | Port 5433"]
+            
+            REDIS_AGENT["⚡ REDIS AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🚀 Agent queue<br/>1.5GB | Port 6380"]
+        end
+        
+        subgraph LAKEHOUSE["🏘️ LAKEHOUSE & ETL (2.2GB) ⭐ V10"]
+            DUCKDB_APP["🦆 DUCKDB<br/>━━━━━━━━━━━━━━━━━━━━<br/>📊 Analytics Engine<br/>500MB RAM | Port 8080"]
+            
+            AIRBYTE_APP["✈️ AIRBYTE<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔄 ETL Pipelines<br/>500MB RAM | Port 8000"]
+            
+            DBT_APP["🛠️ DBT<br/>━━━━━━━━━━━━━━━━━━━━<br/>📊 Data Transform<br/>200MB RAM | Port 8080"]
+            
+            UNSTRUCTURED_APP["📄 UNSTRUCTURED.IO<br/>━━━━━━━━━━━━━━━━━━━━<br/>📝 Document ETL<br/>500MB RAM | Port 8000"]
+            
+            ICEBERG_APP["❄️ ICEBERG<br/>━━━━━━━━━━━━━━━━━━━━<br/>🗂️ Table Format<br/>500MB RAM"]
+        end
+        
+        PROMTAIL_VPS2["📤 PROMTAIL<br/>━━━━━━━━━━━━━━━━━━━━<br/>📨 Log Shipper<br/>200MB | Port 9080"]
+    end
+
+    %% ============================================================================
+    %% SECTION 3: VPS1 - CONTROL PLANE
+    %% ============================================================================
+
+    subgraph VPS1_LAYER["🖥️ VPS1: CONTROL + MONITORING - Contabo 24GB RAM (46.250.237.194) - $15/mo"]
+        direction TB
+        
+        subgraph INFRA_CORE["🏭️ [VPS1] INFRASTRUCTURE CORE (5.8GB)"]
+            COOLIFY_APP["🐳 COOLIFY<br/>━━━━━━━━━━━━━━━━━━━━<br/>🎯 PaaS Manager<br/>2GB RAM | Port 8000"]
+            
+            LOGTO_APP["🎫 LOGTO<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔐 SSO/Identity<br/>1GB RAM | Ports 3001-3002"]
+            
+            VAULTWARDEN_APP["🔐 VAULTWARDEN<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔑 Secrets Manager<br/>500MB | Port 8200"]
+            
+            CORE_POSTGRES["🗄️ CORE POSTGRESQL<br/>━━━━━━━━━━━━━━━━━━━━<br/>💾 Operational DB<br/>2GB RAM | Port 5432"]
+            
+            HEADSCALE_APP["🌐 HEADSCALE<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔐 VPN Mesh<br/>200MB | Port 8080"]
+            
+            KOPIA_APP["💾 KOPIA<br/>━━━━━━━━━━━━━━━━━━━━<br/>📦 Backup Tool<br/>500MB | Port 51515"]
+        end
+        
+        subgraph OBSERVABILITY["📊 OBSERVABILITY STACK (8GB) ⭐ V10"]
+            GRAFANA_APP["📊 GRAFANA<br/>━━━━━━━━━━━━━━━━━━━━<br/>📈 Dashboards<br/>1GB RAM | Port 3000"]
+            
+            PROMETHEUS_APP["📈 PROMETHEUS<br/>━━━━━━━━━━━━━━━━━━━━<br/>📊 Metrics (3 VPS)<br/>2GB RAM | Port 9090"]
+            
+            LOKI_APP["📝 LOKI<br/>━━━━━━━━━━━━━━━━━━━━<br/>📋 Log Aggregation<br/>2GB RAM | Port 3100"]
+            
+            PROMTAIL_APP["📤 PROMTAIL<br/>━━━━━━━━━━━━━━━━━━━━<br/>📨 Log Shipper<br/>200MB | Port 9080"]
+            
+            SENTRY_APP["🐛 SENTRY<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔍 Error Tracking<br/>1GB RAM | Port 9000"]
+            
+            TEMPO_APP["🔍 TEMPO<br/>━━━━━━━━━━━━━━━━━━━━<br/>📡 Distributed Tracing<br/>1GB RAM | Port 3200"]
+            
+            ALERTA_APP["🚨 ALERTA<br/>━━━━━━━━━━━━━━━━━━━━<br/>📢 Alert Hub<br/>800MB | Port 8200"]
+        end
+        
+        subgraph AUTOMATION["⚙️ AUTOMATION (800MB) ⭐ V10"]
+            WINDMILL_APP["🌪️ WINDMILL<br/>━━━━━━━━━━━━━━━━━━━━<br/>🐍 Code-First Automation<br/>Python/TS/Go/Rust<br/>800MB RAM | Port 8000"]
+        end
+        
+        subgraph REALTIME_DASHBOARD["📊 REAL-TIME & DASHBOARD (1.3GB) ⭐ V10"]
+            SUPABASE_REALTIME["⚡ SUPABASE REALTIME<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔌 WebSocket Sync<br/>Broadcast + Presence<br/>500MB RAM | Port 4000"]
+            
+            REFLEX_DASHBOARD["🌐 REFLEX DASHBOARD<br/>━━━━━━━━━━━━━━━━━━━━<br/>🐍 Python Real-Time UI<br/>AI-Generated Dashboards<br/>800MB RAM | Port 3000"]
+        end
+        
+        subgraph DEVOPS_SECURITY["🔧 DEVOPS & SECURITY (2.4GB) ⭐ V10"]
+            GITEA_ACTIONS["🔄 GITEA ACTIONS<br/>━━━━━━━━━━━━━━━━━━━━<br/>🚀 CI/CD Pipeline<br/>1GB RAM | Port 3001"]
+            
+            TRIVY_APP["🛡️ TRIVY<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔒 Security Scanner<br/>500MB | On-demand"]
+            
+            ZOT_REGISTRY["📦 ZOT REGISTRY<br/>━━━━━━━━━━━━━━━━━━━━<br/>🐳 Docker Registry<br/>500MB | Port 5000"]
+            
+            WATCHTOWER_VPS1["🔄 WATCHTOWER<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔄 Auto-updater<br/>200MB"]
+            
+            INFISICAL_APP["🔐 INFISICAL<br/>━━━━━━━━━━━━━━━━━━━━<br/>🤖 Secrets for Machines<br/>500MB | Port 8080"]
+            
+            FALCO_APP["🚨 FALCO<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔍 Runtime Security<br/>300MB | Port 8765"]
+            
+            UPTIME_KUMA["🟢 UPTIME KUMA<br/>━━━━━━━━━━━━━━━━━━━━<br/>📊 Status Page<br/>200MB | Port 3001"]
+        end
+        
+        subgraph MCP_GATEWAY["🌐 MCP GATEWAY (1GB) ⭐ V10"]
+            CONTEXTFORGE_APP["🔧 CONTEXTFORGE<br/>━━━━━━━━━━━━━━━━━━━━<br/>🌐 IBM MCP Gateway<br/>REST→MCP + gRPC→MCP<br/>Multi-tenant + RBAC<br/>145+ MCP Tools<br/>1GB RAM | Port 8500"]
+        end
+    end
+
+    %% ============================================================================
+    %% SECTION 4: VPS3 - AI BRAIN + WORKLOAD
+    %% ============================================================================
+
+    subgraph VPS4_LAYER["💻 VPS4: CODE EXECUTION - Contabo 8GB RAM - $7-10/mo ⭐ NEW"]
+        direction TB
+        
+        subgraph SKYPILOT_CLUSTER["🚀 SKYPILOT CODE SANDBOX (8GB) - Self-Hosted, No Limits"]
+            K3S["☸️ K3S KUBERNETES<br/>━━━━━━━━━━━━━━━━━━━━<br/>Lightweight K8s<br/>500MB RAM"]
+            
+            SKYPILOT_CONTROL["🛠️ SKYPILOT CONTROL<br/>━━━━━━━━━━━━━━━━━━━━<br/>Orchestrator<br/>500MB RAM | Port 8600"]
+            
+            subgraph CODE_EXEC_PODS["🔥 CODE EXECUTION PODS (7GB) - Session Pooling"]
+                POD_PYTHON["🐍 Python Pod<br/>pandas, numpy, matplotlib<br/>Warm pool: 2 containers"]
+                POD_JS["📜 JavaScript Pod<br/>Node.js, npm packages<br/>Warm pool: 2 containers"]
+                POD_MULTI["🌐 Multi-Lang Pod<br/>Java, C++, Go, R<br/>On-demand"]
+            end
+            
+            SKYPILOT_VOLUMES["💾 PERSISTENT VOLUMES<br/>━━━━━━━━━━━━━━━━━━━━<br/>Data survives restarts<br/>Session state preserved<br/>1GB storage"]
+        end
+        
+        SKYPILOT_STATS["📊 SKYPILOT STATS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Performance: 300ms/exec<br/>7x faster than Modal<br/>$0 usage costs<br/>Unlimited sessions<br/>No quotas, no limits<br/>━━━━━━━━━━━━━━━━━━━━<br/>MCP: Via ContextForge wrapper"]
+    end
+    
+    subgraph VPS3_LAYER["🤖 VPS3: PRODUCT AI + AGENT AI - Contabo 12GB RAM (194.233.95.149) - $7.95/mo"]
+        direction TB
+        
+        subgraph AI_MODELS["🧠 AI MODELS (External API - NO RAM!)"]
+            direction LR
+            
+            CLAUDE["🎯 CLAUDE 4.5<br/>━━━━━━━━━━━━━━━━━━━━<br/>200K ctx | $3/$15<br/>Product: $15-40/mo<br/>Agent: $5-10/mo"]
+            
+            GROK["⚡ GROK 4 FAST<br/>━━━━━━━━━━━━━━━━━━━━<br/>2M ctx | $0.20/$0.50<br/>Product: $5-15/mo<br/>Agent: $5-15/mo ⭐ PRIMARY"]
+            
+            GEMINI["🚀 GEMINI 2.0<br/>━━━━━━━━━━━━━━━━━━━━<br/>1M ctx | $0.075/$0.30<br/>Product: $5-10/mo"]
+        end
+        
+        subgraph PRODUCT_AI["💼 [VPS3] PRODUCT AI - 'AI CÓ MÁY TÍNH' (6GB)<br/>🎯 AI làm việc CHO USER | Replace SaaS | Data Sovereignty"]
+            LANGGRAPH_PRODUCT["🔄 LANGGRAPH PRODUCT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🧠 User AI Orchestration<br/>🔌 MCP Client → CF_CORE<br/>2GB RAM | Port 8001"]
+            
+            ZEP_PRODUCT["🧠 ZEP PRODUCT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🕰️ User Memory<br/>2GB RAM | Port 8002"]
+            
+            LOBECHAT_APP["💬 LOBECHAT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🤖 Chat Interface<br/>1GB RAM | Port 3210"]
+            
+            SKILLS_LIB["📚 SKILLS LIBRARY<br/>━━━━━━━━━━━━━━━━━━━━<br/>📁 100+ skills<br/>500MB"]
+            
+            WEBSOCKET["🔌 WEBSOCKET<br/>━━━━━━━━━━━━━━━━━━━━<br/>⚡ Realtime<br/>200MB | Port 8888"]
+        end
+        
+        subgraph PRODUCT_APPS["📦 PRODUCT APPS (2GB)"]
+            METAMCP_APP["🚀 METAMCP<br/>━━━━━━━━━━━━━━━━━━━━<br/>📦 Product App<br/>1GB RAM | Port 8003"]
+            
+            POSTIZ_APP["📱 POSTIZ<br/>━━━━━━━━━━━━━━━━━━━━<br/>📲 Social Media<br/>500MB | Port 5000"]
+        end
+        
+        subgraph AGENT_AI["🤖 [VPS3] AGENT AI - 'AI OPERATIONS' (3GB) ⭐ V10<br/>🎯 AI làm việc CHO HỆ THỐNG | Self-healing 70% | 90% Automation"]
+            LANGGRAPH_AGENT["🔄 LANGGRAPH AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🤖 Agent Orchestrator<br/>🔌 MCP Client → CF_CORE<br/>🛠️ Uses FastMCP framework<br/>1GB RAM | Port 8100"]
+            
+            ZEP_AGENT["🧠 ZEP AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>🕰️ Agent Memory<br/>500MB | Port 8101"]
+            
+            subgraph EIGHT_AGENTS["8 AI AGENTS (1.5GB, 190MB each)"]
+                AGENT_DEVOPS["🔧 DevOps<br/>190MB"]
+                AGENT_DATA["📊 Data<br/>190MB"]
+                AGENT_ALERT["🚨 Alert<br/>190MB"]
+                AGENT_FINANCE["💰 Finance<br/>190MB"]
+                AGENT_DOC["📝 Doc<br/>190MB"]
+                AGENT_COMPLIANCE["⚖️ Compliance<br/>190MB"]
+                AGENT_TEST["🧪 Test<br/>190MB"]
+                AGENT_LEARNING["🎓 Learning<br/>190MB"]
+            end
+        end
+        
+        AGENT_GRAFANA["📊 AGENT GRAFANA<br/>━━━━━━━━━━━━━━━━━━━━<br/>📈 Agent Dashboard<br/>200MB | Port 3001"]
+        
+        PROMTAIL_VPS3["📤 PROMTAIL<br/>━━━━━━━━━━━━━━━━━━━━<br/>📨 Log Shipper<br/>200MB | Port 9080"]
+        
+        WATCHTOWER_VPS3["🔄 WATCHTOWER<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔄 Auto-updater<br/>200MB"]
+    end
+    
+    %% ============================================================================
+    %% SECTION 5: MCP GATEWAY LAYER - "AI CẦM ĐƯỢC HẾT INFRASTRUCTURE"
+    %% ============================================================================
+    
+    subgraph MCP_GATEWAY_LAYER["🌐 MCP GATEWAY LAYER - AI Control Infrastructure"]
+        direction TB
+        
+        subgraph CONTEXTFORGE_GATEWAY["🔧 CONTEXTFORGE GATEWAY (VPS1, 1GB) - IBM Enterprise MCP Gateway"]
+            direction TB
+            
+            CF_CORE["🌐 CONTEXTFORGE CORE<br/>━━━━━━━━━━━━━━━━━━━━<br/>🔐 Auth: OAuth, JWT, SSO<br/>⚡ Rate Limit: 100 req/min<br/>🔄 Federation: 3 VPS<br/>📊 Observability: Phoenix, Jaeger<br/>1GB RAM | Port 8500"]
+            
+            subgraph CF_FEATURES["✨ KILLER FEATURES"]
+                CF_REST_MCP["🔄 REST → MCP<br/>Auto-convert APIs to MCP tools<br/>No code needed!"]
+                CF_GRPC_MCP["🔄 gRPC → MCP<br/>Auto-reflection<br/>Service discovery"]
+                CF_MULTI_TENANT["👥 Multi-tenant<br/>Product AI vs Agent AI<br/>RBAC + Teams"]
+                CF_OBSERVABILITY["📊 Observability<br/>OpenTelemetry<br/>Phoenix + Jaeger"]
+            end
+        end
+        
+        CF_VIRTUAL_TOOLS["🤖 VIRTUAL MCP TOOLS<br/>━━━━━━━━━━━━━━━━━━━━<br/>(Auto-generated inside CF_CORE)<br/><br/>🚀 coolify-mcp: 20+ tools<br/>🔄 gitea-mcp: 15+ tools<br/>⚙️ windmill-mcp: 10+ tools<br/>📊 grafana-mcp: 10+ tools<br/>📈 prometheus-mcp: 10+ tools<br/><br/>Total: 65+ virtual tools"]
+        
+        subgraph CUSTOM_MCP_SERVERS["🛠️ CUSTOM MCP SERVERS - Built with FastMCP"]
+            direction LR
+            
+            CMCP_INFRA["🖥️ infrastructure-mcp<br/>━━━━━━━━━━━━━━━━━━━━<br/>15+ tools<br/>Docker, System, Proxmox"]
+            
+            CMCP_DATABASE["🗄️ database-mcp<br/>━━━━━━━━━━━━━━━━━━━━<br/>20+ tools<br/>PostgreSQL, Neo4j, LanceDB"]
+            
+            CMCP_BACKUP["💾 backup-mcp<br/>━━━━━━━━━━━━━━━━━━━━<br/>10+ tools<br/>Kopia, Snapshots, Restore"]
+            
+            CMCP_LAKEHOUSE["🏠 lakehouse-mcp<br/>━━━━━━━━━━━━━━━━━━━━<br/>15+ tools<br/>DuckDB, dbt, Airbyte"]
+        end
+        
+        subgraph EXTERNAL_MCP_SERVERS["☁️ EXTERNAL MCP SERVERS - 3rd Party"]
+            direction LR
+            
+            EMCP_APIFY["🕷️ Apify MCP<br/>Web scraping<br/>$10/mo"]
+            
+            EMCP_TWELVE["🎥 TwelveLabs MCP<br/>Video analysis<br/>$15/mo"]
+            
+            EMCP_PERPLEXITY["🔍 Perplexity MCP<br/>Search + Research<br/>$5/mo"]
+            
+            EMCP_REPLICATE["🤖 Replicate MCP<br/>AI models<br/>Pay-per-use"]
+        end
+        
+        MCP_STATS["📊 MCP COVERAGE<br/>━━━━━━━━━━━━━━━━━━━━<br/>Virtual MCPs: 65+ tools<br/>Custom MCPs: 60+ tools<br/>External MCPs: 20+ tools<br/>━━━━━━━━━━━━━━━━━━━━<br/>TOTAL: 145+ MCP TOOLS<br/>AI control 95% infrastructure!"]
+    end
+    
+    %% ============================================================================
+    %% REALTIME SYNC & EVENT BUS
+    %% ============================================================================
+    
+    subgraph EVENT_BUS["🔄 REALTIME SYNC & EVENT BUS"]
+        direction TB
+        
+        subgraph REDIS_PUBSUB["📡 Redis Pub/Sub (VPS2)"]
+            EVENTS_NOTION["📝 /events/notion/*<br/>Task updates, DB changes"]
+            EVENTS_DB["🗄️ /events/db/*<br/>PostgreSQL, Neo4j changes"]
+            EVENTS_AI["🤖 /events/ai/*<br/>AI task results"]
+        end
+        
+        CDC["🔄 CDC (Change Data Capture)<br/>━━━━━━━━━━━━━━━━━━━━<br/>PostgreSQL Logical Replication<br/>Neo4j CDC Plugin<br/>Latency: <100ms"]
+    end
+
+    %% ============================================================================
+    %% BANKING & FINANCE LAYER
+    %% ============================================================================
+    
+    subgraph BANKING_LAYER["🏦 BANKING & FINANCE"]
+        direction TB
+        
+        subgraph US_BANKING["🇺🇸 US Banking"]
+            MERCURY["💳 Mercury<br/>Primary checking<br/>ACH + Wire + Debit cards<br/>FDIC insured"]
+            WISE_US["💱 Wise Business<br/>Multi-currency wallet<br/>50+ currencies<br/>Virtual cards"]
+        end
+        
+        subgraph VN_BANKING["🇻🇳 VN Banking (Personal)"]
+            VN_BANK["🏦 Vietcombank<br/>Personal VND account<br/>For local expenses"]
+        end
+        
+        subgraph PAYMENT_GATEWAYS["💳 Payment Gateways"]
+            STRIPE["💳 Stripe<br/>Primary processor<br/>Connected to Mercury<br/>2.9% + $0.30"]
+            PAYPAL["💳 PayPal Business<br/>Alternative payment<br/>Connected to Mercury<br/>2.99% + $0.49"]
+            LEMONSQUEEZY["🍋 Lemon Squeezy<br/>Merchant of Record<br/>Handle VAT/taxes<br/>5% + $0.50"]
+        end
+        
+        PRIVACY["💳 Privacy.com<br/>Unlimited virtual cards<br/>For SaaS subscriptions<br/>→ Mercury<br/>FREE"]
+    end
+    
+    %% ============================================================================
+    %% 4 DATA FLOWS - AI AUTOMATION
+    %% ============================================================================
+    
+    subgraph DATA_FLOWS["🔄 4 DATA FLOWS - AI Automation"]
+        direction TB
+        
+        FLOW_CHAT["1️⃣ CHAT FLOW<br/>User → LobeChat → LangGraph<br/>→ Load Skills → Route MCPs<br/>→ Execute → Store → Response"]
+        
+        FLOW_OPS["2️⃣ VẬN HÀNH FLOW<br/>Notion update → Windmill webhook<br/>→ LangGraph categorize<br/>→ Update DBs → Post Slack<br/>→ AI learns patterns"]
+        
+        FLOW_AUTO["3️⃣ TỰ ĐỘNG FLOW<br/>Windmill Cron (daily 6am)<br/>→ LangGraph research task<br/>→ Perplexity + Apify<br/>→ Generate report → Notion<br/>→ Telegram alert"]
+        
+        FLOW_EVENT["4️⃣ NGOẠI VI FLOW<br/>Webhooks (Stripe, GitHub)<br/>→ Windmill process<br/>→ LangGraph analyze<br/>→ Update KG → Alert<br/>→ Auto-action if needed"]
+    end
+
+    %% ============================================================================
+    %% EXTERNAL SERVICES
+    %% ============================================================================
+    
+    subgraph EXTERNAL_SERVICES["☁️ EXTERNAL SERVICES"]
+        direction LR
+        
+        MCP_APIFY["🕷️ Apify<br/>$10/mo"]
+        MCP_TWELVELABS["🎥 TwelveLabs<br/>$15/mo"]
+        MCP_PERPLEXITY["🔍 Perplexity<br/>$5/mo"]
+        MCP_REPLICATE["🤖 Replicate<br/>$3/mo"]
+        R2_STORAGE["☁️ R2 Storage<br/>$16/mo"]
+    end
+
+    %% ============================================================================
+    %% DATA STORAGE ARCHITECTURE & DATA LAKE
+    %% ============================================================================
+    
+    subgraph DATA_STORAGE["🗄️ DATA STORAGE ARCHITECTURE"]
+        direction TB
+        
+        subgraph STRUCTURED_DATA["📊 STRUCTURED DATA"]
+            direction TB
+            
+            PG_STRUCTURE["🗄️ POSTGRESQL STRUCTURE<br/>━━━━━━━━━━━━━━━━━━━━<br/>📁 /var/lib/postgresql/14/<br/>├── main/ (Core DB)<br/>├── app/ (Application DB)<br/>├── zep/ (Zep Memory)<br/>└── nocodb/ (NocoDB)<br/><br/>Backup: pg_dump every 6h<br/>Retention: 14 days"]
+            
+            NEO4J_STRUCTURE["📊 NEO4J STRUCTURE<br/>━━━━━━━━━━━━━━━━━━━━<br/>📁 /var/lib/neo4j/<br/>├── internal/ (2M triples)<br/>│   ├── data/<br/>│   ├── logs/<br/>│   └── plugins/<br/>└── superapp/ (19M triples)<br/>    ├── data/<br/>    ├── logs/<br/>    └── plugins/<br/><br/>Backup: neo4j-admin dump<br/>Retention: 14 days (internal)<br/>Retention: 4 weeks (superapp)"]
+            
+            LANCEDB_STRUCTURE["🔍 LANCEDB STRUCTURE<br/>━━━━━━━━━━━━━━━━━━━━<br/>📁 /var/lib/lancedb/<br/>├── datasets/<br/>│   ├── embeddings/ (10M vectors)<br/>│   ├── metadata/<br/>│   └── versions/<br/>└── storage/<br/><br/>Backup: File-based daily<br/>Retention: 7 days"]
+        end
+        
+        subgraph UNSTRUCTURED_DATA["📁 UNSTRUCTURED DATA"]
+            direction TB
+            
+            R2_STRUCTURE["☁️ CLOUDFLARE R2 STRUCTURE<br/>━━━━━━━━━━━━━━━━━━━━<br/>📁 trm-production-bucket/<br/>├── backups/<br/>│   ├── vps1/ (daily)<br/>│   ├── vps2/ (daily)<br/>│   └── vps3/ (weekly)<br/>├── uploads/<br/>│   ├── images/<br/>│   ├── documents/<br/>│   └── videos/<br/>├── exports/<br/>│   ├── notion/<br/>│   └── databases/<br/>└── logs/<br/>    ├── application/<br/>    └── system/<br/><br/>Lifecycle: 30 days → Glacier<br/>Cost: $1.50/mo (100GB)"]
+            
+            GDRIVE_STRUCTURE["📁 GOOGLE DRIVE STRUCTURE<br/>━━━━━━━━━━━━━━━━━━━━<br/>📁 RootKnow Shared Drive/<br/>├── 01-Company/<br/>│   ├── Legal/<br/>│   ├── Finance/<br/>│   └── HR/<br/>├── 02-Engineering/<br/>│   ├── Architecture/<br/>│   ├── Code/<br/>│   └── Docs/<br/>├── 03-Operations/<br/>│   ├── Backups/<br/>│   ├── Runbooks/<br/>│   └── Incidents/<br/>└── 04-Product/<br/>    ├── Designs/<br/>    ├── Research/<br/>    └── Roadmap/<br/><br/>Sync: Real-time<br/>Cost: FREE (Business)"]
+        end
+        
+        subgraph DATA_LAKE["🌊 LAKEHOUSE ARCHITECTURE (R2)"]
+            direction LR
+            
+            CDC_PIPELINE["🔄 CDC PIPELINE<br/>━━━━━━━━━━━━━━━━━━━━<br/>PostgreSQL WAL<br/>→ pg_logical_replication<br/>→ Redis Streams<br/>→ LangGraph Consumer<br/><br/>Neo4j Changes<br/>→ neo4j-cdc-plugin<br/>→ Redis Streams<br/>→ LangGraph Consumer<br/><br/>Latency: <100ms<br/>Throughput: 1000+ events/min"]
+            
+            LAKEHOUSE["🏠 LAKEHOUSE (R2)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Tech Stack:<br/>• Storage: Cloudflare R2 (S3-compatible)<br/>• Format: Apache Parquet<br/>• Compression: Snappy<br/>• Query: DuckDB (embedded)<br/>• Catalog: Iceberg (metadata)<br/><br/>📁 trm-lakehouse/<br/>├── bronze/ (raw CDC)<br/>├── silver/ (cleaned)<br/>└── gold/ (aggregated)<br/><br/>Retention: 90 days → Archive"]
+        end
+        
+        subgraph BACKUP_STRATEGY["💾 MULTI-TIER BACKUP STRATEGY"]
+            direction TB
+            
+            TIER1["🔴 TIER 1: PRIMARY (R2)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: Every 4-6 hours<br/>Method: Automated (Windmill)<br/>Storage: Cloudflare R2<br/>Retention: 30 days<br/>Cost: $1.50/mo (100GB)<br/>Egress: FREE<br/><br/>Includes:<br/>• All VPS databases<br/>• Application configs<br/>• Vaultwarden vault<br/>• Windmill workflows"]
+            
+            TIER2["🟡 TIER 2: SECONDARY (GDrive)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: Daily (critical only)<br/>Method: Automated (Windmill)<br/>Storage: Google Drive<br/>Retention: 30 days<br/>Cost: FREE (Business)<br/><br/>Includes:<br/>• Vaultwarden (encrypted)<br/>• PostgreSQL (critical)<br/>• Neo4j Internal<br/>• Configs & secrets"]
+            
+            TIER3["🟢 TIER 3: COLD STORAGE (R2 Glacier)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: Weekly<br/>Method: Lifecycle policy<br/>Storage: R2 Glacier tier<br/>Retention: 1 year<br/>Cost: $0.50/mo (100GB)<br/><br/>Includes:<br/>• Monthly snapshots<br/>• Audit logs<br/>• Historical data<br/>• Compliance records"]
+            
+            TIER4["⚪ TIER 4: EXTERNAL (GitHub)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: On change<br/>Method: Git auto-commit<br/>Storage: GitHub Private Repos<br/>Retention: Unlimited<br/>Cost: FREE<br/><br/>Includes:<br/>• Windmill workflows (code)<br/>• Skills Library (code)<br/>• Infrastructure configs<br/>• Documentation"]
+        end
+    end
+    
+    %% ============================================================================
+    %% COMPLIANCE & CONTRACTOR MANAGEMENT
+    %% ============================================================================
+    
+    subgraph COMPLIANCE_LAYER["⚖️ COMPLIANCE & CONTRACTOR MANAGEMENT"]
+        direction TB
+        
+        subgraph LEGAL_COMPLIANCE["⚖️ LEGAL COMPLIANCE"]
+            direction LR
+            
+            US_COMPANY["🏛️ US COMPANY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Delaware C-Corp<br/>RootKnow Inc.<br/>EIN: Applied<br/>Registered Agent: Northwest<br/><br/>Annual: $500 (DE)<br/>Tax: $1,500-3,000 (CPA)"]
+            
+            GDPR_COMPLIANCE["🌍 GDPR COMPLIANCE<br/>━━━━━━━━━━━━━━━━━━━━<br/>Privacy Policy: ✅<br/>Cookie Consent: ✅<br/>Data Export API: ✅<br/>Data Delete API: ✅<br/>DPA with vendors: ✅<br/><br/>Tool: Termly ($10/mo)"]
+            
+            DATA_RESIDENCY["🌏 DATA RESIDENCY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Primary: Singapore (VPS)<br/>Backup: Global (R2)<br/>Compliance: PDPA (SG)<br/>EU Data: Separate region<br/><br/>Classification:<br/>• Public: R2 public<br/>• Internal: Notion<br/>• Confidential: PostgreSQL<br/>• Secret: Vaultwarden"]
+        end
+        
+        subgraph CONTRACTOR_MGMT["👥 CONTRACTOR MANAGEMENT"]
+            direction LR
+            
+            ONBOARDING["🚀 ONBOARDING (Windmill)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Trigger: Notion new row<br/>1. Create Logto account<br/>2. Provision access<br/>3. Send welcome email<br/>4. Create tasks<br/>5. Notify team<br/><br/>Duration: 8 min (automated)"]
+            
+            TIME_TRACKING["⏱️ TIME TRACKING<br/>━━━━━━━━━━━━━━━━━━━━<br/>Tool: Toggl Track<br/>Sync: Windmill → Notion<br/>Frequency: Daily 11pm<br/>Alert: >40h/week<br/><br/>Database: Notion<br/>'Time Tracking'"]
+            
+            OFFBOARDING["🚫 OFFBOARDING (Windmill)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Trigger: Status = Offboarded<br/>1. Revoke all access (immediate)<br/>2. Archive data<br/>3. Calculate payment<br/>4. Send email<br/>5. Security audit<br/><br/>Duration: 16 min (90% auto)"]
+        end
+    end
+
+    %% ============================================================================
+    %% CONNECTIONS
+    %% ============================================================================
+    
+    %% ============================================================================
+    %% FOUNDER LAYER - "CHỈ LÁI AI + XEM DASH" ⭐ CORE PHILOSOPHY
+    %% ============================================================================
+    
+    %% Founder 1 → Product AI (PRIMARY INTERFACE)
+    FOUNDER1 -->|Chat| LOBECHAT_APP
+    FOUNDER1 -->|Real-time| WEBSOCKET
+    LOBECHAT_APP -->|AI Response| FOUNDER1
+    WEBSOCKET -->|Push updates| FOUNDER1
+    
+    %% Founder 1 → Dashboards (MONITORING ONLY)
+    FOUNDER1 -->|View metrics| GRAFANA_APP
+    FOUNDER1 -->|View status| REFLEX_DASHBOARD
+    FOUNDER1 -->|View alerts| ALERTA_APP
+    
+    %% Founder 1 → Emergency Access (RARE)
+    FOUNDER1 -->|Emergency only| COOLIFY_APP
+    FOUNDER1 -->|Data check| NOCODB_APP
+    
+    %% Founder 2 → Agent AI (SECONDARY INTERFACE)
+    FOUNDER2 -->|Monitor agents| AGENT_GRAFANA
+    FOUNDER2 -->|View reports| REFLEX_DASHBOARD
+    FOUNDER2 -->|Check status| UPTIME_KUMA
+    
+    %% Layer 0 → Layer 7 (Security)
+    FOUNDER1 --> CF_TUNNEL
+    FOUNDER2 --> CF_TUNNEL
+    CF_TUNNEL --> LOGTO_APP
+    
+    %% Layer 7 → VPS1 (Auth)
+    LOGTO_APP --> COOLIFY_APP
+    LOGTO_APP --> WINDMILL_APP
+    LOGTO_APP --> GRAFANA_APP
+    
+    %% VPS1 Infrastructure → VPS2
+    WINDMILL_APP --> APP_POSTGRES
+    CORE_POSTGRES --> APP_POSTGRES
+    
+    %% VPS1 Observability → All VPS
+    PROMETHEUS_APP --> NEO4J_INTERNAL
+    PROMETHEUS_APP --> NEO4J_SUPERAPP
+    PROMETHEUS_APP --> LANCEDB_PRODUCT
+    PROMETHEUS_APP --> NEO4J_AGENT
+    PROMETHEUS_APP --> LANCEDB_AGENT
+    GRAFANA_APP --> PROMETHEUS_APP
+    LOKI_APP --> PROMTAIL_VPS2
+    LOKI_APP --> PROMTAIL_VPS3
+    ALERTA_APP --> PROMETHEUS_APP
+    ALERTA_APP --> SENTRY_APP
+    
+    %% VPS1 DevOps → VPS3
+    COOLIFY_APP --> LOBECHAT_APP
+    COOLIFY_APP --> METAMCP_APP
+    COOLIFY_APP --> LANGGRAPH_PRODUCT
+    COOLIFY_APP --> LANGGRAPH_AGENT
+    GITEA_ACTIONS --> ZOT_REGISTRY
+    GITEA_ACTIONS --> TRIVY_APP
+    
+    %% VPS1 → VPS3 Automation
+    WINDMILL_APP --> LANGGRAPH_PRODUCT
+    WINDMILL_APP --> LANGGRAPH_AGENT
+    
+
+    %% VPS3 Product AI → VPS4 CODE EXECUTION ⭐ "AI CÓ MÁY TÍNH RIÊNG"
+    %% ============================================================================
+    
+    %% COMPLETE FLOW: Founder → AI → Code Execution → Results
+    
+    %% Step 1: Founder requests code execution
+    FOUNDER1 -->|"Analyze CSV with pandas"| LOBECHAT_APP
+    LOBECHAT_APP -->|Parse request| LANGGRAPH_PRODUCT
+    
+    %% Step 2: LangGraph decides to execute code
+    LANGGRAPH_PRODUCT -->|Route to SkyPilot| SKYPILOT_CONTROL
+    LANGGRAPH_PRODUCT -.->|Execute Python| POD_PYTHON
+    LANGGRAPH_PRODUCT -.->|Execute JS| POD_JS
+    
+    %% Step 3: Code execution in pods
+    POD_PYTHON -->|Save results| SKYPILOT_VOLUMES
+    POD_JS -->|Save results| SKYPILOT_VOLUMES
+    SKYPILOT_VOLUMES -->|Load data| POD_PYTHON
+    SKYPILOT_VOLUMES -->|Load data| POD_JS
+    
+    %% Step 4: Results back to founder
+    POD_PYTHON -->|Results| LANGGRAPH_PRODUCT
+    POD_JS -->|Results| LANGGRAPH_PRODUCT
+    LANGGRAPH_PRODUCT -->|Format response| LOBECHAT_APP
+    LOBECHAT_APP -->|Display| FOUNDER1
+    WEBSOCKET -->|Push updates| FOUNDER1
+    
+    %% MCP Integration (Future)
+    CF_CORE -.->|MCP wrapper (planned)| SKYPILOT_CONTROL
+    
+    %% VPS3 Product AI → VPS2 Product DBs
+    LANGGRAPH_PRODUCT --> NEO4J_INTERNAL
+    LANGGRAPH_PRODUCT --> NEO4J_SUPERAPP
+    LANGGRAPH_PRODUCT --> LANCEDB_PRODUCT
+    LANGGRAPH_PRODUCT --> APP_POSTGRES
+    LANGGRAPH_PRODUCT --> REDIS_CLUSTER
+    ZEP_PRODUCT --> NEO4J_INTERNAL
+    ZEP_PRODUCT --> LANCEDB_PRODUCT
+    ZEP_PRODUCT --> APP_POSTGRES
+    LOBECHAT_APP --> LANGGRAPH_PRODUCT
+    LOBECHAT_APP --> WEBSOCKET
+    
+    %% VPS3 Agent AI → VPS2 Agent DBs
+    LANGGRAPH_AGENT --> NEO4J_AGENT
+    LANGGRAPH_AGENT --> LANCEDB_AGENT
+    LANGGRAPH_AGENT --> AGENT_POSTGRES
+    LANGGRAPH_AGENT --> REDIS_AGENT
+    ZEP_AGENT --> NEO4J_AGENT
+    ZEP_AGENT --> LANCEDB_AGENT
+    
+    %% 8 Agents → Orchestrator
+    AGENT_DEVOPS --> LANGGRAPH_AGENT
+    AGENT_DATA --> LANGGRAPH_AGENT
+    AGENT_ALERT --> LANGGRAPH_AGENT
+    AGENT_FINANCE --> LANGGRAPH_AGENT
+    AGENT_DOC --> LANGGRAPH_AGENT
+    AGENT_COMPLIANCE --> LANGGRAPH_AGENT
+    AGENT_TEST --> LANGGRAPH_AGENT
+    AGENT_LEARNING --> LANGGRAPH_AGENT
+    
+    %% Alert Agent → Alerta
+    AGENT_ALERT --> ALERTA_APP
+    ALERTA_APP -.->|Read alerts| AGENT_ALERT
+    
+    %% DevOps Agent → Infrastructure
+    AGENT_DEVOPS --> COOLIFY_APP
+    AGENT_DEVOPS --> HEADSCALE_APP
+    
+    %% Data Agent → Databases
+    AGENT_DATA --> NEO4J_INTERNAL
+    AGENT_DATA --> NEO4J_SUPERAPP
+    AGENT_DATA --> LANCEDB_PRODUCT
+    
+    %% Finance Agent → Banking
+    AGENT_FINANCE --> MERCURY
+    AGENT_FINANCE --> STRIPE
+    
+    %% Banking connections
+    STRIPE --> MERCURY
+    PAYPAL --> MERCURY
+    PRIVACY --> MERCURY
+    WINDMILL_APP --> MERCURY
+    WINDMILL_APP --> STRIPE
+    
+    %% User flows
+    FOUNDER1 --> NOTION
+    FOUNDER1 --> LOBECHAT_APP
+    FOUNDER2 --> LOBECHAT_APP
+    
+    %% AI Models connections
+    LANGGRAPH_PRODUCT --> CLAUDE
+    LANGGRAPH_PRODUCT --> GROK
+    LANGGRAPH_PRODUCT --> GEMINI
+    LANGGRAPH_AGENT --> GROK
+    LANGGRAPH_AGENT --> CLAUDE
+    
+    %% ============================================================================
+    %% MCP GATEWAY CONNECTIONS - "AI CẦM ĐƯỢC HẾT"
+    %% ============================================================================
+    
+    %% AI Systems → ContextForge Gateway
+    LANGGRAPH_PRODUCT --> CF_CORE
+    LANGGRAPH_AGENT --> CF_CORE
+    
+    %% ContextForge → Virtual MCPs (internal tools, auto-generated)
+    %% Note: Virtual MCPs are internal to CF_CORE, not separate nodes
+    %% They auto-convert REST APIs to MCP tools
+    
+    %% ContextForge → Real Infrastructure (via internal virtual MCPs)
+    CF_CORE -.->|coolify-mcp| COOLIFY_APP
+    CF_CORE -.->|gitea-mcp| GITEA_ACTIONS
+    CF_CORE -.->|windmill-mcp| WINDMILL_APP
+    CF_CORE -.->|grafana-mcp| GRAFANA_APP
+    CF_CORE -.->|prometheus-mcp| PROMETHEUS_APP
+    
+    %% ContextForge → Custom MCPs
+    CF_CORE --> CMCP_INFRA
+    CF_CORE --> CMCP_DATABASE
+    CF_CORE --> CMCP_BACKUP
+    CF_CORE --> CMCP_LAKEHOUSE
+    
+    %% Custom MCPs → Infrastructure (Direct SDK/API)
+    CMCP_INFRA -.->|Docker SDK| COOLIFY_APP
+    CMCP_DATABASE -.->|SQL| APP_POSTGRES
+    CMCP_DATABASE -.->|Cypher| NEO4J_INTERNAL
+    CMCP_DATABASE -.->|Arrow| LANCEDB_PRODUCT
+    CMCP_BACKUP -.->|Kopia API| R2_LAKEHOUSE
+    CMCP_LAKEHOUSE -.->|DuckDB| R2_LAKEHOUSE
+    
+    %% ContextForge → External MCPs
+    CF_CORE --> EMCP_APIFY
+    CF_CORE --> EMCP_TWELVE
+    CF_CORE --> EMCP_PERPLEXITY
+    CF_CORE --> EMCP_REPLICATE
+    
+    %% ContextForge Observability
+    CF_CORE -.->|Traces| TEMPO_APP
+    CF_CORE -.->|Metrics| PROMETHEUS_APP
+    CF_CORE -.->|Logs| LOKI_APP
+    
+    %% Skills Library connections
+    LANGGRAPH_PRODUCT --> SKILLS_LIB
+    SKILLS_LIB -.->|Provide workflows| LANGGRAPH_PRODUCT
+    
+    %% MCP Gateway connections
+    LANGGRAPH_PRODUCT --> MCP_APIFY
+    LANGGRAPH_PRODUCT --> MCP_TWELVELABS
+    LANGGRAPH_PRODUCT --> MCP_PERPLEXITY
+    LANGGRAPH_PRODUCT --> MCP_REPLICATE
+    
+    %% Notion Databases connections
+    FOUNDER1 --> DB_ACCOUNTS
+    FOUNDER1 --> DB_ACCESS
+    FOUNDER1 --> DB_IP_ASSETS
+    DB_ACCOUNTS -.->|Sync| VAULTWARDEN_APP
+    DB_ACCESS -.->|Trigger| WINDMILL_APP
+    WINDMILL_APP -.->|Provision| LOGTO_APP
+    
+    %% Realtime Event Bus
+    NOTION -.->|Webhook| WINDMILL_APP
+    WINDMILL_APP --> EVENTS_NOTION
+    APP_POSTGRES -.->|CDC| CDC
+    NEO4J_INTERNAL -.->|CDC| CDC
+    CDC --> EVENTS_DB
+    
+    %% Event Consumers
+    EVENTS_NOTION --> LANGGRAPH_PRODUCT
+    EVENTS_DB --> LANGGRAPH_PRODUCT
+    WEBSOCKET -.->|Push| LOBECHAT_APP
+    
+    %% Storage connections
+    LANGGRAPH_PRODUCT --> R2_STORAGE
+    LANGGRAPH_AGENT --> R2_STORAGE
+    
+    %% Data Storage connections
+    APP_POSTGRES -.->|Structure| PG_STRUCTURE
+    NEO4J_INTERNAL -.->|Structure| NEO4J_STRUCTURE
+    NEO4J_SUPERAPP -.->|Structure| NEO4J_STRUCTURE
+    LANCEDB_PRODUCT -.->|Structure| LANCEDB_STRUCTURE
+    
+    %% Backup flows - Multi-tier
+    PG_STRUCTURE -->|Primary| TIER1
+    NEO4J_STRUCTURE -->|Primary| TIER1
+    LANCEDB_STRUCTURE -->|Primary| TIER1
+    VAULTWARDEN_APP -->|Primary| TIER1
+    
+    TIER1 -->|Critical only| TIER2
+    TIER1 -->|Weekly snapshot| TIER3
+    WINDMILL_APP -->|Git commit| TIER4
+    SKILLS_LIB -->|Git commit| TIER4
+    
+    %% CDC to Lakehouse
+    CDC -->|Stream| CDC_PIPELINE
+    CDC_PIPELINE -->|Bronze layer| LAKEHOUSE
+    LAKEHOUSE -->|Archive| TIER3
+    
+    %% ============================================================================
+    %% OLD TOOLS CONNECTIONS - FIX FAKE COMPONENTS!
+    %% ============================================================================
+    
+    %% Coolify PaaS Manager (CRITICAL!)
+    COOLIFY_APP -->|Deploy| LANGGRAPH_PRODUCT
+    COOLIFY_APP -->|Deploy| LANGGRAPH_AGENT
+    COOLIFY_APP -->|Deploy| LOBECHAT_APP
+    COOLIFY_APP -->|Manage| NEO4J_INTERNAL
+    COOLIFY_APP -->|Manage| LANCEDB_PRODUCT
+    AGENT_DEVOPS -->|Control| COOLIFY_APP
+    
+    %% Logto SSO/Identity
+    LOGTO_APP -->|Auth| LANGGRAPH_PRODUCT
+    LOGTO_APP -->|Auth| LANGGRAPH_AGENT
+    LOGTO_APP -->|Auth| GRAFANA_APP
+    LOGTO_APP -->|Auth| NOCODB_APP
+    
+    %% Headscale VPN Mesh
+    HEADSCALE_APP -->|Connect| VPS1_LAYER
+    HEADSCALE_APP -->|Connect| VPS2_LAYER
+    HEADSCALE_APP -->|Connect| VPS3_LAYER
+    HEADSCALE_APP -->|Connect| VPS4_LAYER
+    AGENT_DEVOPS -->|Configure| HEADSCALE_APP
+    
+    %% Grafana Dashboards
+    GRAFANA_APP -->|Query| PROMETHEUS_APP
+    GRAFANA_APP -->|Query| LOKI_APP
+    GRAFANA_APP -->|Query| TEMPO_APP
+    GRAFANA_APP -->|Display| ALERTA_APP
+    AGENT_ALERT -->|Configure| GRAFANA_APP
+    
+    %% Sentry Error Tracking
+    SENTRY_APP -->|Track errors| LANGGRAPH_PRODUCT
+    SENTRY_APP -->|Track errors| LANGGRAPH_AGENT
+    SENTRY_APP -->|Alert| ALERTA_APP
+    AGENT_ALERT -->|Monitor| SENTRY_APP
+    
+    %% Tempo Distributed Tracing
+    TEMPO_APP -->|Trace| LANGGRAPH_PRODUCT
+    TEMPO_APP -->|Trace| LANGGRAPH_AGENT
+    TEMPO_APP -->|Trace| CF_CORE
+    GRAFANA_APP -->|Visualize| TEMPO_APP
+    
+    %% Gitea Actions CI/CD
+    GITEA_ACTIONS -->|Build| LANGGRAPH_PRODUCT
+    GITEA_ACTIONS -->|Build| LANGGRAPH_AGENT
+    GITEA_ACTIONS -->|Push| ZOT_REGISTRY
+    GITEA_ACTIONS -->|Scan| TRIVY_APP
+    AGENT_DEVOPS -->|Trigger| GITEA_ACTIONS
+    
+    %% Trivy Security Scanner
+    TRIVY_APP -->|Scan| ZOT_REGISTRY
+    TRIVY_APP -->|Alert| ALERTA_APP
+    AGENT_COMPLIANCE -->|Run| TRIVY_APP
+    
+    %% Zot Docker Registry
+    ZOT_REGISTRY -->|Provide images| COOLIFY_APP
+    GITEA_ACTIONS -->|Push| ZOT_REGISTRY
+    
+    %% NocoDB Database UI
+    NOCODB_APP -->|Query| APP_POSTGRES
+    NOCODB_APP -->|Display| NEO4J_INTERNAL
+    AGENT_DATA -->|Manage| NOCODB_APP
+    
+    %% MetaMCP Product App
+    METAMCP_APP -->|Use| CF_CORE
+    METAMCP_APP -->|Query| NEO4J_SUPERAPP
+    LANGGRAPH_PRODUCT -->|Integrate| METAMCP_APP
+    
+    %% Postiz Social Media
+    POSTIZ_APP -->|Post| R2_STORAGE
+    POSTIZ_APP -->|Schedule| WINDMILL_APP
+    LANGGRAPH_PRODUCT -->|Generate content| POSTIZ_APP
+    
+    %% ============================================================================
+    %% NEW TOOLS CONNECTIONS ⭐ V10 - MAKE THEM REAL!
+    %% ============================================================================
+    
+    %% Kopia Backup Tool
+    KOPIA_APP -->|Backup| PG_STRUCTURE
+    KOPIA_APP -->|Backup| NEO4J_STRUCTURE
+    KOPIA_APP -->|Backup| LANCEDB_STRUCTURE
+    KOPIA_APP -->|Upload| TIER1
+    WINDMILL_APP -->|Trigger| KOPIA_APP
+    AGENT_DATA -->|Monitor| KOPIA_APP
+    
+    %% Infisical Secrets Management
+    INFISICAL_APP -->|Provide secrets| LANGGRAPH_PRODUCT
+    INFISICAL_APP -->|Provide secrets| LANGGRAPH_AGENT
+    INFISICAL_APP -->|Provide secrets| WINDMILL_APP
+    INFISICAL_APP -->|Provide secrets| COOLIFY_APP
+    AGENT_DEVOPS -->|Manage| INFISICAL_APP
+    
+    %% Falco Runtime Security
+    FALCO_APP -->|Monitor| COOLIFY_APP
+    FALCO_APP -->|Alert| ALERTA_APP
+    AGENT_COMPLIANCE -->|Configure| FALCO_APP
+    PROMETHEUS_APP -->|Scrape| FALCO_APP
+    
+    %% Uptime Kuma Status Page
+    UPTIME_KUMA -->|Monitor| COOLIFY_APP
+    UPTIME_KUMA -->|Monitor| GRAFANA_APP
+    UPTIME_KUMA -->|Monitor| LANGGRAPH_PRODUCT
+    UPTIME_KUMA -->|Alert| ALERTA_APP
+    AGENT_ALERT -->|Configure| UPTIME_KUMA
+    
+    %% Supabase Realtime Sync
+    SUPABASE_REALTIME -->|Broadcast| WEBSOCKET
+    SUPABASE_REALTIME -->|Sync| LANGGRAPH_PRODUCT
+    SUPABASE_REALTIME -->|Sync| LANGGRAPH_AGENT
+    REDIS_CLUSTER -->|Pub/Sub| SUPABASE_REALTIME
+    
+    %% Reflex Dashboard
+    REFLEX_DASHBOARD -->|Query| PROMETHEUS_APP
+    REFLEX_DASHBOARD -->|Query| APP_POSTGRES
+    REFLEX_DASHBOARD -->|Display| SUPABASE_REALTIME
+    LANGGRAPH_PRODUCT -->|Update| REFLEX_DASHBOARD
+    LANGGRAPH_AGENT -->|Update| REFLEX_DASHBOARD
+    
+    %% Lakehouse Tools - DuckDB
+    DUCKDB_APP -->|Query| LAKEHOUSE
+    DUCKDB_APP -->|Export| R2_STORAGE
+    LANGGRAPH_PRODUCT -->|Analyze| DUCKDB_APP
+    AGENT_DATA -->|Monitor| DUCKDB_APP
+    
+    %% Lakehouse Tools - Airbyte
+    AIRBYTE_APP -->|Extract| NEO4J_INTERNAL
+    AIRBYTE_APP -->|Extract| APP_POSTGRES
+    AIRBYTE_APP -->|Load| LAKEHOUSE
+    AGENT_DATA -->|Configure| AIRBYTE_APP
+    
+    %% Lakehouse Tools - dbt
+    DBT_APP -->|Transform| LAKEHOUSE
+    DBT_APP -->|Test| LAKEHOUSE
+    AGENT_DATA -->|Run| DBT_APP
+    
+    %% Lakehouse Tools - Unstructured.io
+    UNSTRUCTURED_APP -->|Process| R2_STORAGE
+    UNSTRUCTURED_APP -->|Extract| LAKEHOUSE
+    LANGGRAPH_PRODUCT -->|Use| UNSTRUCTURED_APP
+    
+    %% Lakehouse Tools - Iceberg
+    ICEBERG_APP -->|Catalog| LAKEHOUSE
+    DUCKDB_APP -->|Query via| ICEBERG_APP
+    
+    %% Compliance connections
+    WINDMILL_APP -.->|Automate| ONBOARDING
+    WINDMILL_APP -.->|Automate| OFFBOARDING
+    WINDMILL_APP -.->|Sync| TIME_TRACKING
+    NOTION -.->|Trigger| ONBOARDING
+    NOTION -.->|Trigger| OFFBOARDING
+
+    %% ============================================================================
+    %% STYLING
+    %% ============================================================================
+    
+    classDef founderStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef securityStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    classDef vps1Style fill:#E8F5E9,stroke:#388E3C,stroke-width:2px
+    classDef vps2Style fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef vps3Style fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    classDef vps4Style fill:#F3E5F5,stroke:#6A1B9A,stroke-width:2px
+    classDef bankingStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef externalStyle fill:#FFCCBC,stroke:#E64A19,stroke-width:2px
+    
+    class FOUNDER1,FOUNDER2 founderStyle
+    class CF_TUNNEL,LOGTO_APP,VAULTWARDEN_APP,HEADSCALE_APP securityStyle
+    class COOLIFY_APP,WINDMILL_APP,CORE_POSTGRES,GRAFANA_APP,PROMETHEUS_APP,LOKI_APP,PROMTAIL_APP,SENTRY_APP,TEMPO_APP,ALERTA_APP,GITEA_ACTIONS,TRIVY_APP,ZOT_REGISTRY,WATCHTOWER_VPS1,CONTEXTFORGE_APP,SUPABASE_REALTIME,REFLEX_DASHBOARD,INFISICAL_APP,FALCO_APP,UPTIME_KUMA,KOPIA_APP vps1Style
+    class NEO4J_INTERNAL,NEO4J_SUPERAPP,LANCEDB_PRODUCT,APP_POSTGRES,REDIS_CLUSTER,NOCODB_APP,NEO4J_AGENT,LANCEDB_AGENT,AGENT_POSTGRES,REDIS_AGENT,PROMTAIL_VPS2,DUCKDB_APP,AIRBYTE_APP,DBT_APP,UNSTRUCTURED_APP,ICEBERG_APP vps2Style
+    class LANGGRAPH_PRODUCT,ZEP_PRODUCT,LOBECHAT_APP,SKILLS_LIB,WEBSOCKET,METAMCP_APP,POSTIZ_APP,LANGGRAPH_AGENT,ZEP_AGENT,AGENT_DEVOPS,AGENT_DATA,AGENT_ALERT,AGENT_FINANCE,AGENT_DOC,AGENT_COMPLIANCE,AGENT_TEST,AGENT_LEARNING,AGENT_GRAFANA,PROMTAIL_VPS3,WATCHTOWER_VPS3 vps3Style
+    class K3S,SKYPILOT_CONTROL,POD_PYTHON,POD_JS,POD_MULTI,SKYPILOT_VOLUMES,SKYPILOT_STATS vps4Style
+    class MERCURY,WISE_US,STRIPE,PAYPAL,PRIVACY,VN_BANK,LEMONSQUEEZY bankingStyle
+    class MCP_APIFY,MCP_TWELVELABS,MCP_PERPLEXITY,MCP_REPLICATE,R2_STORAGE,EMCP_APIFY,EMCP_TWELVE,EMCP_PERPLEXITY,EMCP_REPLICATE externalStyle
+    class CLAUDE,GROK,GEMINI vps3Style
+    class EVENTS_NOTION,EVENTS_DB,EVENTS_AI,CDC vps3Style
+    
+    %% Data Storage styling
+    classDef dataStorageStyle fill:#E8EAF6,stroke:#3F51B5,stroke-width:2px
+    classDef dataLakeStyle fill:#E0F2F1,stroke:#00897B,stroke-width:2px
+    classDef backupStyle fill:#FFF3E0,stroke:#FF6F00,stroke-width:2px
+    class PG_STRUCTURE,NEO4J_STRUCTURE,LANCEDB_STRUCTURE dataStorageStyle
+    class R2_STRUCTURE,GDRIVE_STRUCTURE dataStorageStyle
+    class CDC_PIPELINE,LAKEHOUSE dataLakeStyle
+    class TIER1,TIER2,TIER3,TIER4 backupStyle
+    
+    %% Compliance styling
+    classDef complianceStyle fill:#FFF9C4,stroke:#F9A825,stroke-width:2px
+    classDef contractorStyle fill:#F3E5F5,stroke:#8E24AA,stroke-width:2px
+    class US_COMPANY,GDPR_COMPLIANCE,DATA_RESIDENCY complianceStyle
+    class ONBOARDING,TIME_TRACKING,OFFBOARDING contractorStyle
+    
+    %% ============================================================================
+    %% ANNOTATIONS - COST BREAKDOWN & KEY METRICS
+    %% ============================================================================
+    
+    %% Cost Summary V10
+    COST_SUMMARY["💰 V10 ULTIMATE COST BREAKDOWN ⭐ 'AI CÓ MÁY TÍNH RIÊNG'<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>🖥️ VPS Infrastructure: $45-48 ⭐ +VPS4<br/>  • VPS1 (24GB): $15.00 (Control + Monitoring)<br/>  • VPS2 (24GB): $15.00 ⭐ UPGRADED (All DBs + Lakehouse)<br/>  • VPS3 (12GB): $7.95 (Product + Agent AI)<br/>  • VPS4 (8GB): $7-10 ⭐ NEW (Code Execution - SkyPilot)<br/><br/>☁️ Storage & CDN: $20.00<br/>  • Cloudflare R2: $2.00 (Lakehouse + Backup)<br/>  • Google Drive: $0 (free)<br/>  • Backups: $18.00<br/><br/>🤖 AI Models (variable): $30-100 ⭐ SPLIT<br/>  • Product AI:<br/>    - Claude 4.5: $15-40<br/>    - Grok 4 Fast: $5-15<br/>    - Gemini 2.0: $5-10<br/>  • Agent AI:<br/>    - Grok 4 Fast: $5-15 (primary)<br/>    - Claude 4.5: $5-10 (complex only)<br/><br/>🔧 External MCPs: $33.00<br/>  • Apify: $10<br/>  • TwelveLabs: $15<br/>  • Perplexity: $5<br/>  • Replicate: $3<br/><br/>📦 SaaS Tools: $40.00<br/>  • Notion: $10<br/>  • QuickBooks: $30<br/><br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>💵 TOTAL: $138-141 (fixed) + $30-100 (variable)<br/>📊 AVERAGE: ~$165/month (+$10 from V10)<br/>🎯 VALUE: +VPS4 Code Execution (300ms/exec, 7x faster than Modal)<br/>🚀 BREAKTHROUGH: AI CÓ MÁY TÍNH RIÊNG - Chạy code thật, không giới hạn!"]
+    
+    %% Key Metrics V10
+    METRICS["📊 V10 ULTIMATE METRICS & PERFORMANCE ⭐ 'AI CÓ MÁY TÍNH'<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>🗄️ Data Capacity: ⭐ EXPANDED<br/>  • Neo4j Product: 21M triples (2M + 19M)<br/>  • Neo4j Agent: 1M triples (incident graph)<br/>  • LanceDB Product: 10M vectors (embedded!)<br/>  • LanceDB Agent: 400k vectors (embedded!)<br/>  • PostgreSQL: 6 databases (4 product + 2 agent)<br/>  • Redis: 2 instances (product + agent)<br/><br/>⚡ Performance:<br/>  • Realtime Sync: <200ms (was 5-15 min in V7)<br/>  • CDC Pipeline: <100ms latency<br/>  • DB Query: <50ms (p95)<br/>  • API Response: <500ms (p95)<br/>  • AI Task: <30s (p95)<br/>  • Code Execution: 300ms ⭐ NEW (7x faster than Modal)<br/><br/>🤖 Autonomous Operations: ⭐ V10<br/>  • 8 AI Agents: 90% automation<br/>  • Auto-deploy: <5 min<br/>  • Auto-fix: 70% incidents<br/>  • Alert response: <1 min<br/><br/>💻 Code Execution: ⭐ V10 ULTIMATE<br/>  • Languages: Python, JS, Java, C++, Go, R<br/>  • Session pooling: 2 warm containers (Python/JS)<br/>  • Unlimited executions: $0 usage cost<br/>  • Persistent volumes: 1GB storage<br/><br/>🎯 SLA Targets:<br/>  • Uptime: 99.9% (43 min/month)<br/>  • Error Rate: <0.1%<br/>  • Backup Success: 100%<br/>  • Agent Success Rate: >95%<br/>  • Code Exec Success: >98%"]
+    
+    %% 4 Data Flows
+    FLOW_CHAT["💬 FLOW 1: CHAT (Real-time)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>User → LobeChat → WebSocket → LangGraph<br/>→ AI Models (Claude/Grok/Gemini)<br/>→ Query DBs (Neo4j/LanceDB/PostgreSQL)<br/>→ Response → WebSocket → User<br/><br/>Latency: <200ms | Event-driven"]
+    
+    FLOW_OPS["⚙️ FLOW 2: VẬN HÀNH (Automated)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Notion Update → Webhook → Windmill<br/>→ Redis Pub/Sub → LangGraph<br/>→ Process Task → Update Notion<br/>→ Slack Notification<br/><br/>Latency: <1s | Webhook-triggered"]
+    
+    FLOW_AUTO["🤖 FLOW 3: TỰ ĐỘNG (Scheduled)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Windmill Cron → LangGraph → AI Models<br/>→ Generate Content/Reports<br/>→ Update Databases<br/>→ Post to Social (Postiz)<br/><br/>Frequency: Hourly/Daily/Weekly"]
+    
+    FLOW_EXT["🌐 FLOW 4: NGOẠI VI (External)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>LangGraph → MCP Gateway (ContextForge)<br/>→ External MCPs (Apify/TwelveLabs/etc)<br/>→ Process Results → Store in DBs<br/>→ Notify User<br/><br/>Latency: 5-30s | API-dependent"]
+    
+    FLOW_CODE["💻 FLOW 5: CODE EXECUTION ⭐ 'AI CÓ MÁY TÍNH RIÊNG'<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>👤 Founder: 'Analyze this CSV with pandas'<br/>↓<br/>💬 LobeChat: Parse natural language request<br/>↓<br/>🧠 LangGraph: Understand → Generate Python code<br/>↓<br/>🚀 SkyPilot Control: Route to warm Python pod<br/>↓<br/>🐍 Python Pod: Execute code (pandas, numpy, matplotlib)<br/>↓<br/>💾 Persistent Volume: Save results + plots<br/>↓<br/>📊 Results: Return data + visualizations<br/>↓<br/>💬 LobeChat: Display to founder<br/>⚡ WebSocket: Push real-time updates<br/><br/>⏱️ Latency: 300ms | 7x faster Modal | $0 cost | Unlimited!<br/>🔥 NO QUOTAS | NO LIMITS | PERSISTENT STATE"]
+    
+    %% Position annotations
+    COST_SUMMARY -.->|Reference| VPS1_LAYER
+    METRICS -.->|Reference| VPS2_LAYER
+    FLOW_CHAT -.->|Reference| LOBECHAT_APP
+    FLOW_OPS -.->|Reference| WINDMILL_APP
+    FLOW_AUTO -.->|Reference| WINDMILL_APP
+    FLOW_EXT -.->|Reference| CF_CORE
+    FLOW_CODE -.->|Reference| VPS4_LAYER
+    
+    %% Style annotations
+    classDef annotationStyle fill:#FFFDE7,stroke:#F57F17,stroke-width:2px,stroke-dasharray: 5 5
+    class COST_SUMMARY,METRICS,FLOW_CHAT,FLOW_OPS,FLOW_AUTO,FLOW_EXT,FLOW_CODE annotationStyle

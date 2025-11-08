@@ -1,0 +1,116 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E3F2FD',
+    'primaryTextColor': '#1565C0',
+    'primaryBorderColor': '#1976D2',
+    'lineColor': '#424242',
+    'secondaryColor': '#F3E5F5',
+    'tertiaryColor': '#E8F5E9',
+    'fontSize': '16px'
+  }
+}}%%
+
+graph TB
+    %% ============================================================================
+    %% VPS4: CODE EXECUTION - "AI CÓ MÁY TÍNH RIÊNG" BREAKTHROUGH 🔥
+    %% ============================================================================
+    %% PARENT: 00-MASTER-OVERVIEW.mmd
+    %% PHILOSOPHY: AI execute code thật, không giới hạn!
+    %% BREAKTHROUGH: 7x faster Modal, $0 cost, unlimited sessions
+    
+    %% ============================================================================
+    %% USER REQUEST
+    %% ============================================================================
+    
+    FOUNDER["👤 FOUNDER<br/>━━━━━━━━━━━━━━<br/>'Analyze this CSV<br/>with pandas and plot<br/>sales trends'"]
+    
+    LOBECHAT["💬 LOBECHAT<br/>━━━━━━━━━━━━━━<br/>Parse natural language<br/>Extract intent"]
+    
+    %% ============================================================================
+    %% AI PROCESSING
+    %% ============================================================================
+    
+    LANGGRAPH["🔄 LANGGRAPH PRODUCT<br/>━━━━━━━━━━━━━━<br/>VPS3 | 2GB RAM<br/>━━━━━━━━━━━━━━<br/>1️⃣ Understand request<br/>2️⃣ Generate Python code:<br/><br/>```python<br/>import pandas as pd<br/>import matplotlib.pyplot as plt<br/><br/>df = pd.read_csv('sales.csv')<br/>df.groupby('month')['revenue']<br/>  .sum().plot(kind='bar')<br/>plt.savefig('sales_trend.png')<br/>```<br/><br/>3️⃣ Route to SkyPilot"]
+    
+    %% ============================================================================
+    %% CODE EXECUTION SANDBOX
+    %% ============================================================================
+    
+    subgraph VPS4["💻 VPS4: CODE EXECUTION (8GB) - $7-10/mo"]
+        direction TB
+        
+        SKYPILOT_CONTROL["🚀 SKYPILOT CONTROL<br/>━━━━━━━━━━━━━━<br/>Orchestrator<br/>500MB RAM<br/>━━━━━━━━━━━━━━<br/>✅ Route to warm pod<br/>✅ Manage sessions<br/>✅ Monitor resources<br/>✅ Handle failures"]
+        
+        K3S["☸️ K3S KUBERNETES<br/>━━━━━━━━━━━━━━<br/>Lightweight K8s<br/>500MB RAM<br/>━━━━━━━━━━━━━━<br/>✅ Container orchestration<br/>✅ Auto-scaling<br/>✅ Health checks"]
+        
+        subgraph WARM_POOL["🔥 WARM POD POOL (7GB) - NO COLD START!"]
+            direction LR
+            
+            POD_PYTHON["🐍 PYTHON POD<br/>━━━━━━━━━━━━━━<br/>Warm pool: 2 containers<br/>3GB RAM each<br/>━━━━━━━━━━━━━━<br/>Pre-installed:<br/>✅ pandas, numpy<br/>✅ matplotlib, seaborn<br/>✅ scikit-learn<br/>✅ tensorflow, pytorch<br/>✅ requests, beautifulsoup<br/>━━━━━━━━━━━━━━<br/>⚡ 300ms latency<br/>💰 $0 usage cost"]
+            
+            POD_JS["📜 JAVASCRIPT POD<br/>━━━━━━━━━━━━━━<br/>Warm pool: 2 containers<br/>2GB RAM each<br/>━━━━━━━━━━━━━━<br/>Pre-installed:<br/>✅ Node.js 20<br/>✅ npm packages<br/>✅ axios, lodash<br/>✅ cheerio, puppeteer<br/>━━━━━━━━━━━━━━<br/>⚡ 300ms latency<br/>💰 $0 usage cost"]
+        end
+        
+        PERSISTENT_VOL["💾 PERSISTENT VOLUMES<br/>━━━━━━━━━━━━━━<br/>1GB storage<br/>━━━━━━━━━━━━━━<br/>✅ Data survives restarts<br/>✅ Session state preserved<br/>✅ Share between pods<br/>✅ Backup to R2"]
+    end
+    
+    %% ============================================================================
+    %% RESULTS
+    %% ============================================================================
+    
+    RESULTS["📊 RESULTS<br/>━━━━━━━━━━━━━━<br/>DataFrame:<br/>month | revenue<br/>Jan   | $125k<br/>Feb   | $143k<br/>Mar   | $167k<br/>━━━━━━━━━━━━━━<br/>Chart: sales_trend.png<br/>━━━━━━━━━━━━━━<br/>⏱️ Total time: 2.3s<br/>💰 Cost: $0"]
+    
+    %% ============================================================================
+    %% COMPARISON
+    %% ============================================================================
+    
+    subgraph COMPARISON["📊 VS MODAL / JUPYTER"]
+        direction TB
+        
+        MODAL["❌ MODAL (Cloud)<br/>━━━━━━━━━━━━━━<br/>⏱️ Cold start: 2-5s<br/>⏱️ Execution: 2s<br/>⏱️ Total: 4-7s<br/>━━━━━━━━━━━━━━<br/>💰 $0.50/hour<br/>💰 ~$360/mo<br/>━━━━━━━━━━━━━━<br/>❌ 24h timeout<br/>❌ No persistent state<br/>❌ Quotas & limits"]
+        
+        SKYPILOT_STATS["✅ SKYPILOT (Self-hosted)<br/>━━━━━━━━━━━━━━<br/>⏱️ Cold start: 0ms (warm!)<br/>⏱️ Execution: 300ms<br/>⏱️ Total: 300ms<br/>━━━━━━━━━━━━━━<br/>💰 $0 usage cost<br/>💰 $7-10/mo fixed<br/>━━━━━━━━━━━━━━<br/>✅ UNLIMITED time<br/>✅ Persistent state<br/>✅ NO quotas, NO limits<br/>━━━━━━━━━━━━━━<br/>🔥 7x FASTER!<br/>🔥 36x CHEAPER!"]
+    end
+    
+    %% ============================================================================
+    %% CONNECTIONS - COMPLETE FLOW
+    %% ============================================================================
+    
+    %% 1️⃣ Founder → AI
+    FOUNDER -->|Natural language| LOBECHAT
+    LOBECHAT --> LANGGRAPH
+    
+    %% 2️⃣ AI → Code Execution
+    LANGGRAPH -->|Python code| SKYPILOT_CONTROL
+    SKYPILOT_CONTROL --> K3S
+    K3S -->|Route to warm pod| POD_PYTHON
+    
+    %% 3️⃣ Execution
+    POD_PYTHON -->|Save results| PERSISTENT_VOL
+    PERSISTENT_VOL -->|Load data| POD_PYTHON
+    
+    %% 4️⃣ Results back
+    POD_PYTHON -->|Results| SKYPILOT_CONTROL
+    SKYPILOT_CONTROL -->|Format| LANGGRAPH
+    LANGGRAPH -->|Response| LOBECHAT
+    LOBECHAT -->|Display| RESULTS
+    RESULTS -->|Show to| FOUNDER
+    
+    %% ============================================================================
+    %% STYLING
+    %% ============================================================================
+    
+    classDef founderStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:4px
+    classDef interfaceStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:3px
+    classDef aiStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px
+    classDef codeStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:4px
+    classDef resultStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef comparisonStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    
+    class FOUNDER founderStyle
+    class LOBECHAT interfaceStyle
+    class LANGGRAPH aiStyle
+    class SKYPILOT_CONTROL,K3S,POD_PYTHON,POD_JS,PERSISTENT_VOL codeStyle
+    class RESULTS resultStyle
+    class MODAL,SKYPILOT_STATS comparisonStyle

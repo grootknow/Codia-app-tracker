@@ -1,0 +1,103 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#42A5F5','secondaryColor':'#F3E5F5','tertiaryColor':'#E8F5E9'}}}%%
+
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+%% TRM AI PRODUCTION SYSTEM V10 - BACKUP & DISASTER RECOVERY
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+%% Philosophy: "AI CÓ MÁY TÍNH RIÊNG" - 4-tier backup, 10x faster recovery
+%% Link: See NEW-V10-00-MASTER-OVERVIEW.mmd for full context
+%% Date: 2025-01-05
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+graph TB
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 1: SOURCE DATA
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph SOURCES["📦 DATA SOURCES"]
+        VPS1_DATA["🏢 VPS1 Data<br/>Configs, logs, metrics"]
+        VPS2_DATA["🗄️ VPS2 Data<br/>All databases (20GB)"]
+        VPS3_DATA["🤖 VPS3 Data<br/>AI models, skills"]
+        VPS4_DATA["⚡ VPS4 Data<br/>Code execution state"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 2: BACKUP TOOL
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph BACKUP_ENGINE["💾 BACKUP ENGINE"]
+        KOPIA["🔧 Kopia<br/>500MB RAM<br/>⚡ Deduplicated backups<br/>⚡ Encrypted<br/>⚡ Incremental"]
+        KAMAL["🚀 Kamal<br/>200MB RAM<br/>⚡ Infrastructure as Code<br/>⚡ Auto-deploy<br/>⚡ 10x faster recovery"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 3: 4-TIER BACKUP STRATEGY
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph TIER1["🔥 TIER 1: HOT BACKUP (Real-time)"]
+        R2["☁️ Cloudflare R2<br/>$0.015/GB/mo<br/>⚡ <1s access<br/>⚡ Unlimited egress<br/>📊 Total: ~$3/mo"]
+    end
+    
+    subgraph TIER2["⚡ TIER 2: WARM BACKUP (Daily)"]
+        GDRIVE["📁 Google Drive<br/>$10/mo for 2TB<br/>⚡ 5s access<br/>⚡ Versioning"]
+    end
+    
+    subgraph TIER3["❄️ TIER 3: COLD BACKUP (Weekly)"]
+        GLACIER["🧊 AWS Glacier<br/>$0.004/GB/mo<br/>⚡ 12h retrieval<br/>📊 Total: ~$1/mo"]
+    end
+    
+    subgraph TIER4["🔐 TIER 4: DISASTER RECOVERY (Monthly)"]
+        GITHUB["🦊 GitHub<br/>Free for code<br/>⚡ Infrastructure as Code<br/>⚡ Kamal configs"]
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 4: DATA FLOWS
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    %% Source → Kopia
+    VPS1_DATA -->|"Continuous"| KOPIA
+    VPS2_DATA -->|"Continuous"| KOPIA
+    VPS3_DATA -->|"Continuous"| KOPIA
+    VPS4_DATA -->|"Continuous"| KOPIA
+    
+    %% Kopia → 4 Tiers
+    KOPIA -->|"Real-time<br/>Every 15min"| R2
+    KOPIA -->|"Daily<br/>3AM UTC"| GDRIVE
+    KOPIA -->|"Weekly<br/>Sunday"| GLACIER
+    
+    %% Kamal → GitHub
+    KAMAL -->|"Infrastructure as Code<br/>Every commit"| GITHUB
+    
+    %% Recovery Flows
+    R2 -.->|"Restore<br/><1min"| VPS1_DATA
+    GDRIVE -.->|"Restore<br/><5min"| VPS2_DATA
+    GLACIER -.->|"Restore<br/><12h"| VPS3_DATA
+    GITHUB -.->|"Redeploy<br/><45min"| KAMAL
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 5: BENEFITS
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    BENEFITS["🎯 RECOVERY TIMES:<br/>✅ Tier 1 (R2): <1 minute<br/>✅ Tier 2 (GDrive): <5 minutes<br/>✅ Tier 3 (Glacier): <12 hours<br/>✅ Tier 4 (Kamal): <45 minutes<br/><br/>💰 TOTAL COST: $14/mo<br/>⚡ 10x faster than manual (4-5h → 45min)"]
+    
+    TIER1 -.->|"Delivers"| BENEFITS
+    TIER4 -.->|"Delivers"| BENEFITS
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% STYLING
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    classDef sourceStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px,color:#0D47A1
+    classDef toolStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px,color:#4A148C
+    classDef hotStyle fill:#FFEBEE,stroke:#C62828,stroke-width:3px,color:#B71C1C
+    classDef warmStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px,color:#E65100
+    classDef coldStyle fill:#E0F2F1,stroke:#00796B,stroke-width:3px,color:#004D40
+    classDef drStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px,color:#1B5E20
+    classDef benefitStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px,color:#880E4F
+    
+    class VPS1_DATA,VPS2_DATA,VPS3_DATA,VPS4_DATA sourceStyle
+    class KOPIA,KAMAL toolStyle
+    class R2 hotStyle
+    class GDRIVE warmStyle
+    class GLACIER coldStyle
+    class GITHUB drStyle
+    class BENEFITS benefitStyle

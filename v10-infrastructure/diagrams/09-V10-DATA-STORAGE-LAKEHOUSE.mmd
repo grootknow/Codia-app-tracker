@@ -1,0 +1,148 @@
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#E0F2F1','primaryTextColor':'#00897B','primaryBorderColor':'#00897B','lineColor':'#424242','fontSize':'14px'}}}%%
+
+graph TB
+    %% ============================================================================
+    %% V9 DATA STORAGE & LAKEHOUSE ARCHITECTURE
+    %% ============================================================================
+    
+    subgraph SOURCE_SYSTEMS["📊 SOURCE SYSTEMS"]
+        direction LR
+        
+        PG_SOURCE["🗄️ POSTGRESQL<br/>━━━━━━━━━━━━━━━━━━━━<br/>4 Databases:<br/>• Core (Coolify, Logto)<br/>• App (MetaMCP, Postiz)<br/>• Zep (Memory)<br/>• NocoDB<br/><br/>Total: 6GB data<br/>WAL enabled"]
+        
+        NEO4J_SOURCE["📊 NEO4J<br/>━━━━━━━━━━━━━━━━━━━━<br/>2 Instances:<br/>• Internal (2M triples)<br/>• SuperApp (19M triples)<br/><br/>Total: 21M triples<br/>CDC plugin enabled"]
+        
+        LANCEDB_SOURCE["🚀 LANCEDB<br/>━━━━━━━━━━━━━━━━━━━━<br/>Collections:<br/>• Embeddings (10M vectors)<br/>• Metadata<br/><br/>Total: 10M vectors (Embedded!)<br/>Arrow format<br/>500MB RAM only"]
+        
+        REDIS_SOURCE["⚡ REDIS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Data:<br/>• Cache (hot data)<br/>• Queue (tasks)<br/>• Pub/Sub (events)<br/><br/>Total: 1GB<br/>RDB snapshots"]
+    end
+    
+    subgraph CDC_LAYER["🔄 CHANGE DATA CAPTURE (CDC)"]
+        direction TB
+        
+        PG_CDC["📝 POSTGRESQL CDC<br/>━━━━━━━━━━━━━━━━━━━━<br/>Method: Logical Replication<br/>Tool: pg_logical_replication<br/>Slot: trm_cdc_slot<br/>Publication: trm_pub<br/><br/>Captures:<br/>• INSERT, UPDATE, DELETE<br/>• Schema changes<br/>• Transaction metadata<br/><br/>Latency: <50ms<br/>Throughput: 500 events/min"]
+        
+        NEO4J_CDC["📝 NEO4J CDC<br/>━━━━━━━━━━━━━━━━━━━━<br/>Method: CDC Plugin<br/>Tool: neo4j-cdc-plugin<br/>Stream: trm_neo4j_stream<br/><br/>Captures:<br/>• Node create/update/delete<br/>• Relationship changes<br/>• Property changes<br/><br/>Latency: <100ms<br/>Throughput: 300 events/min"]
+        
+        LANCEDB_CDC["📝 LANCEDB CDC<br/>━━━━━━━━━━━━━━━━━━━━<br/>Method: File watcher<br/>Tool: Arrow IPC stream<br/><br/>Captures:<br/>• Vector upsert<br/>• Collection changes<br/>• Metadata updates<br/><br/>Latency: <100ms ⭐ Faster!<br/>Throughput: 500 events/min"]
+    end
+    
+    subgraph EVENT_BUS["📡 EVENT BUS (Redis Streams)"]
+        direction LR
+        
+        STREAM_PG["📊 Stream: cdc_postgres<br/>━━━━━━━━━━━━━━━━━━━━<br/>Consumer Groups:<br/>• lakehouse_writer<br/>• ai_processor<br/>• analytics<br/><br/>Max Length: 10,000<br/>TTL: 24 hours"]
+        
+        STREAM_NEO4J["📊 Stream: cdc_neo4j<br/>━━━━━━━━━━━━━━━━━━━━<br/>Consumer Groups:<br/>• lakehouse_writer<br/>• graph_analyzer<br/><br/>Max Length: 10,000<br/>TTL: 24 hours"]
+        
+        STREAM_LANCEDB["📊 Stream: cdc_lancedb<br/>━━━━━━━━━━━━━━━━━━━━<br/>Consumer Groups:<br/>• lakehouse_writer<br/>• vector_analyzer<br/><br/>Max Length: 5,000<br/>TTL: 12 hours"]
+    end
+    
+    subgraph LAKEHOUSE["🏠 LAKEHOUSE ARCHITECTURE (Cloudflare R2)"]
+        direction TB
+        
+        subgraph BRONZE_LAYER["🥉 BRONZE LAYER (Raw)"]
+            BRONZE["📁 /bronze/<br/>━━━━━━━━━━━━━━━━━━━━<br/>Raw CDC events (JSON)<br/><br/>Structure:<br/>├── postgres/<br/>│   ├── YYYY/MM/DD/<br/>│   └── events.json<br/>├── neo4j/<br/>│   ├── YYYY/MM/DD/<br/>│   └── events.json<br/>└── qdrant/<br/>    ├── YYYY/MM/DD/<br/>    └── events.json<br/><br/>Retention: 7 days<br/>Size: ~500MB/day"]
+        end
+        
+        subgraph SILVER_LAYER["🥈 SILVER LAYER (Cleaned)"]
+            SILVER["📁 /silver/<br/>━━━━━━━━━━━━━━━━━━━━<br/>Cleaned & validated (Parquet)<br/><br/>Structure:<br/>├── postgres/<br/>│   ├── tables/<br/>│   └── YYYY/MM/DD/<br/>├── neo4j/<br/>│   ├── nodes/<br/>│   ├── relationships/<br/>│   └── YYYY/MM/DD/<br/>└── qdrant/<br/>    ├── vectors/<br/>    └── YYYY/MM/DD/<br/><br/>Format: Parquet + Snappy<br/>Retention: 30 days<br/>Size: ~200MB/day (compressed)"]
+        end
+        
+        subgraph GOLD_LAYER["🥇 GOLD LAYER (Aggregated)"]
+            GOLD["📁 /gold/<br/>━━━━━━━━━━━━━━━━━━━━<br/>Business metrics (Parquet)<br/><br/>Structure:<br/>├── daily/<br/>│   ├── user_activity<br/>│   ├── ai_usage<br/>│   └── system_health<br/>├── weekly/<br/>│   └── summaries<br/>└── monthly/<br/>    └── reports<br/><br/>Format: Parquet + Snappy<br/>Retention: 90 days<br/>Size: ~50MB/day"]
+        end
+        
+        ICEBERG["📋 ICEBERG CATALOG<br/>━━━━━━━━━━━━━━━━━━━━<br/>Metadata management<br/><br/>Features:<br/>• Schema evolution<br/>• Time travel<br/>• Partition pruning<br/>• ACID transactions<br/><br/>Storage: R2 /metadata/<br/>Size: ~10MB"]
+    end
+    
+    subgraph QUERY_ENGINE["🔍 QUERY ENGINE (DuckDB)"]
+        direction LR
+        
+        DUCKDB["🦆 DUCKDB<br/>━━━━━━━━━━━━━━━━━━━━<br/>Embedded analytics DB<br/><br/>Features:<br/>• Read Parquet directly from R2<br/>• SQL queries on lakehouse<br/>• Fast aggregations<br/>• Export to CSV/JSON<br/><br/>Use Cases:<br/>• Ad-hoc analytics<br/>• Report generation<br/>• Data exploration<br/><br/>Deployment: VPS3 (LangGraph)"]
+        
+        QUERY_API["🌐 QUERY API<br/>━━━━━━━━━━━━━━━━━━━━<br/>REST API for lakehouse queries<br/><br/>Endpoints:<br/>• POST /query (SQL)<br/>• GET /tables<br/>• GET /schema/{table}<br/>• GET /export/{format}<br/><br/>Auth: Logto JWT<br/>Rate Limit: 100 req/min"]
+    end
+    
+    subgraph BACKUP_TIERS["💾 MULTI-TIER BACKUP STRATEGY"]
+        direction TB
+        
+        TIER1["🔴 TIER 1: PRIMARY (R2)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: Every 4-6 hours<br/>Method: pg_dump, neo4j-admin, lancedb backup<br/>Storage: R2 /backups/<br/>Retention: 30 days<br/>Cost: $1.50/mo<br/><br/>Automation: Windmill workflow<br/>Verification: SHA-256 checksum<br/>Alert: Slack on failure"]
+        
+        TIER2["🟡 TIER 2: SECONDARY (Google Drive)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: Daily (critical only)<br/>Method: Encrypted zip<br/>Storage: GDrive /Backups/<br/>Retention: 30 days<br/>Cost: FREE<br/><br/>Includes:<br/>• Vaultwarden (GPG encrypted)<br/>• PostgreSQL Core<br/>• Neo4j Internal<br/>• Configs"]
+        
+        TIER3["🟢 TIER 3: COLD STORAGE (R2 Glacier)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: Weekly<br/>Method: Lifecycle policy<br/>Storage: R2 Glacier tier<br/>Retention: 1 year<br/>Cost: $0.50/mo<br/><br/>Includes:<br/>• Monthly full snapshots<br/>• Audit logs<br/>• Compliance records<br/>• Historical data"]
+        
+        TIER4["⚪ TIER 4: VERSION CONTROL (GitHub)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: On change<br/>Method: Git auto-commit<br/>Storage: Private repos<br/>Retention: Unlimited<br/>Cost: FREE<br/><br/>Includes:<br/>• Windmill workflows (Python/TS)<br/>• Skills Library (Python)<br/>• Infrastructure as Code<br/>• Documentation (Markdown)"]
+    end
+    
+    subgraph SYNC_STRATEGY["🔄 SYNC & CONSISTENCY"]
+        direction LR
+        
+        SYNC_REALTIME["⚡ REALTIME SYNC<br/>━━━━━━━━━━━━━━━━━━━━<br/>CDC → Redis Streams → Lakehouse<br/>Latency: <200ms<br/>Guarantee: At-least-once<br/><br/>Use Cases:<br/>• Live dashboards<br/>• AI real-time processing<br/>• Event-driven workflows"]
+        
+        SYNC_BATCH["📦 BATCH SYNC<br/>━━━━━━━━━━━━━━━━━━━━<br/>Scheduled jobs (Windmill)<br/>Frequency: Hourly/Daily<br/>Guarantee: Exactly-once<br/><br/>Use Cases:<br/>• Historical data migration<br/>• Large dataset processing<br/>• Report generation"]
+        
+        CONSISTENCY["✅ CONSISTENCY MODEL<br/>━━━━━━━━━━━━━━━━━━━━<br/>Bronze: Eventual consistency<br/>Silver: Strong consistency<br/>Gold: Strong consistency<br/><br/>Conflict Resolution:<br/>• Last-write-wins (timestamp)<br/>• Manual review (critical data)"]
+    end
+    
+    %% ============================================================================
+    %% DATA FLOWS
+    %% ============================================================================
+    
+    %% Source → CDC
+    PG_SOURCE -->|WAL| PG_CDC
+    NEO4J_SOURCE -->|Plugin| NEO4J_CDC
+    LANCEDB_SOURCE -->|Arrow IPC| LANCEDB_CDC
+    
+    %% CDC → Event Bus
+    PG_CDC -->|Publish| STREAM_PG
+    NEO4J_CDC -->|Publish| STREAM_NEO4J
+    LANCEDB_CDC -->|Publish| STREAM_LANCEDB
+    
+    %% Event Bus → Lakehouse
+    STREAM_PG -->|Consume| BRONZE
+    STREAM_NEO4J -->|Consume| BRONZE
+    STREAM_LANCEDB -->|Consume| BRONZE
+    
+    %% Lakehouse layers
+    BRONZE -->|Transform| SILVER
+    SILVER -->|Aggregate| GOLD
+    ICEBERG -.->|Manage| BRONZE
+    ICEBERG -.->|Manage| SILVER
+    ICEBERG -.->|Manage| GOLD
+    
+    %% Query engine
+    DUCKDB -->|Read| SILVER
+    DUCKDB -->|Read| GOLD
+    QUERY_API -->|Execute| DUCKDB
+    
+    %% Backup flows
+    PG_SOURCE -->|Dump| TIER1
+    NEO4J_SOURCE -->|Dump| TIER1
+    LANCEDB_SOURCE -->|Arrow export| TIER1
+    REDIS_SOURCE -->|RDB| TIER1
+    
+    TIER1 -->|Critical| TIER2
+    TIER1 -->|Weekly| TIER3
+    GOLD -->|Archive| TIER3
+    
+    %% Sync
+    STREAM_PG -.->|Realtime| SYNC_REALTIME
+    BRONZE -.->|Batch| SYNC_BATCH
+    
+    %% Styling
+    classDef sourceStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:2px
+    classDef cdcStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef eventStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef lakehouseStyle fill:#E0F2F1,stroke:#00897B,stroke-width:3px
+    classDef queryStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:2px
+    classDef backupStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    classDef syncStyle fill:#E8EAF6,stroke:#3F51B5,stroke-width:2px
+    
+    class PG_SOURCE,NEO4J_SOURCE,LANCEDB_SOURCE,REDIS_SOURCE sourceStyle
+    class PG_CDC,NEO4J_CDC,LANCEDB_CDC cdcStyle
+    class STREAM_PG,STREAM_NEO4J,STREAM_LANCEDB eventStyle
+    class BRONZE,SILVER,GOLD,ICEBERG lakehouseStyle
+    class DUCKDB,QUERY_API queryStyle
+    class TIER1,TIER2,TIER3,TIER4 backupStyle
+    class SYNC_REALTIME,SYNC_BATCH,CONSISTENCY syncStyle

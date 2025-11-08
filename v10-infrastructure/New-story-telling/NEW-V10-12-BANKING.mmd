@@ -1,0 +1,47 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#42A5F5','secondaryColor':'#F3E5F5','tertiaryColor':'#E8F5E9'}}}%%
+
+%% TRM AI V10 - BANKING & FINANCE
+%% Philosophy: "AI CÓ MÁY TÍNH RIÊNG" - AI manages finances
+%% Link: See NEW-V10-00-MASTER-OVERVIEW.mmd
+
+graph TB
+    subgraph BANKS["🏦 BANKING"]
+        MERCURY["💳 Mercury<br/>US business banking"]
+        WISE["🌍 Wise<br/>International transfers"]
+    end
+    
+    subgraph PAYMENTS["💰 PAYMENTS"]
+        STRIPE["💳 Stripe<br/>Payment processing"]
+    end
+    
+    subgraph TRACKING["📊 TRACKING"]
+        POSTGRES["🐘 PostgreSQL<br/>Transaction logs"]
+        NEO4J["🕸️ Neo4j<br/>Financial graph"]
+    end
+    
+    subgraph AI["🤖 AI FINANCE"]
+        COST_AGENT["💰 Cost Agent<br/>Monitor spending"]
+        FINANCE_AGENT["📊 Finance Agent<br/>Reconciliation"]
+    end
+    
+    MERCURY -->|"Transactions"| POSTGRES
+    WISE -->|"Transfers"| POSTGRES
+    STRIPE -->|"Payments"| POSTGRES
+    POSTGRES -->|"Build graph"| NEO4J
+    NEO4J -->|"Analyze"| COST_AGENT
+    NEO4J -->|"Reconcile"| FINANCE_AGENT
+    
+    BENEFITS["🎯 BENEFITS:<br/>✅ Auto-reconciliation<br/>✅ Real-time cost tracking<br/>✅ Fraud detection<br/>✅ Budget optimization"]
+    AI -.-> BENEFITS
+    
+    classDef bankStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef paymentStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px
+    classDef trackStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef aiStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef benefitStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px
+    
+    class MERCURY,WISE bankStyle
+    class STRIPE paymentStyle
+    class POSTGRES,NEO4J trackStyle
+    class COST_AGENT,FINANCE_AGENT aiStyle
+    class BENEFITS benefitStyle

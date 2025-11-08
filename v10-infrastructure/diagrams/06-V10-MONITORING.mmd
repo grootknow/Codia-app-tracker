@@ -1,0 +1,139 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#F3E5F5',
+    'primaryTextColor': '#7B1FA2',
+    'primaryBorderColor': '#8E24AA',
+    'lineColor': '#424242',
+    'secondaryColor': '#E8F5E9',
+    'tertiaryColor': '#E1F5FE',
+    'fontSize': '14px'
+  }
+}}%%
+
+graph TB
+    %% ============================================================================
+    %% V10 OBSERVABILITY STACK - COMPLETE MONITORING
+    %% ============================================================================
+    %% Version: 10.0 ULTIMATE
+    %% Focus: Full Observability with 7 Tools
+    %% Date: 2025-11-04
+    
+    subgraph OBSERVABILITY["📊 OBSERVABILITY STACK (VPS1 - 8GB RAM)"]
+        direction TB
+        
+        subgraph VISUALIZATION["📊 VISUALIZATION & DASHBOARDS"]
+            GRAFANA["📊 GRAFANA<br/>━━━━━━━━━━━━━━━━━━━━<br/>1GB RAM | Port 3000<br/><br/>Dashboards:<br/>• System Overview<br/>• Database Health<br/>• AI Performance<br/>• Agent Operations<br/>• Cost Tracking<br/><br/>Data Sources:<br/>• Prometheus<br/>• Loki<br/>• Tempo"]
+        end
+        
+        subgraph METRICS["📈 METRICS COLLECTION"]
+            PROMETHEUS["📈 PROMETHEUS<br/>━━━━━━━━━━━━━━━━━━━━<br/>2GB RAM | Port 9090<br/><br/>Scrapes from:<br/>• VPS1 (Control)<br/>• VPS2 (Databases)<br/>• VPS3 (AI Systems)<br/><br/>Metrics:<br/>• CPU, Memory, Disk<br/>• Container stats<br/>• DB query latency<br/>• AI task duration<br/>• Agent success rate<br/><br/>Retention: 30 days"]
+        end
+        
+        subgraph LOGS["📝 LOG AGGREGATION"]
+            LOKI["📝 LOKI<br/>━━━━━━━━━━━━━━━━━━━━<br/>2GB RAM | Port 3100<br/><br/>Aggregates logs from:<br/>• All 3 VPS<br/>• All containers<br/>• System logs<br/>• Application logs<br/><br/>Features:<br/>• Label-based indexing<br/>• LogQL queries<br/>• Real-time streaming<br/><br/>Retention: 14 days"]
+            
+            PROMTAIL1["📤 PROMTAIL VPS1<br/>━━━━━━━━━━━━━━━━━━━━<br/>200MB<br/><br/>Ships logs from:<br/>• Coolify<br/>• Windmill<br/>• Observability stack<br/>• DevOps tools"]
+            
+            PROMTAIL2["📤 PROMTAIL VPS2<br/>━━━━━━━━━━━━━━━━━━━━<br/>200MB<br/><br/>Ships logs from:<br/>• Neo4j (3 instances)<br/>• Qdrant (2 instances)<br/>• PostgreSQL (3 instances)<br/>• Redis (2 instances)"]
+            
+            PROMTAIL3["📤 PROMTAIL VPS3<br/>━━━━━━━━━━━━━━━━━━━━<br/>200MB<br/><br/>Ships logs from:<br/>• LangGraph (2 instances)<br/>• Zep (2 instances)<br/>• 8 AI Agents<br/>• Applications"]
+        end
+        
+        subgraph ERRORS["🐛 ERROR TRACKING"]
+            SENTRY["🐛 SENTRY<br/>━━━━━━━━━━━━━━━━━━━━<br/>1GB RAM | Port 9000<br/><br/>Tracks errors from:<br/>• Product AI<br/>• Agent AI<br/>• Applications<br/>• APIs<br/><br/>Features:<br/>• Stack traces<br/>• Error grouping<br/>• Impact analysis<br/>• Slack integration<br/><br/>Retention: 90 days"]
+        end
+        
+        subgraph TRACING["🔍 DISTRIBUTED TRACING"]
+            TEMPO["🔍 TEMPO<br/>━━━━━━━━━━━━━━━━━━━━<br/>1GB RAM | Port 3200<br/><br/>Traces:<br/>• User requests<br/>• AI task flows<br/>• Agent operations<br/>• Database queries<br/><br/>Features:<br/>• OTLP protocol<br/>• Span analysis<br/>• Performance bottlenecks<br/><br/>Retention: 7 days"]
+        end
+        
+        subgraph ALERTS["🚨 ALERT MANAGEMENT"]
+            ALERTA["🚨 ALERTA<br/>━━━━━━━━━━━━━━━━━━━━<br/>800MB | Port 8080<br/><br/>Aggregates alerts from:<br/>• Prometheus<br/>• Sentry<br/>• Loki<br/>• Custom sources<br/><br/>Features:<br/>• Auto-triage<br/>• Alert routing<br/>• Escalation logic<br/>• Incident tracking<br/><br/>Integration:<br/>• Alert Agent (auto-fix)<br/>• Slack notifications"]
+        end
+    end
+    
+    subgraph TARGETS["🎯 MONITORING TARGETS"]
+        direction TB
+        
+        subgraph VPS1_TARGETS["🖥️ VPS1 TARGETS"]
+            VPS1_NODE["📊 Node Exporter<br/>System metrics"]
+            VPS1_DOCKER["🐳 Docker Metrics<br/>Container stats"]
+            VPS1_COOLIFY["🚀 Coolify Metrics<br/>Deployment stats"]
+        end
+        
+        subgraph VPS2_TARGETS["🖥️ VPS2 TARGETS"]
+            NEO4J_METRICS["🔵 Neo4j Metrics<br/>Query latency<br/>Connection pool<br/>Cache hit rate"]
+            LANCEDB_METRICS["🚀 LanceDB Metrics<br/>Search latency<br/>Vector count<br/>Memory usage"]
+            PG_METRICS["🗄️ PostgreSQL Metrics<br/>Query performance<br/>Connections<br/>Replication lag"]
+            REDIS_METRICS["🔴 Redis Metrics<br/>Hit rate<br/>Memory usage<br/>Commands/sec"]
+        end
+        
+        subgraph VPS3_TARGETS["🖥️ VPS3 TARGETS"]
+            LG_METRICS["🧠 LangGraph Metrics<br/>Task duration<br/>Success rate<br/>Token usage"]
+            AGENT_METRICS["🤖 Agent Metrics<br/>Agent uptime<br/>Auto-fix rate<br/>Response time"]
+            APP_METRICS["📱 App Metrics<br/>API latency<br/>Request rate<br/>Error rate"]
+        end
+    end
+    
+    subgraph DASHBOARDS["📊 GRAFANA DASHBOARDS"]
+        direction LR
+        
+        DASH1["📊 SYSTEM OVERVIEW<br/>━━━━━━━━━━━━━━━━━━━━<br/>• CPU usage (3 VPS)<br/>• Memory usage (3 VPS)<br/>• Disk usage (3 VPS)<br/>• Network I/O<br/>• Container status<br/><br/>Alerts:<br/>• CPU > 80% (5 min)<br/>• Memory > 90% (5 min)<br/>• Disk > 85%"]
+        
+        DASH2["📊 DATABASE HEALTH<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Neo4j query latency<br/>• Qdrant search latency<br/>• PostgreSQL connections<br/>• Redis hit rate<br/>• Database sizes<br/><br/>Alerts:<br/>• Query latency > 100ms<br/>• Connections > 80%<br/>• Hit rate < 90%"]
+        
+        DASH3["📊 AI PERFORMANCE<br/>━━━━━━━━━━━━━━━━━━━━<br/>• LangGraph task duration<br/>• AI model API latency<br/>• Token usage<br/>• Agent success rate<br/>• MCP call latency<br/><br/>Alerts:<br/>• Task duration > 30s<br/>• API latency > 5s<br/>• Success rate < 95%"]
+        
+        DASH4["📊 AGENT OPERATIONS<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Agent uptime (8 agents)<br/>• Task success rate<br/>• Response time<br/>• Error rate<br/>• Resource usage<br/><br/>Alerts:<br/>• Agent down > 5 min<br/>• Success rate < 90%<br/>• Response time > 30s"]
+    end
+    
+    %% Connections - Prometheus scraping
+    PROMETHEUS --> VPS1_NODE
+    PROMETHEUS --> VPS1_DOCKER
+    PROMETHEUS --> VPS1_COOLIFY
+    PROMETHEUS --> NEO4J_METRICS
+    PROMETHEUS --> LANCEDB_METRICS
+    PROMETHEUS --> PG_METRICS
+    PROMETHEUS --> REDIS_METRICS
+    PROMETHEUS --> LG_METRICS
+    PROMETHEUS --> AGENT_METRICS
+    PROMETHEUS --> APP_METRICS
+    
+    %% Connections - Loki aggregating
+    LOKI --> PROMTAIL1
+    LOKI --> PROMTAIL2
+    LOKI --> PROMTAIL3
+    
+    %% Connections - Grafana data sources
+    GRAFANA --> PROMETHEUS
+    GRAFANA --> LOKI
+    GRAFANA --> TEMPO
+    
+    %% Connections - Grafana dashboards
+    GRAFANA --> DASH1
+    GRAFANA --> DASH2
+    GRAFANA --> DASH3
+    GRAFANA --> DASH4
+    
+    %% Connections - Alerta aggregating
+    ALERTA --> PROMETHEUS
+    ALERTA --> SENTRY
+    ALERTA --> LOKI
+    
+    %% Styling
+    classDef visualizationStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:3px
+    classDef metricsStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:2px
+    classDef logsStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef errorsStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    classDef tracingStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef alertsStyle fill:#FFCCBC,stroke:#E64A19,stroke-width:2px
+    classDef dashboardStyle fill:#E0F2F1,stroke:#00897B,stroke-width:2px
+    
+    class GRAFANA visualizationStyle
+    class PROMETHEUS,VPS1_NODE,VPS1_DOCKER,VPS1_COOLIFY,NEO4J_METRICS,LANCEDB_METRICS,PG_METRICS,REDIS_METRICS,LG_METRICS,AGENT_METRICS,APP_METRICS metricsStyle
+    class LOKI,PROMTAIL1,PROMTAIL2,PROMTAIL3 logsStyle
+    class SENTRY errorsStyle
+    class TEMPO tracingStyle
+    class ALERTA alertsStyle
+    class DASH1,DASH2,DASH3,DASH4 dashboardStyle

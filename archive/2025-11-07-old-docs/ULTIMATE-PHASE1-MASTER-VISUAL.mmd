@@ -1,0 +1,365 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E3F2FD',
+    'primaryTextColor': '#0D47A1',
+    'primaryBorderColor': '#1976D2',
+    'lineColor': '#424242',
+    'secondaryColor': '#FFF3E0',
+    'tertiaryColor': '#E8F5E9',
+    'fontSize': '10px',
+    'fontFamily': 'arial'
+  }
+}}%%
+
+graph TB
+    %% ============================================================================
+    %% ULTIMATE PHASE 1 MASTER VISUAL - TẤT CẢ TRONG 1 DIAGRAM
+    %% Founders, Devices, VPS, Services, Folders, Permissions, Media, Backup
+    %% ============================================================================
+    
+    subgraph FOUNDERS["👥 FOUNDERS + PERMISSIONS"]
+        direction TB
+        
+        HUNG["👤 HÙNG - Tech/Media/Fundraising<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>📧 Personal: grootknow@gmail.com<br/>📧 Work: hung@rootknow.com<br/>📧 Admin: admin@rootknow.com<br/>📱 Phone: [Personal] + [Work eSIM]<br/><br/>🔐 ACCESS: SUPER ADMIN (Full)<br/>  ✅ All VPS (root)<br/>  ✅ All databases (admin)<br/>  ✅ All services (owner)<br/>  ✅ All credentials (master)<br/>  ✅ All media accounts<br/><br/>💻 Devices:<br/>  • LG Gram 2022 (32GB, 256GB)<br/>  • Workstation i9-12900K (64GB, 35TB)<br/>  • Xiaomi 14T Pro<br/><br/>📷 Equipment ($20K):<br/>  • Sony A7S III + Canon R6<br/>  • Aputure lights<br/>  • Rode/Sennheiser audio<br/>  • NAS 24TB"]
+        
+        TUAN["👤 TUẤN - Operations/Finance<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>📧 Personal: drootknow@gmail.com<br/>📧 Work: tuan@rootknow.com<br/>📱 Phone: 0977078336<br/>🏠 Hà Đông, Hà Nội<br/><br/>🔐 ACCESS: ADMIN (Limited)<br/>  ✅ Grafana (view dashboards)<br/>  ✅ Notion (full access)<br/>  ✅ Finance reports (read)<br/>  ✅ LinkedIn Company (admin)<br/>  ❌ VPS SSH (no access)<br/>  ❌ Database write (no access)<br/>  ❌ Code deployment (no access)<br/><br/>💻 Devices:<br/>  • WorkPC 2025<br/>  • Xiaomi 15T Pro"]
+    end
+    
+    subgraph VPS1_FULL["☁️ VPS1: 24GB RAM, $15/mo - INFRASTRUCTURE CORE"]
+        direction TB
+        
+        VPS1_INFO["🖥️ VPS1 - Contabo Singapore<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>IP: [Contabo provides]<br/>RAM: 24GB | CPU: 6 cores<br/>Storage: 400GB NVMe<br/>OS: Debian 12<br/>SSH: Key-based (Hùng only)<br/>Firewall: UFW (22,80,443)"]
+        
+        VPS1_FOLDERS["📁 FOLDER STRUCTURE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>/opt/trm/<br/>  /data/<br/>    /vaultwarden/<br/>    /gitea/<br/>    /grafana/<br/>    /prometheus/<br/>    /loki/<br/>    /sentry/<br/>  /backups/<br/>    /daily/<br/>    /weekly/<br/>  /scripts/<br/>    backup.sh<br/>    restore.sh<br/>    health-check.sh<br/>  /configs/<br/>    docker-compose/"]
+        
+        VPS1_SERVICES["🔧 SERVICES (11)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>1. Coolify :3000 (PaaS)<br/>2. Logto :3001 (SSO Auth)<br/>3. Vaultwarden :8443 (Secrets)<br/>4. Gitea :3002 (Git)<br/>5. Prometheus :9090 (Metrics)<br/>6. Grafana :3003 (Dashboards)<br/>7. Loki :3100 (Logs)<br/>8. Sentry :9000 (Errors)<br/>9. Alerta :8080 (Alerts)<br/>10. Zot :5000 (Registry)<br/>11. Headscale :8090 (VPN)<br/><br/>DNS: *.xknow.site → VPS1 IP<br/>Backup: Every 4h → R2"]
+    end
+    
+    subgraph VPS2_FULL["☁️ VPS2: 24GB RAM, $15/mo - ALL DATABASES"]
+        direction TB
+        
+        VPS2_INFO["🖥️ VPS2 - Contabo Singapore<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>IP: [Contabo provides]<br/>RAM: 24GB | CPU: 6 cores<br/>Storage: 400GB NVMe<br/>OS: Debian 12<br/>SSH: Key-based (Hùng only)"]
+        
+        VPS2_FOLDERS["📁 FOLDER STRUCTURE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>/opt/trm/<br/>  /databases/<br/>    /postgres-product/<br/>    /postgres-agent/<br/>    /neo4j-product/<br/>    /neo4j-agent/<br/>    /lancedb-product/<br/>    /lancedb-agent/<br/>    /redis-product/<br/>    /redis-agent/<br/>  /backups/<br/>    /pg-dumps/<br/>    /neo4j-dumps/<br/>    /lancedb-snapshots/<br/>    /redis-rdb/<br/>  /scripts/<br/>    db-backup-all.sh<br/>    db-restore.sh"]
+        
+        VPS2_DB_USERS["👥 DATABASE USERS<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>PostgreSQL:<br/>  • postgres (superuser)<br/>  • product_app (rw)<br/>  • agent_readonly (r)<br/>  • agent_writer (rw)<br/>  • founder_admin (all)<br/><br/>Neo4j:<br/>  • neo4j (admin)<br/>  • product_app (rw)<br/>  • agent_readonly (r)<br/><br/>Redis:<br/>  • default (admin)<br/>  • app (rw)<br/>  • agent (r)<br/><br/>LanceDB:<br/>  • file-based (owner: docker)"]
+        
+        VPS2_SERVICES["💾 DATABASES (8)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>1. PostgreSQL Product :5432 (4GB)<br/>2. PostgreSQL Agent :5433 (2GB)<br/>3. Neo4j Product :7474/:7687 (6GB)<br/>4. Neo4j Agent :7475/:7688 (2GB)<br/>5. LanceDB Product :8001 (4GB)<br/>6. LanceDB Agent :8002 (2GB)<br/>7. Redis Product :6379 (2GB)<br/>8. Redis Agent :6380 (1GB)<br/><br/>Total: 23GB / 24GB RAM<br/>Backup: Every 4h → R2"]
+    end
+    
+    subgraph VPS3_FULL["☁️ VPS3: 12GB RAM, $8/mo - AI STACK + MEDIA"]
+        direction TB
+        
+        VPS3_INFO["🖥️ VPS3 - Contabo Singapore<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>IP: [Contabo provides]<br/>RAM: 12GB | CPU: 4 cores<br/>Storage: 200GB NVMe<br/>OS: Debian 12<br/>SSH: Key-based (Hùng only)"]
+        
+        VPS3_FOLDERS["📁 FOLDER STRUCTURE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>/opt/trm/<br/>  /ai/<br/>    /langgraph-product/<br/>    /langgraph-agent/<br/>    /agents/<br/>      /devops-commander/<br/>      /data-orchestrator/<br/>      /alert-commander/<br/>      /finance-tracker/<br/>      /doc-writer/<br/>      /compliance-guardian/<br/>      /test-runner/<br/>      /system-learner/<br/>    /zep/<br/>    /lobechat/<br/>  /media/<br/>    /postiz/<br/>  /configs/<br/>    agent-configs/"]
+        
+        VPS3_SERVICES["🤖 AI SERVICES (12)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Product AI:<br/>1. LangGraph Product :8010 (2GB)<br/><br/>Agent Orchestration:<br/>2. LangGraph Agent Orch :8020 (2GB)<br/><br/>8 AI Agents (each 512MB-1GB):<br/>3. DevOps Commander :8030<br/>4. Data Orchestrator :8031<br/>5. Alert Commander :8032<br/>6. Finance Tracker :8033<br/>7. Doc Writer :8034<br/>8. Compliance Guardian :8035<br/>9. Test Runner :8036<br/>10. System Learner :8037 (1GB)<br/><br/>Support:<br/>11. Zep Memory :8050 (2GB)<br/>12. LobeChat UI :8060 (1GB)<br/><br/>Media:<br/>13. Postiz :8070 (512MB)<br/><br/>Total: 11.5GB / 12GB RAM"]
+    end
+    
+    subgraph VPS4_FULL["☁️ VPS4: 12GB RAM, $7/mo - CODE EXECUTION SANDBOX"]
+        direction TB
+        
+        VPS4_INFO["🖥️ VPS4 - Contabo Singapore<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>IP: [Contabo provides]<br/>RAM: 12GB | CPU: 4 cores<br/>Storage: 200GB NVMe<br/>OS: Debian 12<br/>SSH: Key-based (Hùng only)<br/>⚠️ ISOLATED - No VPS1/2/3 access"]
+        
+        VPS4_FOLDERS["📁 FOLDER STRUCTURE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>/opt/trm/<br/>  /k3s/<br/>    /manifests/<br/>    /configs/<br/>  /runners/<br/>    /python/<br/>    /nodejs/<br/>    /multi-lang/<br/>  /workspaces/<br/>    /temp/ (auto-clean)<br/>  /logs/<br/>    /execution-logs/"]
+        
+        VPS4_SERVICES["🔒 EXECUTION PODS (4)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>1. K3s Control :6443 (2GB)<br/>2. Python Runner (3GB)<br/>   • Isolated network<br/>   • 5min timeout<br/>   • CPU/RAM limits<br/>3. Node.js Runner (3GB)<br/>   • Same security<br/>4. Multi-lang Runner (3GB)<br/>   • Python + Node + Go<br/><br/>Security:<br/>  ⚠️ No outbound except APIs<br/>  ⚠️ No VPS1/2/3 access<br/>  ⚠️ Auto-terminate processes<br/>  ⚠️ Logs to VPS1 Loki only"]
+    end
+    
+    subgraph VAULTWARDEN_DETAIL["🔐 VAULTWARDEN - CREDENTIAL VAULT (VPS1)"]
+        direction TB
+        
+        VAULT_MASTER["🔑 MASTER ACCOUNT<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Email: admin@rootknow.com<br/>Master Password: [PAPER IN SAFE]<br/>2FA: Authy (work phone)<br/>Recovery: 10 codes → paper → safe<br/><br/>Access:<br/>  • Hùng: Full (owner)<br/>  • Tuấn: No access<br/>  • Agents: API read-only (specific items)"]
+        
+        VAULT_STRUCTURE["📂 VAULT ORGANIZATION<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>/phase1/<br/>  /foundation/<br/>    gws-admin, gws-hung, gws-tuan<br/>    cloudflare, r2-keys<br/>    contabo<br/>  /development/<br/>    github-pat, notion-token<br/>  /ai-services/<br/>    claude-api, grok-api, gemini-api<br/>  /media/<br/>    adobe, canva, figma<br/>    artlist, envato, tubebuddy<br/>  /social/<br/>    youtube, tiktok, instagram<br/>    linkedin-company, linkedin-hung, linkedin-tuan<br/>    twitter, medium, devto<br/><br/>/vps1/<br/>  ssh-key, coolify, logto, gitea<br/>  prometheus, grafana, sentry<br/><br/>/vps2/<br/>  ssh-key<br/>  pg-product, pg-agent<br/>  neo4j-product, neo4j-agent<br/>  redis, lancedb<br/><br/>/vps3/<br/>  ssh-key, langgraph<br/><br/>/vps4/<br/>  ssh-key, k3s<br/><br/>/agents/<br/>  /devops-commander/<br/>  /data-orchestrator/<br/>  /alert-commander/<br/>  /finance-tracker/<br/>  /doc-writer/<br/>  /compliance-guardian/<br/>  /test-runner/<br/>  /system-learner/"]
+    end
+    
+    subgraph MEDIA_CHANNELS["📺 MEDIA & SOCIAL (18 CHANNELS)"]
+        direction TB
+        
+        PHASE1_CHANNELS["✅ PHASE 1 (11 channels)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Video:<br/>  1. YouTube @rootknow_ai<br/>  2. TikTok @rootknow_ai<br/><br/>Image:<br/>  3. Instagram @rootknow.ai<br/><br/>Professional:<br/>  4. LinkedIn Company<br/>  5. LinkedIn Hùng<br/>  6. LinkedIn Tuấn<br/>  7. X/Twitter @rootknow_ai<br/><br/>Content:<br/>  8. Medium @rootknow<br/>  9. DEV.to @rootknow<br/>  10. Hashnode @rootknow<br/>  11. Hacker News (rootknow_ai)<br/><br/>Owner: hung@rootknow.com<br/>Schedule: Postiz (VPS3)<br/>Analytics: Grafana (VPS1)"]
+        
+        PHASE2_CHANNELS["❌ PHASE 2 (7 channels)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Brand:<br/>  1. Website rootknow.com<br/>  2. Docs docs.rootknow.com<br/>  3. Blog blog.rootknow.com<br/><br/>Community:<br/>  4. Discord Community<br/><br/>Optional:<br/>  5. YouTube VN @rootknow_vn<br/>  6. Pinterest @rootknow_ai<br/>  7. Reddit u/rootknow_ai<br/><br/>Launch: With product ready"]
+        
+        CONTENT_FLOW["📤 CONTENT REPURPOSING<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>1 YouTube Video (20 min)<br/>  ↓<br/>  → 5 Shorts (YT/TikTok/IG)<br/>  → Blog post (transcript)<br/>  → 3 cross-posts (Medium/DEV/Hash)<br/>  → LinkedIn insight<br/>  → Twitter thread<br/><br/>= 1 video = 12+ pieces<br/><br/>Weekly:<br/>  • 2 long videos<br/>  • 5 shorts<br/>  • 7 TikToks<br/>  • 3 LinkedIn<br/>  • 5 Tweets<br/>  • 1 blog (bi-weekly)<br/><br/>Total: 20-25 pieces/week"]
+    end
+    
+    subgraph STORAGE_TIERS["💾 STORAGE STRATEGY (4 TIERS)"]
+        direction TB
+        
+        TIER1_HOT["🔥 TIER 1: HOT STORAGE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Hardware: Synology DS923+ NAS<br/>Capacity: 24TB (RAID 5)<br/>Location: Office/home<br/>Network: 10 Gbps<br/>Purpose: Active projects<br/>Retention: 30 days<br/>Content:<br/>  • Raw footage<br/>  • Project files<br/>  • Work-in-progress<br/>Cost: $1,400 one-time<br/>Backup: Every 4h → Tier 2"]
+        
+        TIER2_WARM["💨 TIER 2: WARM STORAGE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Service: Cloudflare R2<br/>Capacity: 100GB → 5TB<br/>Purpose: Recent content (90d)<br/>Content:<br/>  • Published videos<br/>  • DB backups<br/>  • Vaultwarden vault<br/>  • Docker volumes<br/>Cost: $15-75/mo<br/>Backup: Daily → Tier 3"]
+        
+        TIER3_COLD["❄️ TIER 3: COLD ARCHIVE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Service: Google Drive<br/>Capacity: 30GB (GWS Starter)<br/>  OR: 4TB (upgrade $24/mo)<br/>Purpose: Forever archive<br/>Content:<br/>  • All published content<br/>  • Important documents<br/>  • Project archives<br/>Cost: $0 or $24/mo<br/>Backup: Monthly → Tier 4"]
+        
+        TIER4_OFFLINE["🔒 TIER 4: OFFLINE BACKUP<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Hardware: 2x 4TB + 1x 2TB HDD<br/>Capacity: 10TB<br/>Location: Physical safe<br/>Purpose: Disaster recovery<br/>Content:<br/>  • Archive snapshots<br/>  • Critical docs<br/>  • Vaultwarden exports<br/>Cost: $500 one-time<br/>Process: Manual monthly"]
+    end
+    
+    subgraph BACKUP_AUTOMATION["🔄 BACKUP & RESTORE AUTOMATION"]
+        direction LR
+        
+        BACKUP_SCHEDULE["⏰ BACKUP SCHEDULE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Every 4 hours:<br/>  • VPS2 all databases<br/>  • Vaultwarden vault<br/>  • Docker volumes<br/>  → Upload to R2<br/><br/>Every 24 hours:<br/>  • Full system snapshot<br/>  • Configs → GitHub<br/>  • Logs (24h retention)<br/>  → Archive to R2<br/><br/>Every week:<br/>  • NAS → External HDD<br/>  • Manual verification<br/>  → Store in safe<br/><br/>Agent: Data Orchestrator<br/>Monitoring: Alerta alerts"]
+        
+        RESTORE_PROCESS["♻️ RESTORE PROCEDURE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>If VPS dies:<br/>1. Order new VPS (15 min)<br/>2. Install Docker (5 min)<br/>3. Run restore script:<br/>   /opt/trm/restore.sh<br/>   • Pull from R2<br/>   • Extract backups<br/>   • Start containers<br/>   • Health check<br/>4. Update DNS (5 min)<br/>5. Verify services (10 min)<br/><br/>Total: 30-60 mins<br/>Data loss: Max 4 hours<br/><br/>Test: Monthly drill"]
+    end
+    
+    subgraph COSTS_REVENUE["💰 FINANCIAL OVERVIEW"]
+        direction TB
+        
+        MONTHLY_COSTS["💸 MONTHLY COSTS<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Infrastructure:<br/>  • VPS 4x: $45<br/>  • R2 Storage: $20<br/>  • Cloudflare: $0<br/>  Subtotal: $65<br/><br/>Software:<br/>  • GWS: $12<br/>  • Adobe CC: $55<br/>  • Canva: $10<br/>  • Figma: $15<br/>  • AI tools: $40<br/>  • Stock: $50<br/>  • Social: $15<br/>  • AI APIs: $30-50<br/>  Subtotal: $227-247<br/><br/>Media Production:<br/>  • Per video: $50-200<br/>  • Monthly (8 vids): $400-1,600<br/><br/>Equipment Depreciation:<br/>  • $20K / 60mo: $333<br/><br/>TOTAL: $1,025-2,245/mo"]
+        
+        REVENUE_PROJ["💵 REVENUE PROJECTIONS<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Year 1 (Building):<br/>  • Revenue: $0<br/>  • Investment phase<br/><br/>Year 2 (Monetization):<br/>  • YouTube Ads: $500-1K/mo<br/>  • Sponsorships: $2-5K/mo<br/>  • Affiliate: $200-500/mo<br/>  • Total: $2,700-6,500/mo<br/>  = $32K-78K/year<br/><br/>Year 3 (Scale):<br/>  • YouTube Ads: $3-8K/mo<br/>  • Sponsorships: $10-20K/mo<br/>  • Affiliate: $1-2K/mo<br/>  • Product: $5-10K/mo<br/>  • Total: $19-40K/mo<br/>  = $228K-480K/year"]
+    end
+    
+    subgraph LAKEHOUSE["🏠 DATA LAKEHOUSE (Cloudflare R2)"]
+        direction TB
+        
+        LAKEHOUSE_LAYERS["📊 3-LAYER ARCHITECTURE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>🥉 BRONZE (Raw):<br/>  • Path: /bronze/YYYY/MM/DD/<br/>  • Format: JSON (CDC events)<br/>  • Sources: PostgreSQL, Neo4j, LanceDB<br/>  • Retention: 7 days<br/>  • Size: ~500MB/day<br/><br/>🥈 SILVER (Cleaned):<br/>  • Path: /silver/tables/YYYY/MM/DD/<br/>  • Format: Parquet + Snappy<br/>  • Validation: Schema enforced<br/>  • Retention: 30 days<br/>  • Size: ~200MB/day (compressed)<br/><br/>🥇 GOLD (Aggregated):<br/>  • Path: /gold/daily|weekly|monthly/<br/>  • Format: Parquet + Snappy<br/>  • Content: Business metrics<br/>  • Retention: 90 days<br/>  • Size: ~50MB/day<br/><br/>📋 Iceberg Catalog:<br/>  • Metadata: /metadata/<br/>  • Features: Schema evolution, Time travel<br/>  • Size: ~10MB"]
+        
+        CDC_PIPELINE["🔄 CDC PIPELINE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Sources → CDC → Redis Streams → Lakehouse<br/><br/>PostgreSQL CDC:<br/>  • Method: Logical replication<br/>  • Slot: trm_cdc_slot<br/>  • Latency: <50ms<br/><br/>Neo4j CDC:<br/>  • Method: CDC Plugin<br/>  • Stream: trm_neo4j_stream<br/>  • Latency: <100ms<br/><br/>LanceDB CDC:<br/>  • Method: File watcher (Arrow IPC)<br/>  • Latency: <100ms<br/><br/>Redis Streams:<br/>  • cdc_postgres (max 10K)<br/>  • cdc_neo4j (max 10K)<br/>  • cdc_lancedb (max 5K)<br/>  • TTL: 24 hours<br/><br/>Consumer: Data Orchestrator Agent<br/>Process: Bronze → Silver → Gold<br/>Automation: Windmill workflows"]
+        
+        QUERY_ENGINE["🦆 QUERY ENGINE (DuckDB)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Location: VPS3 (embedded)<br/>Features:<br/>  • Read Parquet from R2<br/>  • SQL queries on lakehouse<br/>  • Fast aggregations<br/>  • Export CSV/JSON<br/><br/>API Endpoints:<br/>  • POST /query (SQL)<br/>  • GET /tables<br/>  • GET /schema/{table}<br/>  • GET /export/{format}<br/><br/>Auth: Logto JWT<br/>Rate limit: 100 req/min<br/>Access: Founders + Finance Agent"]
+    end
+    
+    subgraph SERVICE_ACCOUNTS["🤖 SERVICE ACCOUNTS (Logto SSO)"]
+        direction TB
+        
+        LOGTO_APPS["📱 APPLICATION ACCOUNTS (6)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>1. langgraph-product@service<br/>   • OAuth: Client credentials<br/>   • Access: Product DB (rw)<br/>   • Scope: app.data.*<br/><br/>2. langgraph-agent@service<br/>   • Access: Agent DB (rw)<br/>   • Scope: agent.orchestrate<br/><br/>3. lobechat@service<br/>   • Access: Product AI only<br/>   • Scope: chat.*, user.profile<br/><br/>4. postiz@service<br/>   • Access: Social APIs<br/>   • Scope: social.post<br/><br/>5. grafana@service<br/>   • Access: Prometheus, Loki (r)<br/>   • Scope: metrics.read<br/><br/>6. windmill@service<br/>   • Access: Admin all<br/>   • Scope: admin.*<br/><br/>Auth: Logto → JWT tokens<br/>Token TTL: 1 hour<br/>Refresh: 7 days"]
+        
+        AGENT_ACCOUNTS["🤖 AI AGENT ACCOUNTS (8)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Each agent = Logto service account<br/><br/>7. devops-commander@service<br/>   ✅ Docker API, GitHub, Gitea<br/>   ✅ Alerts (ack/resolve)<br/>   ❌ DB write, Production deploy<br/><br/>8. data-orchestrator@service<br/>   ✅ All DB (r/w), R2, Lakehouse<br/>   ❌ DB DROP/ALTER, Vault<br/><br/>9. alert-commander@service<br/>   ✅ Alerta, Telegram, Email<br/>   ❌ Silence permanently<br/><br/>10. finance-tracker@service<br/>   ✅ Notion Finance, PG finance (r)<br/>   ✅ Mercury/Stripe API (r) [P2]<br/>   ❌ Delete transactions<br/><br/>11. doc-writer@service<br/>   ✅ GitHub (r code, w docs)<br/>   ✅ Notion, Gitea wiki<br/>   ❌ Delete docs<br/><br/>12. compliance-guardian@service<br/>   ✅ All logs (r), Audit trail<br/>   ❌ Modify logs<br/><br/>13. test-runner@service<br/>   ✅ VPS4 execute, GitHub tests<br/>   ❌ Production access<br/><br/>14. system-learner@service<br/>   ✅ Logs, metrics (r)<br/>   ✅ Knowledge DB (w)<br/>   ❌ System configs<br/><br/>Credentials: In Vaultwarden<br/>→ /agents/{agent-name}/logto-client"]
+        
+        DB_USERS["💾 DATABASE USER MATRIX<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>PostgreSQL Users:<br/>  • postgres (superuser)<br/>  • product_app (rw) ← LangGraph Product<br/>  • agent_orchestrator (rw) ← Agents<br/>  • agent_readonly (r) ← Finance, Compliance<br/>  • founder_admin (all) ← Hùng<br/>  • founder_readonly (r) ← Tuấn<br/><br/>Neo4j Users:<br/>  • neo4j (admin)<br/>  • product_app (rw)<br/>  • agent_readonly (r)<br/><br/>Redis:<br/>  • default (admin)<br/>  • app (rw)<br/>  • agent (r)<br/><br/>LanceDB:<br/>  • File-based (owner: docker)<br/>  • API key auth per app<br/><br/>Credentials: Vaultwarden<br/>→ /vps2/pg-users/, /neo4j-users/"]
+    end
+    
+    subgraph EMAIL_NOTIFICATION["📧 EMAIL & NOTIFICATION SYSTEM"]
+        direction TB
+        
+        EMAIL_SYSTEM["📨 EMAIL INFRASTRUCTURE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>SMTP Server:<br/>  • Provider: Google Workspace<br/>  • Host: smtp.gmail.com:587<br/>  • Auth: admin@rootknow.com<br/>  • App password: In Vaultwarden<br/>  • TLS: Required<br/><br/>Email Addresses:<br/>  📧 admin@rootknow.com (System)<br/>     • Service registrations<br/>     • Password resets<br/>     • Critical alerts<br/><br/>  📧 hung@rootknow.com (Daily)<br/>     • Team communications<br/>     • Social media replies<br/>     • Non-critical alerts<br/><br/>  📧 tuan@rootknow.com (Finance)<br/>     • Financial reports<br/>     • Compliance notifications<br/>     • Invoices<br/><br/>  📧 noreply@rootknow.com (Automated)<br/>     • User notifications<br/>     • Marketing emails [P2]<br/>     • System updates<br/><br/>Aliases & Firewall:<br/>  📧 devops@rootknow.com → hung@<br/>  📧 finance@rootknow.com → tuan@<br/>  📧 support@rootknow.com → hung@ [P2]<br/>  📧 hello@rootknow.com → hung@ [P2]"]
+        
+        TELEGRAM_SYSTEM["💬 TELEGRAM NOTIFICATION<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Bot: @rootknow_alert_bot<br/>Token: In Vaultwarden /phase1/telegram/<br/><br/>Channels:<br/>  🔴 Critical Alerts<br/>     • VPS down<br/>     • Database failure<br/>     • Backup failure<br/>     • Security breach<br/>     Recipients: Hùng + Tuấn<br/><br/>  🟡 Warnings<br/>     • High CPU/RAM<br/>     • Disk space low<br/>     • Failed deployments<br/>     • API errors<br/>     Recipients: Hùng only<br/><br/>  🟢 Info/Success<br/>     • Backup completed<br/>     • Deploy success<br/>     • Daily reports<br/>     Recipients: Hùng only<br/><br/>  💰 Financial<br/>     • Transactions<br/>     • Budget alerts<br/>     • Revenue milestones<br/>     Recipients: Tuấn + Hùng<br/><br/>Implementation:<br/>  • Alerta → Telegram webhook<br/>  • Alert Commander Agent<br/>  • Rate limit: 20 msg/min"]
+        
+        NOTIFICATION_ROUTING["🔔 NOTIFICATION ROUTING<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Priority Matrix:<br/><br/>P0 (Critical - Immediate):<br/>  → Telegram (Hùng + Tuấn)<br/>  → Email (admin@)<br/>  → SMS [If P0 persists >5min]<br/>  Examples: VPS down, DB fail<br/><br/>P1 (High - <15min):<br/>  → Telegram (Hùng)<br/>  → Email (hung@)<br/>  Examples: Service crash, API errors<br/><br/>P2 (Medium - <1hr):<br/>  → Telegram (Hùng)<br/>  Examples: High resource usage<br/><br/>P3 (Low - Daily digest):<br/>  → Email (hung@)<br/>  Examples: Backups, deploys<br/><br/>Financial:<br/>  → Telegram Financial channel<br/>  → Email (tuan@ + hung@)<br/>  → Daily/Weekly reports<br/><br/>Social Media:<br/>  → Email (hung@)<br/>  → Comments, mentions<br/>  → Daily digest<br/><br/>Routing Agent: Alert Commander<br/>On-call: Hùng 24/7 (Phase 1)"]
+    end
+    
+    subgraph ENTITY_HIERARCHY["🏢 ENTITY & ACCOUNT HIERARCHY"]
+        direction TB
+        
+        ROOT_ACCOUNT["🏢 ROOT ENTITY: RootKnow Inc.<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>Status: Phase 1 (Personal placeholder)<br/>Will form: Delaware C-Corp (Phase 2)<br/><br/>ROOT MASTER ACCOUNT:<br/>  📧 admin@rootknow.com<br/>     • Google Workspace (Super Admin)<br/>     • Cloudflare (Account owner)<br/>     • Contabo (4 VPS owner)<br/>     • All service registrations<br/>     • Emergency access only<br/><br/>Credentials:<br/>  → Vaultwarden /phase1/gws-admin/<br/>  → Master password in physical safe<br/>  → 2FA: Authy (Hùng's work phone)<br/>  → Recovery codes: Paper in safe<br/><br/>Owner: Hùng (100% Phase 1)<br/>Will become: Corporate account (Phase 2)"]
+        
+        SUB_ACCOUNTS["📧 SUB-ACCOUNTS STRUCTURE<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>HUMAN ACCOUNTS (Daily work):<br/>  📧 hung@rootknow.com<br/>     • Super Admin (all systems)<br/>     • Daily operations<br/>     • Media content owner<br/>     • Device sync<br/><br/>  📧 tuan@rootknow.com<br/>     • Admin (limited)<br/>     • Finance oversight<br/>     • Compliance monitoring<br/>     • No technical access<br/><br/>FUNCTIONAL ALIASES (Firewall):<br/>  📧 devops@rootknow.com → hung@<br/>  📧 finance@rootknow.com → tuan@<br/>  📧 support@rootknow.com → hung@ [P2]<br/>  📧 hello@rootknow.com → hung@ [P2]<br/><br/>AUTOMATED (No-reply):<br/>  📧 noreply@rootknow.com<br/>     • System notifications<br/>     • User emails [P2]<br/>     • Marketing [P2]<br/><br/>SERVICE ACCOUNTS (Logto):<br/>  🤖 14 service accounts<br/>     • 6 app accounts<br/>     • 8 agent accounts<br/>     • OAuth client credentials<br/>     • Scoped permissions<br/><br/>Purpose:<br/>  ✅ Separation of concerns<br/>  ✅ Email filtering<br/>  ✅ Security (firewall)<br/>  ✅ Audit trail<br/>  ✅ Easy handoff/offboard"]
+    end
+    
+    subgraph FOUNDER_CONTROL["🎯 FOUNDER CONTROL CENTER - 2 APPS"]
+        direction TB
+        
+        CODIA_TRACKER["🗺️ CODIA TRACKER APP (Master Map)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>URL: https://codia-tracker.vercel.app<br/>Tech: React + Supabase (Real-time)<br/>Access: Hùng + AI (shared context)<br/><br/>Philosophy: CODIA + V10<br/>  • CODIA = CODE + MEDIA (2 đòn bẩy)<br/>  • V10 = AI CÓ MÁY TÍNH RIÊNG<br/>  • Own platform, not rent tools<br/><br/>4 MAIN VIEWS:<br/><br/>1️⃣ MASTER MAP (Tấm bản đồ chung):<br/>   • Overall: 20% (Week 2/10)<br/>   • Phase 1: Infrastructure 50% ✅<br/>   • Phase 2: Capabilities 0% ⏸️<br/>   • Phase 3: Operations 0% ⏸️<br/>   • Progress bars live<br/>   • KPIs & deliverables<br/>   • Current focus + next steps<br/><br/>2️⃣ CHECKLIST (Interactive TODO):<br/>   • 32 tasks với dependencies<br/>   • Check/uncheck tasks ✅<br/>   • Update status (Pending/InProgress/Done)<br/>   • Add notes/details<br/>   • Track blockers<br/>   • Group by week<br/>   • Filter by phase<br/><br/>3️⃣ TIMELINE (10-Week Gantt):<br/>   • Visual timeline view<br/>   • Tasks grouped by week<br/>   • Dependencies shown<br/>   • Phase indicators<br/>   • Status icons<br/>   • Auto-generate from tasks<br/><br/>4️⃣ LOGS (Execution History):<br/>   • All actions logged<br/>   • Timestamp + details<br/>   • Status (Success/Failed)<br/>   • Real-time feed<br/>   • No manual refresh<br/><br/>Data: Supabase PostgreSQL<br/>Sync: Real-time subscriptions<br/>Update: Via app OR AI MCP<br/><br/>Purpose:<br/>  ✅ Shared context (Hùng + AI)<br/>  ✅ Track progress (what's done)<br/>  ✅ See next steps (what to do)<br/>  ✅ Dependencies clear<br/>  ✅ NO estimated time (realistic!)<br/>  ✅ Interactive (check tasks)<br/>  ✅ Real-time (always current)"]
+        
+        GRAFANA_DASH["📊 GRAFANA DASHBOARDS (System Health)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>URL: https://grafana.xknow.site<br/>Access: hung@ (full), tuan@ (finance only)<br/><br/>4 DASHBOARDS:<br/><br/>1️⃣ SYSTEM OVERVIEW:<br/>   • VPS Health: CPU, RAM, Disk, Network<br/>   • Service Status: 35 services health<br/>   • Database Metrics: PG, Neo4j, LanceDB, Redis<br/>   • AI Agent Status: 8 agents live<br/>   • Backup Status: Last + next<br/>   • Alerts: 🔴🟡🟢 counts<br/>   • Auto-refresh: 30s<br/><br/>2️⃣ FINANCE DASHBOARD:<br/>   • Costs real-time: Infra + Software + Media<br/>   • Revenue tracking [Phase 2]<br/>   • Transactions (30 days)<br/>   • Budget tracking<br/>   • Data: Finance Tracker Agent<br/>   • Update: Every 15 mins<br/><br/>3️⃣ MEDIA DASHBOARD:<br/>   • Channel metrics: 11 channels<br/>   • YouTube, TikTok, Instagram, LinkedIn<br/>   • Content pipeline status<br/>   • Engagement rates<br/>   • Revenue [Phase 2]<br/>   • Data: Postiz + Platform APIs<br/><br/>4️⃣ AI AGENT DASHBOARD:<br/>   • Real-time agent activity<br/>   • Current tasks per agent<br/>   • Today's completed tasks<br/>   • Error rates<br/>   • Agent metrics<br/>   • Real-time log stream<br/><br/>Purpose:<br/>  ✅ Technical health monitoring<br/>  ✅ Real-time alerts<br/>  ✅ Performance metrics<br/>  ✅ Financial tracking<br/>  ✅ Media analytics"]
+    end
+    
+    subgraph DUAL_APP_WORKFLOW["👨‍💻 FOUNDER WORKFLOW - 2 APPS COMBINED"]
+        direction TB
+        
+        WHY_2_APPS["🤔 TẠI SAO 2 APPS?<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>CODIA Tracker = STRATEGIC (What to do)<br/>  • Master map: Where are we?<br/>  • Checklist: What's next?<br/>  • Timeline: How to get there?<br/>  • Logs: What did we do?<br/>  • Focus: EXECUTION PROGRESS<br/>  • Update: Manual check + AI MCP<br/>  • Real-time: Yes (Supabase)<br/>  • Shared: Hùng + AI same view<br/><br/>Grafana = TACTICAL (System health)<br/>  • Overview: Is system alive?<br/>  • Metrics: Performance OK?<br/>  • Alerts: Any issues?<br/>  • Agents: Are they working?<br/>  • Focus: SYSTEM HEALTH<br/>  • Update: Auto (Prometheus scrape)<br/>  • Real-time: Yes (30s refresh)<br/>  • Access: Hùng (full), Tuấn (finance)<br/><br/>Analogy:<br/>  📱 CODIA Tracker = GPS (where to go)<br/>  🚗 Grafana = Car dashboard (engine OK?)<br/><br/>Together:<br/>  ✅ Know where going (CODIA)<br/>  ✅ Know system healthy (Grafana)<br/>  ✅ Execute with confidence<br/>  ✅ No surprises"]
+        
+        DASH_FINANCE["💰 FINANCE DASHBOARD<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>URL: https://grafana.xknow.site/finance<br/>Access: tuan@ (full), hung@ (view)<br/><br/>1️⃣ COSTS (Real-time):<br/>   • Infrastructure: $65/mo<br/>   • Software: $227-247/mo<br/>   • Media production: $400-1,600/mo<br/>   • Total: $692-1,912/mo<br/>   • Trend: ↑↓ vs last month<br/><br/>2️⃣ REVENUE (Phase 2):<br/>   • YouTube Ads: $X<br/>   • Sponsorships: $Y<br/>   • Product: $Z<br/>   • Total: $XYZ<br/><br/>3️⃣ TRANSACTIONS:<br/>   • Last 30 days: Table<br/>   • By category: Chart<br/>   • Largest expenses: Top 10<br/><br/>4️⃣ BUDGET TRACKING:<br/>   • Budget: $2,000/mo<br/>   • Spent: $X/mo<br/>   • Remaining: $Y<br/>   • Burn rate: X%<br/><br/>Data source: Finance Tracker Agent<br/>Update: Every 15 mins<br/>Export: CSV/PDF reports"]
+        
+        DASH_MEDIA["📺 MEDIA DASHBOARD<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>URL: https://grafana.xknow.site/media<br/>Access: hung@ (full)<br/><br/>1️⃣ CHANNEL METRICS (11 channels):<br/>   YouTube:<br/>     • Subscribers: Count + Δ24h<br/>     • Views (24h/7d/30d)<br/>     • Watch time: Hours<br/>     • Top video: Title + views<br/>   TikTok:<br/>     • Followers: Count + Δ24h<br/>     • Views: Total<br/>     • Top video: Views<br/>   Instagram, LinkedIn, Twitter:<br/>     • Similar metrics<br/><br/>2️⃣ CONTENT PIPELINE:<br/>   • Videos in production: Count<br/>   • Videos scheduled: Count<br/>   • Published this week: Count<br/>   • Performance: Avg views<br/><br/>3️⃣ ENGAGEMENT:<br/>   • Likes, Comments, Shares<br/>   • Engagement rate: %<br/>   • Best time to post<br/>   • Audience demographics<br/><br/>4️⃣ REVENUE (Phase 2):<br/>   • Ad revenue: $X<br/>   • Sponsorships: $Y<br/>   • Affiliate: $Z<br/>   • RPM: $X per 1K views<br/><br/>Data source: Postiz + Platform APIs<br/>Update: Hourly"]
+        
+        DASH_AGENT["🤖 AI AGENT DASHBOARD<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>URL: https://grafana.xknow.site/agents<br/>Access: hung@ (full)<br/><br/>Real-time Agent Activity:<br/>1. DevOps Commander<br/>   Status: 🟢 Active<br/>   Current: Monitoring alerts<br/>   Today: 24 tasks, 0 errors<br/>   Last: Restarted service X (5min ago)<br/><br/>2. Data Orchestrator<br/>   Status: 🟢 Active<br/>   Current: Processing CDC events<br/>   Today: Backup completed (4h ago)<br/>   Lakehouse: Bronze→Silver (running)<br/><br/>3. Alert Commander<br/>   Status: 🟢 Active<br/>   Current: Monitoring 35 services<br/>   Today: 3 warnings sent<br/>   Last alert: High RAM VPS3 (2h ago)<br/><br/>4. Finance Tracker<br/>   Status: 🟢 Active<br/>   Current: Idle<br/>   Today: Synced 5 transactions<br/>   Next: Daily report (6pm)<br/><br/>5-8. Other agents...<br/><br/>Agent Metrics:<br/>  • Total tasks: 1,234<br/>  • Success rate: 98.5%<br/>  • Avg response time: 2.3s<br/>  • Errors (24h): 3<br/><br/>Agent Logs:<br/>  • Real-time log stream<br/>  • Filter by agent<br/>  • Error highlighting"]
+    end
+    
+    subgraph AI_COVERAGE_MAP["🗺️ AI AGENT COVERAGE MAP - WHO TOUCHES WHAT"]
+        direction TB
+        
+        COVERAGE_MATRIX["📋 COVERAGE MATRIX<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>System Coverage: 100% ✅<br/><br/>VPS1 (Infrastructure) - Covered by:<br/>  🤖 DevOps Commander: ✅✅✅<br/>     • Docker API (restart containers)<br/>     • Gitea (CI/CD monitoring)<br/>     • Alerta (alert management)<br/>     • Logs analysis (Loki)<br/>  🤖 Alert Commander: ✅✅<br/>     • Alerta (ack/resolve alerts)<br/>     • Monitoring all services<br/>  🤖 Compliance Guardian: ✅<br/>     • Audit logs (read-only)<br/>     • Access logs review<br/><br/>VPS2 (Databases) - Covered by:<br/>  🤖 Data Orchestrator: ✅✅✅✅<br/>     • All DB backups<br/>     • CDC pipeline management<br/>     • Lakehouse sync (Bronze/Silver/Gold)<br/>     • Query optimization<br/>  🤖 Finance Tracker: ✅<br/>     • PostgreSQL finance tables (read)<br/>     • Transaction sync<br/>  🤖 Compliance Guardian: ✅<br/>     • DB access logs<br/>     • Query audit<br/><br/>VPS3 (AI Stack) - Covered by:<br/>  🤖 System Learner: ✅✅✅<br/>     • Agent performance analysis<br/>     • Knowledge DB updates<br/>     • Pattern recognition<br/>  🤖 Doc Writer: ✅<br/>     • Generate agent docs<br/>     • Update wiki<br/>  🤖 Alert Commander: ✅<br/>     • Monitor AI services<br/><br/>VPS4 (Code Execution) - Covered by:<br/>  🤖 Test Runner: ✅✅✅<br/>     • Execute tests<br/>     • Code validation<br/>     • Report results<br/>  🤖 DevOps Commander: ✅<br/>     • Monitor sandbox health<br/>  🤖 Compliance Guardian: ✅<br/>     • Execution logs audit<br/><br/>Vaultwarden (Credentials) - Covered by:<br/>  ❌ NO AGENT ACCESS (Security!)<br/>     • Only Hùng manual access<br/>     • Backup by Data Orchestrator (encrypted)<br/><br/>Lakehouse (R2) - Covered by:<br/>  🤖 Data Orchestrator: ✅✅✅✅<br/>     • Write Bronze/Silver/Gold<br/>     • Manage lifecycle<br/>     • Run DuckDB queries<br/>  🤖 Finance Tracker: ✅<br/>     • Query financial data<br/>  🤖 Compliance Guardian: ✅<br/>     • Audit data access<br/><br/>Media Channels (18) - Covered by:<br/>  🤖 Doc Writer: ✅✅<br/>     • Generate social media posts<br/>     • Blog article drafts<br/>  🤖 Finance Tracker: ✅<br/>     • Track sponsorship revenue<br/>     • Ad revenue sync<br/><br/>Email/Notification - Covered by:<br/>  🤖 Alert Commander: ✅✅✅<br/>     • Send alerts (Telegram + Email)<br/>     • Route notifications<br/>     • Priority management<br/>  🤖 Finance Tracker: ✅<br/>     • Send financial reports<br/><br/>GitHub - Covered by:<br/>  🤖 DevOps Commander: ✅✅<br/>     • Monitor CI/CD<br/>     • Create PRs for fixes<br/>  🤖 Doc Writer: ✅✅<br/>     • Update documentation<br/>     • Generate READMEs<br/>  🤖 Test Runner: ✅<br/>     • Read test files<br/>     • Write test results<br/><br/>Notion - Covered by:<br/>  🤖 Finance Tracker: ✅✅<br/>     • Sync transactions<br/>     • Update financial DB<br/>  🤖 Doc Writer: ✅<br/>     • Update documentation DB<br/>  🤖 Compliance Guardian: ✅<br/>     • Audit trail<br/><br/>COVERAGE SCORE:<br/>  ✅ Infrastructure: 100% (3 agents)<br/>  ✅ Databases: 100% (3 agents)<br/>  ✅ AI Stack: 100% (3 agents)<br/>  ✅ Code Execution: 100% (3 agents)<br/>  ✅ Lakehouse: 100% (3 agents)<br/>  ✅ Media: 100% (2 agents)<br/>  ✅ Notifications: 100% (2 agents)<br/>  ✅ Development: 100% (3 agents)<br/><br/>GAPS: 0 ✅<br/>Overlap: Intentional (redundancy)"]
+        
+        DAILY_WORKFLOW["📅 HÙNG'S DAILY WORKFLOW (5+5 mins)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>MORNING (5 mins):<br/><br/>Step 1: CODIA Tracker (Strategic)<br/>  Open: https://codia-tracker.vercel.app<br/>  1. Check Master Map tab:<br/>     • Where are we? (20% Week 2/10)<br/>     • What phase? (Phase 1: 50%)<br/>  2. Check Checklist tab:<br/>     • Today's tasks? (What to do)<br/>     • Any blockers? (Dependencies clear?)<br/>  3. Decision:<br/>     • This week: Task X<br/>     • Today: Sub-task Y<br/><br/>Step 2: Grafana (Tactical)<br/>  Open: https://grafana.xknow.site<br/>  1. Quick glance System Overview:<br/>     • VPS: 🟢🟢🟢🟢 All OK?<br/>     • Services: 35/35 ✅?<br/>     • Agents: 8/8 active?<br/>  2. Check alerts:<br/>     • 🔴 Critical: 0 ← GOOD<br/>     • 🟡 Warning: X ← Review<br/>  3. Decision:<br/>     ✅ All green → Execute today's task<br/>     🟡 Yellow → Fix first OR ask agent<br/>     🔴 Red → STOP, fix immediately<br/><br/>Step 3: Telegram<br/>  • Read overnight alerts<br/>  • Any critical issues?<br/><br/>DURING DAY:<br/>  • Execute task from CODIA Tracker<br/>  • Agents handle system operations<br/>  • Telegram notifies if issues<br/>  • Grafana: Quick health checks<br/>  • CODIA Tracker: Check off subtasks<br/><br/>EVENING (5 mins):<br/><br/>Step 1: CODIA Tracker (Progress)<br/>  1. Open Checklist tab<br/>  2. Check off completed tasks ✅<br/>  3. Add notes/learnings<br/>  4. View updated Master Map:<br/>     • Progress updated? (21%?)<br/>  5. Check Logs tab:<br/>     • What did we accomplish?<br/><br/>Step 2: Grafana (Review)<br/>  1. Agent Dashboard:<br/>     • Tasks completed: X<br/>     • Any errors: X<br/>  2. Finance Dashboard:<br/>     • Today's costs: $X<br/>  3. Media Dashboard (if applicable):<br/>     • Followers: +X<br/><br/>Step 3: Plan Tomorrow<br/>  • CODIA Tracker: Next task clear?<br/>  • Grafana: System healthy?<br/>  • Ready for tomorrow ✅<br/><br/>WEEKLY (30 mins):<br/>  • CODIA Tracker: Review week progress<br/>  • Grafana: Deep dive metrics<br/>  • Agent performance review<br/><br/>MONTHLY (2 hours):<br/>  • CODIA Tracker: Phase review<br/>  • Grafana: Full system audit<br/>  • Financial review with Tuấn"]
+        
+        TUAN_WORKFLOW["💼 TUẤN's WORKFLOW<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>DAILY (5 mins):<br/>  1. Grafana Finance Dashboard<br/>  2. Check transactions<br/>  3. Review budget<br/>  4. Telegram Financial channel<br/><br/>WEEKLY (1 hour):<br/>  • Export reports<br/>  • Review with Hùng<br/>  • Approve expenses<br/>  • Compliance check<br/><br/>Access:<br/>  • Grafana: Full finance, View system<br/>  • CODIA Tracker: View-only<br/>  • Telegram: Financial channel"]
+        
+        AUTONOMY_LEVEL["🤖 AUTONOMY BREAKDOWN<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>AI AUTO (90%):<br/>  🤖 Monitoring: 100%<br/>  🤖 Backups: 100%<br/>  🤖 Alerts: 100%<br/>  🤖 Routine ops: 100%<br/>  🤖 CDC pipeline: 100%<br/>  🤖 Lakehouse sync: 100%<br/><br/>FOUNDER MANUAL (10%):<br/>  👨‍💻 Hùng (7%):<br/>     • Strategic decisions<br/>     • Code deploy approval<br/>     • Infrastructure changes<br/>     • Emergency fixes<br/>     • Content creation<br/>  💼 Tuấn (3%):<br/>     • Financial approval<br/>     • Compliance review<br/>     • Budget decisions<br/><br/>AI UPDATES CODIA:<br/>  🤖 Via MCP tool<br/>     • Mark tasks complete<br/>     • Add logs<br/>     • Update progress<br/>     • Real-time sync<br/>  👨‍💻 Hùng verifies:<br/>     • Check tracker<br/>     • Confirm progress<br/>     • Adjust if needed"]
+    end
+    
+    subgraph AUTONOMY_WORKFLOWS["⚡ AUTONOMY WORKFLOWS - AI TỰ MỞ RỘNG"]
+        direction TB
+        
+        DYNAMIC_PERMISSIONS["🔐 DYNAMIC PERMISSION SYSTEM<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>NOT Static ✅❌ boundaries!<br/>BUT Dynamic levels + approval!<br/><br/>PERMISSION LEVELS:<br/><br/>Level 0: AUTO-EXECUTE (safe)<br/>  ✅ Read logs, metrics<br/>  ✅ Restart crashed containers<br/>  ✅ Backup data<br/>  ✅ Send routine notifications<br/>  → No approval needed<br/>  → Instant execution<br/><br/>Level 1: APPROVAL REQUIRED<br/>  ⚠️ Deploy to staging<br/>  ⚠️ Modify configs<br/>  ⚠️ Create DB users<br/>  ⚠️ Access restricted credentials<br/>  → Telegram approval<br/>  → Founder ✅ → Execute<br/><br/>Level 2: DANGEROUS (Founder + 2FA)<br/>  🔴 Production deploy<br/>  🔴 DB DROP/ALTER schema<br/>  🔴 Delete backups<br/>  🔴 VPS shutdown<br/>  → Telegram + SMS<br/>  → 2FA confirmation<br/><br/>AGENT WORKFLOW:<br/>  1. Agent wants action<br/>  2. System checks level<br/>  3. If L0 → Execute immediately<br/>  4. If L1 → Telegram: 'DevOps wants deploy staging, approve?'<br/>  5. Founder ✅ Approve<br/>  6. Agent executes<br/>  7. Log: 'Approved by founder 5:30 PM'<br/><br/>LEARNING SYSTEM:<br/>  Track approval patterns:<br/>    • Founder approved 'restart Grafana' 20x<br/>    • System: 'Make this auto-approve?'<br/>    • Founder: ✅ → Add to L0<br/>  <br/>  Temp permissions:<br/>    • 'Auto-deploy for next 24h'<br/>    • After 24h → Revert to L1<br/><br/>Result:<br/>  ✅ Week 1: 50 approvals<br/>  ✅ Month 1: 20 approvals<br/>  ✅ Month 3: 5 approvals<br/>  ✅ Agent learns what's safe!"]
+        
+        SELF_PROVISIONING["🔧 SELF-PROVISIONING SYSTEM<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>NOT Fixed users (manual)!<br/>BUT Dynamic provisioning (API)!<br/><br/>DATABASE USER REGISTRY:<br/>  Table: db_user_registry<br/>  Fields:<br/>    • username, role, permissions<br/>    • created_by, expires_at, status<br/><br/>PROVISIONING API:<br/>  POST /api/db-users/create<br/>  {<br/>    'username': 'new_agent_9',<br/>    'role': 'agent',<br/>    'permissions': {'read': ['public.*'], 'write': ['logs.*']},<br/>    'expires_at': '24h'<br/>  }<br/><br/>  Workflow:<br/>    1. Agent requests user<br/>    2. Check: Approval needed? (L1)<br/>    3. Telegram: 'Data Agent wants new DB user for 24h'<br/>    4. Founder ✅<br/>    5. Create user in PostgreSQL<br/>    6. Grant permissions<br/>    7. Store credentials in Vaultwarden<br/>    8. Return connection string<br/>    9. After 24h → Auto-revoke + delete<br/><br/>AUTO-CLEANUP:<br/>  Daily job:<br/>    • Find expired users → Revoke access<br/>    • Unused for 30d → Alert founder<br/>    • Anomaly: 'Why 100 temp users?'<br/><br/>SELF-SERVICE:<br/>  Agent: 'I need read-only finance table'<br/>  System: Creates temp user (24h)<br/>  Agent: Uses connection<br/>  24h later: User deleted<br/><br/>Result:<br/>  ✅ Scalable (1000 users OK)<br/>  ✅ Secure (time-limited, scoped)<br/>  ✅ Auditable (who created what)<br/>  ✅ No manual SSH!"]
+        
+        AGENT_FIRST_EMAIL["📧 AGENT-FIRST EMAIL ROUTING<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>NOT Email → Human inbox only!<br/>BUT Email → Agent → Human if needed!<br/><br/>EMAIL WEBHOOK:<br/>  Postmark/SendGrid → POST /api/email-received<br/>  {<br/>    'to': 'devops@rootknow.com',<br/>    'from': 'aws@amazon.com',<br/>    'subject': 'Billing Alert',<br/>    'body': '...'<br/>  }<br/><br/>EMAIL ROUTER AGENT:<br/>  1. Receives email<br/>  2. Classify type:<br/>     • 'Billing Alert' → finance<br/>     • 'CI/CD failed' → devops<br/>     • 'User support' → support<br/>     • 'Spam' → archive<br/>  3. Route to agent:<br/>     • Finance → Finance Tracker Agent<br/>     • DevOps → DevOps Commander<br/>     • Support → Support Agent [P2]<br/>  4. Agent handles:<br/>     • Read email body<br/>     • Extract info (bill = $500)<br/>     • Action: Add to finance tracking<br/>     • Alert: Telegram if urgent<br/>  5. Copy to founder:<br/>     • Important → Also send to hung@<br/>     • Routine → Just log in DB<br/><br/>HUMAN OVERRIDE:<br/>  • Founder can reply anytime<br/>  • Agent sees: 'Founder replied' → Stand down<br/><br/>LEARNING:<br/>  • Track: Which emails agent handled well<br/>  • Track: Which needed human<br/>  • Improve classification<br/><br/>Result:<br/>  ✅ Agent handles 80% emails<br/>  ✅ Founder sees 20% important<br/>  ✅ Email = queryable data<br/>  ✅ No inbox overload!"]
+        
+        AGENT_ALERT_FIX["🚨 AGENT-FIRST ALERT RESOLUTION<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>NOT Alert → Telegram → Founder!<br/>BUT Alert → Agent tries fix → Escalate if can't!<br/><br/>MULTI-LEVEL RESPONSE:<br/><br/>Severity 0: AGENT AUTO-FIX (0-5 mins)<br/>  Alert: 'Grafana container crashed'<br/>  Agent: Alert Commander<br/>  Action:<br/>    1. Receive alert<br/>    2. Check: Known issue? (Yes)<br/>    3. Execute: docker restart grafana<br/>    4. Verify: Is it up? (Yes ✅)<br/>    5. Update: 'Auto-resolved'<br/>    6. Notification: NONE (silent fix)<br/>    7. Log: 'Alert XYZ auto-resolved by Alert Commander'<br/><br/>Severity 1: AGENT ESCALATION (5-30 mins)<br/>  Alert: 'Grafana still crashed'<br/>  Agent tried:<br/>    • Restart → Failed<br/>    • Restore backup → Failed<br/>  Telegram: '⚠️ Can't fix Grafana crash, tried restart + backup restore'<br/>  Founder: Reviews + fixes manually<br/><br/>Severity 2: HUMAN CRITICAL (immediate)<br/>  Alert: 'VPS2 unreachable'<br/>  Agent: 'Beyond my scope, I can't access VPS2'<br/>  Telegram: '🔴 VPS2 down, need human intervention'<br/>  SMS: If no response in 5 mins<br/><br/>LEARNING:<br/>  Track resolution:<br/>    • Agent auto-resolved: 80%<br/>    • Agent escalated: 15%<br/>    • Human critical: 5%<br/>  <br/>  Add auto-fix patterns:<br/>    • 'Restart X if Y error'<br/>    • 'Restore backup if Z corruption'<br/><br/>DAILY REPORT:<br/>  'Handled 47 alerts today:<br/>   • 43 auto-resolved (91%)<br/>   • 4 escalated to you'<br/><br/>Result:<br/>  ✅ Founder sees 10% alerts<br/>  ✅ No alert fatigue<br/>  ✅ Agents learn over time<br/>  ✅ Sleep well at night!"]
+        
+        DUAL_INTERFACE["🖥️ DUAL INTERFACE (Human + Agent)<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>NOT Grafana (human only)!<br/>BUT Grafana (human) + Metrics API (agent)!<br/><br/>METRICS STORE: Prometheus<br/>  • All metrics here<br/>  • Both human + agent access<br/><br/>HUMAN INTERFACE: Grafana<br/>  URL: https://grafana.xknow.site<br/>  • Pretty dashboards<br/>  • Visual trends<br/>  • Interactive charts<br/>  • Founder browses<br/><br/>AGENT INTERFACE: Metrics API<br/>  URL: https://metrics-api.xknow.site<br/>  <br/>  GET /api/metrics/vps3/cpu<br/>  Response:<br/>  {<br/>    'current': 87.3,<br/>    'avg_1h': 65.2,<br/>    'avg_24h': 45.1,<br/>    'threshold': 80,<br/>    'status': 'high',<br/>    'trend': 'increasing'<br/>  }<br/><br/>AGENT WORKFLOW:<br/>  1. DevOps Commander queries API every 5 mins<br/>  2. Checks: CPU > 80%?<br/>  3. If Yes for 10 mins → Investigate<br/>  4. Finds: Neo4j using 90% CPU<br/>  5. Logs: 'Query XYZ is slow'<br/>  6. Suggests: 'Add index to table ABC'<br/>  7. Founder approves<br/>  8. Agent creates index<br/>  9. CPU drops to 45%<br/>  10. Agent: 'Fixed! CPU now normal'<br/>  11. Dashboard shows: Before/after<br/><br/>AGENT QUERIES STORED:<br/>  Table: agent_metric_queries<br/>  • Which agent checks what metric<br/>  • What threshold triggers action<br/>  • What action to take<br/><br/>Result:<br/>  ✅ Human: Visual exploration<br/>  ✅ Agent: Programmatic action<br/>  ✅ Both see same truth<br/>  ✅ Closed-loop automation!"]
+        
+        SCOPED_CREDENTIALS["🔑 SCOPED CREDENTIAL ACCESS<br/>━━━━━━━━━━━━━━━━━━━━━━━━━━<br/>NOT Agent full vault access!<br/>NOT Agent asks founder every time!<br/>BUT Scoped access + approval + auto-rules!<br/><br/>VAULT ORGANIZATION:<br/>  /credentials/<br/>    /public/ (agent auto-read)<br/>      • Non-sensitive configs<br/>      • Public API endpoints<br/>    /restricted/ (agent request → approval)<br/>      • API keys<br/>      • Service passwords<br/>      • DB credentials<br/>    /founder-only/ (never agent)<br/>      • Master passwords<br/>      • Bank accounts<br/>      • Personal creds<br/><br/>CREDENTIAL REQUEST API:<br/>  POST /api/vault/request-credential<br/>  {<br/>    'agent': 'devops-commander',<br/>    'credential': '/restricted/github-pat',<br/>    'reason': 'Deploy service to GitHub',<br/>    'duration': '1h'<br/>  }<br/><br/>  Workflow:<br/>    1. Check: Is agent allowed? (Yes - DevOps can use GitHub)<br/>    2. Check: Is public? (No - restricted)<br/>    3. Telegram: '🔐 DevOps Commander requests GitHub PAT for 1h to deploy service<br/>       [✅ Approve] [❌ Deny]'<br/>    4. Founder: ✅ Approve<br/>    5. System: Create temp access (1h)<br/>    6. Agent: Gets credential<br/>    7. After 1h: Auto-revoke<br/>    8. Log: 'Approved by founder 5:30 PM, expired 6:30 PM'<br/><br/>AUTO-APPROVAL RULES:<br/>  Founder sets:<br/>    • 'DevOps can auto-access GitHub PAT'<br/>    • 'Data Orchestrator can auto-access DB passwords'<br/>    • 'All agents: Deny bank credentials'<br/><br/>LEARNING:<br/>  • You approved GitHub PAT 30x<br/>  • Suggest: 'Make this auto-approve?'<br/>  • Founder: ✅ → Add rule<br/><br/>AUDIT TRAIL:<br/>  Every access logged:<br/>    • Who, what, when, why, duration<br/>    • Query: 'Show all GitHub PAT access last month'<br/>    • Anomaly: 'Why Finance Agent accessed Docker API?'<br/><br/>Result:<br/>  ✅ Agents autonomous (with approval)<br/>  ✅ Security (scoped, time-limited, logged)<br/>  ✅ Auto-rules reduce approvals<br/>  ✅ Full audit trail<br/>  ✅ Founder control: Revoke anytime!"]
+    end
+    
+    %% ============================================================================
+    %% CONNECTIONS & DATA FLOWS
+    %% ============================================================================
+    
+    %% Founders → Access
+    HUNG --> VPS1_INFO
+    HUNG --> VPS2_INFO
+    HUNG --> VPS3_INFO
+    HUNG --> VPS4_INFO
+    HUNG --> VAULT_MASTER
+    HUNG --> PHASE1_CHANNELS
+    
+    TUAN -.->|View only| VPS1_SERVICES
+    TUAN --> PHASE1_CHANNELS
+    
+    %% VPS1 → Services
+    VPS1_INFO --> VPS1_FOLDERS
+    VPS1_FOLDERS --> VPS1_SERVICES
+    VPS1_SERVICES --> VAULTWARDEN_DETAIL
+    
+    %% VPS2 → Databases
+    VPS2_INFO --> VPS2_FOLDERS
+    VPS2_FOLDERS --> VPS2_DB_USERS
+    VPS2_DB_USERS --> VPS2_SERVICES
+    
+    %% VPS3 → AI + Media
+    VPS3_INFO --> VPS3_FOLDERS
+    VPS3_FOLDERS --> VPS3_SERVICES
+    VPS3_SERVICES --> PHASE1_CHANNELS
+    
+    %% VPS4 → Isolated
+    VPS4_INFO --> VPS4_FOLDERS
+    VPS4_FOLDERS --> VPS4_SERVICES
+    
+    %% Vault → Everything
+    VAULT_MASTER --> VAULT_STRUCTURE
+    VAULT_STRUCTURE -.->|Credentials| VPS1_SERVICES
+    VAULT_STRUCTURE -.->|Credentials| VPS2_SERVICES
+    VAULT_STRUCTURE -.->|Credentials| VPS3_SERVICES
+    VAULT_STRUCTURE -.->|Credentials| PHASE1_CHANNELS
+    
+    %% Media workflow
+    PHASE1_CHANNELS --> CONTENT_FLOW
+    CONTENT_FLOW --> PHASE2_CHANNELS
+    
+    %% Storage tiers
+    TIER1_HOT --> TIER2_WARM
+    TIER2_WARM --> TIER3_COLD
+    TIER3_COLD --> TIER4_OFFLINE
+    
+    %% Backup flows
+    VPS2_SERVICES --> BACKUP_SCHEDULE
+    VAULTWARDEN_DETAIL --> BACKUP_SCHEDULE
+    BACKUP_SCHEDULE --> TIER2_WARM
+    TIER1_HOT --> BACKUP_SCHEDULE
+    
+    BACKUP_SCHEDULE --> RESTORE_PROCESS
+    
+    %% Costs
+    VPS1_INFO -.->|$15/mo| MONTHLY_COSTS
+    VPS2_INFO -.->|$15/mo| MONTHLY_COSTS
+    VPS3_INFO -.->|$8/mo| MONTHLY_COSTS
+    VPS4_INFO -.->|$7/mo| MONTHLY_COSTS
+    PHASE1_CHANNELS -.->|Revenue| REVENUE_PROJ
+    
+    %% Lakehouse flows
+    VPS2_SERVICES -->|CDC events| CDC_PIPELINE
+    CDC_PIPELINE -->|Write| LAKEHOUSE_LAYERS
+    LAKEHOUSE_LAYERS -->|Query| QUERY_ENGINE
+    QUERY_ENGINE -.->|API| HUNG
+    QUERY_ENGINE -.->|API| AGENT_ACCOUNTS
+    
+    %% Service accounts → Services
+    LOGTO_APPS -.->|Auth| VPS3_SERVICES
+    AGENT_ACCOUNTS -.->|Auth| VPS1_SERVICES
+    AGENT_ACCOUNTS -.->|Auth| VPS2_SERVICES
+    AGENT_ACCOUNTS -.->|Auth| VPS3_SERVICES
+    DB_USERS -.->|DB Access| VPS2_SERVICES
+    
+    %% Email/Notification flows
+    VPS1_SERVICES -->|Alerts| EMAIL_SYSTEM
+    VPS1_SERVICES -->|Alerts| TELEGRAM_SYSTEM
+    EMAIL_SYSTEM -->|Send| HUNG
+    EMAIL_SYSTEM -->|Send| TUAN
+    TELEGRAM_SYSTEM -->|Notify| HUNG
+    TELEGRAM_SYSTEM -->|Notify| TUAN
+    NOTIFICATION_ROUTING -.->|Route| EMAIL_SYSTEM
+    NOTIFICATION_ROUTING -.->|Route| TELEGRAM_SYSTEM
+    
+    %% Entity hierarchy
+    ROOT_ACCOUNT -->|Owns| SUB_ACCOUNTS
+    ROOT_ACCOUNT -->|Manages| LOGTO_APPS
+    ROOT_ACCOUNT -->|Manages| AGENT_ACCOUNTS
+    SUB_ACCOUNTS -.->|Uses| EMAIL_SYSTEM
+    
+    %% Backup flows to lakehouse
+    BACKUP_SCHEDULE -->|Archive| LAKEHOUSE_LAYERS
+    
+    %% Founder → 2 Apps flows
+    HUNG -->|Morning: Strategic| CODIA_TRACKER
+    HUNG -->|Morning: Tactical| GRAFANA_DASH
+    HUNG -->|Check tasks| DAILY_WORKFLOW
+    HUNG -->|Evening: Update| CODIA_TRACKER
+    TUAN -->|Daily finance| GRAFANA_DASH
+    TUAN -.->|View progress| CODIA_TRACKER
+    
+    %% Dashboard → System monitoring
+    DASH_OVERVIEW -.->|Monitor| VPS1_SERVICES
+    DASH_OVERVIEW -.->|Monitor| VPS2_SERVICES
+    DASH_OVERVIEW -.->|Monitor| VPS3_SERVICES
+    DASH_OVERVIEW -.->|Monitor| VPS4_SERVICES
+    DASH_AGENT -.->|Track| AGENT_ACCOUNTS
+    DASH_FINANCE -.->|Query| LAKEHOUSE_LAYERS
+    DASH_MEDIA -.->|Fetch| PHASE1_CHANNELS
+    
+    %% AI Coverage flows
+    COVERAGE_MATRIX -.->|Agents monitor| VPS1_SERVICES
+    COVERAGE_MATRIX -.->|Agents manage| VPS2_SERVICES
+    COVERAGE_MATRIX -.->|Agents operate| VPS3_SERVICES
+    COVERAGE_MATRIX -.->|Agents test| VPS4_SERVICES
+    DAILY_WORKFLOW -.->|Commands| AGENT_ACCOUNTS
+    AUTONOMY_LEVEL -.->|AI Auto| AGENT_ACCOUNTS
+    
+    %% CODIA Tracker integration
+    CODIA_TRACKER -.->|Data| VPS2_SERVICES
+    AGENT_ACCOUNTS -.->|Update via MCP| CODIA_TRACKER
+    WHY_2_APPS -.->|Explains| CODIA_TRACKER
+    WHY_2_APPS -.->|Explains| GRAFANA_DASH
+    
+    %% Styling
+    classDef founderStyle fill:#E1F5FE,stroke:#01579B,stroke-width:4px,color:#000
+    classDef vpsStyle fill:#E8F5E9,stroke:#1B5E20,stroke-width:3px,color:#000
+    classDef vaultStyle fill:#FFEBEE,stroke:#B71C1C,stroke-width:3px,color:#000
+    classDef mediaStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px,color:#000
+    classDef storageStyle fill:#FFF3E0,stroke:#E65100,stroke-width:3px,color:#000
+    classDef backupStyle fill:#F3E5F5,stroke:#4A148C,stroke-width:3px,color:#000
+    classDef financeStyle fill:#FFF9C4,stroke:#F57F17,stroke-width:3px,color:#000
+    classDef lakehouseStyle fill:#E0F2F1,stroke:#00897B,stroke-width:3px,color:#000
+    classDef serviceAcctStyle fill:#FFF9C4,stroke:#F9A825,stroke-width:3px,color:#000
+    classDef emailStyle fill:#E8EAF6,stroke:#3F51B5,stroke-width:3px,color:#000
+    classDef entityStyle fill:#FCE4EC,stroke:#880E4F,stroke-width:4px,color:#000
+    classDef dashboardStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:4px,color:#000
+    classDef coverageStyle fill:#F1F8E9,stroke:#558B2F,stroke-width:3px,color:#000
+    classDef autonomyStyle fill:#FFF9C4,stroke:#F57F17,stroke-width:4px,color:#000
+    
+    class FOUNDERS,HUNG,TUAN founderStyle
+    class VPS1_FULL,VPS1_INFO,VPS1_FOLDERS,VPS1_SERVICES vpsStyle
+    class VPS2_FULL,VPS2_INFO,VPS2_FOLDERS,VPS2_DB_USERS,VPS2_SERVICES vpsStyle
+    class VPS3_FULL,VPS3_INFO,VPS3_FOLDERS,VPS3_SERVICES vpsStyle
+    class VPS4_FULL,VPS4_INFO,VPS4_FOLDERS,VPS4_SERVICES vpsStyle
+    class VAULTWARDEN_DETAIL,VAULT_MASTER,VAULT_STRUCTURE vaultStyle
+    class MEDIA_CHANNELS,PHASE1_CHANNELS,PHASE2_CHANNELS,CONTENT_FLOW mediaStyle
+    class STORAGE_TIERS,TIER1_HOT,TIER2_WARM,TIER3_COLD,TIER4_OFFLINE storageStyle
+    class BACKUP_AUTOMATION,BACKUP_SCHEDULE,RESTORE_PROCESS backupStyle
+    class COSTS_REVENUE,MONTHLY_COSTS,REVENUE_PROJ financeStyle
+    class LAKEHOUSE,LAKEHOUSE_LAYERS,CDC_PIPELINE,QUERY_ENGINE lakehouseStyle
+    class SERVICE_ACCOUNTS,LOGTO_APPS,AGENT_ACCOUNTS,DB_USERS serviceAcctStyle
+    class EMAIL_NOTIFICATION,EMAIL_SYSTEM,TELEGRAM_SYSTEM,NOTIFICATION_ROUTING emailStyle
+    class ENTITY_HIERARCHY,ROOT_ACCOUNT,SUB_ACCOUNTS entityStyle
+    class FOUNDER_CONTROL,CODIA_TRACKER,GRAFANA_DASH,DUAL_APP_WORKFLOW,WHY_2_APPS dashboardStyle
+    class AI_COVERAGE_MAP,COVERAGE_MATRIX,DAILY_WORKFLOW,TUAN_WORKFLOW,AUTONOMY_LEVEL coverageStyle
+    class DASH_FINANCE,DASH_MEDIA,DASH_AGENT dashboardStyle
+    class AUTONOMY_WORKFLOWS,DYNAMIC_PERMISSIONS,SELF_PROVISIONING,AGENT_FIRST_EMAIL,AGENT_ALERT_FIX,DUAL_INTERFACE,SCOPED_CREDENTIALS autonomyStyle

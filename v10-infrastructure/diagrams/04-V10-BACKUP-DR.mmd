@@ -1,0 +1,163 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#FFF3E0',
+    'primaryTextColor': '#FF6F00',
+    'primaryBorderColor': '#F57C00',
+    'lineColor': '#424242',
+    'secondaryColor': '#E0F2F1',
+    'tertiaryColor': '#E8F5E9',
+    'fontSize': '14px'
+  }
+}}%%
+
+graph TB
+    %% ============================================================================
+    %% V10 MULTI-TIER BACKUP & DISASTER RECOVERY
+    %% ============================================================================
+    %% Version: 10.0 ULTIMATE
+    %% Focus: 4-Tier Backup Strategy
+    %% Date: 2025-11-04
+    
+    subgraph DATA_SOURCES["📊 DATA SOURCES (VPS2 - 24GB)"]
+        direction TB
+        
+        subgraph PRODUCT_DATA["📊 PRODUCT DATA"]
+            NEO4J_INT["🔵 NEO4J INTERNAL<br/>2M triples<br/>4GB"]
+            NEO4J_SUPER["🔵 NEO4J SUPERAPP<br/>19M triples<br/>8GB"]
+            LANCEDB_PROD["🚀 LANCEDB PRODUCT<br/>10M vectors<br/>500MB"]
+            PG_APP["🗄️ POSTGRESQL APP<br/>4 databases<br/>2GB"]
+            REDIS_PROD["🔴 REDIS PRODUCT<br/>Cache + Queue<br/>1GB"]
+        end
+        
+        subgraph AGENT_DATA["🤖 AGENT DATA"]
+            NEO4J_AGENT["🔵 NEO4J AGENT<br/>1M triples<br/>2GB"]
+            LANCEDB_AGENT["🚀 LANCEDB AGENT<br/>400k vectors<br/>300MB"]
+            PG_AGENT["🗄️ POSTGRESQL AGENT<br/>2 databases<br/>1GB"]
+            REDIS_AGENT["🔴 REDIS AGENT<br/>Task Queue<br/>500MB"]
+        end
+        
+        subgraph CONFIG_DATA["⚙️ CONFIGS & SECRETS"]
+            VAULTWARDEN["🔑 VAULTWARDEN<br/>Secrets vault"]
+            WINDMILL_WORKFLOWS["🔄 WINDMILL WORKFLOWS<br/>Automation"]
+            SKILLS_LIB["📚 SKILLS LIBRARY<br/>100+ skills"]
+            CONFIGS["⚙️ APP CONFIGS<br/>Docker compose"]
+        end
+    end
+    
+    subgraph TIER1["🔴 TIER 1: PRIMARY BACKUP (R2)"]
+        direction TB
+        
+        R2_PRIMARY["☁️ CLOUDFLARE R2 PRIMARY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: Every 4-6 hours<br/>Method: Automated (Windmill)<br/>Retention: 30 days<br/>Cost: $1.50/mo (100GB)<br/>Egress: FREE<br/><br/>Includes:<br/>✅ All VPS databases<br/>✅ Application configs<br/>✅ Vaultwarden vault<br/>✅ Windmill workflows<br/>✅ Skills library<br/><br/>Backup Process:<br/>1. Windmill triggers backup<br/>2. Export databases<br/>3. Compress (gzip)<br/>4. Upload to R2<br/>5. Verify integrity<br/>6. Notify Slack<br/><br/>Recovery Time: <1 hour"]
+    end
+    
+    subgraph TIER2["🟡 TIER 2: SECONDARY BACKUP (Google Drive)"]
+        direction TB
+        
+        GDRIVE_SECONDARY["📁 GOOGLE DRIVE BUSINESS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: Daily (critical only)<br/>Method: Automated (Windmill)<br/>Retention: 30 days<br/>Cost: FREE (Business)<br/><br/>Includes (Critical Only):<br/>✅ Vaultwarden (encrypted)<br/>✅ PostgreSQL (critical tables)<br/>✅ Neo4j Internal<br/>✅ Configs & secrets<br/><br/>Backup Process:<br/>1. Windmill triggers daily<br/>2. Export critical data<br/>3. Encrypt (AES-256)<br/>4. Upload to GDrive<br/>5. Verify upload<br/>6. Log to PostgreSQL<br/><br/>Recovery Time: <2 hours"]
+    end
+    
+    subgraph TIER3["🟢 TIER 3: COLD STORAGE (R2 Glacier)"]
+        direction TB
+        
+        R2_GLACIER["❄️ R2 GLACIER TIER<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: Weekly<br/>Method: Lifecycle policy<br/>Retention: 1 year<br/>Cost: $0.50/mo (100GB)<br/><br/>Includes:<br/>✅ Monthly snapshots<br/>✅ Audit logs<br/>✅ Historical data<br/>✅ Compliance records<br/><br/>Lifecycle Policy:<br/>1. R2 Primary > 30 days<br/>2. Auto-move to Glacier<br/>3. Keep for 1 year<br/>4. Auto-delete after 1 year<br/><br/>Recovery Time: <4 hours"]
+    end
+    
+    subgraph TIER4["⚪ TIER 4: EXTERNAL GIT (GitHub)"]
+        direction TB
+        
+        GITHUB_BACKUP["🐙 GITHUB PRIVATE REPOS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Frequency: On change<br/>Method: Git auto-commit<br/>Retention: Unlimited<br/>Cost: FREE<br/><br/>Includes:<br/>✅ Windmill workflows (JSON)<br/>✅ Skills Library (code)<br/>✅ Infrastructure configs<br/>✅ Documentation<br/>✅ Docker compose files<br/><br/>Auto-commit Process:<br/>1. File change detected<br/>2. Git add + commit<br/>3. Push to GitHub<br/>4. Trigger CI/CD<br/>5. Notify team<br/><br/>Recovery Time: <30 min"]
+    end
+    
+    subgraph CDC_LAKEHOUSE["🌊 CONTINUOUS DATA CAPTURE"]
+        direction TB
+        
+        CDC["🔄 CDC PIPELINE<br/>━━━━━━━━━━━━━━━━━━━━<br/>Real-time data capture<br/>Latency: <100ms<br/><br/>Sources:<br/>• PostgreSQL WAL<br/>• Neo4j CDC plugin<br/>• Redis Streams<br/><br/>Process:<br/>1. Capture changes<br/>2. Stream to Redis<br/>3. LangGraph consumes<br/>4. Write to Lakehouse"]
+        
+        LAKEHOUSE["🏠 LAKEHOUSE (R2)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Tech Stack:<br/>• Cloudflare R2<br/>• Apache Parquet<br/>• Snappy compression<br/>• DuckDB query<br/>• Iceberg catalog<br/><br/>Layers:<br/>📁 bronze/ (raw CDC)<br/>📁 silver/ (cleaned)<br/>📁 gold/ (aggregated)<br/><br/>Retention: 90 days<br/>Cost: $0.50/mo"]
+    end
+    
+    subgraph AUTOMATION["🤖 BACKUP AUTOMATION (VPS1)"]
+        direction LR
+        
+        WINDMILL["🔄 WINDMILL<br/>━━━━━━━━━━━━━━━━━━━━<br/>Backup Orchestrator<br/><br/>Schedules:<br/>• Every 4h: Tier 1<br/>• Daily 2am: Tier 2<br/>• Weekly Sun: Verify<br/><br/>Monitors:<br/>• Backup success<br/>• File integrity<br/>• Storage usage<br/>• Alert on failure"]
+        
+        DATA_AGENT["📊 DATA AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Backup Manager<br/><br/>Responsibilities:<br/>• Monitor CDC health<br/>• Trigger backups<br/>• Verify integrity<br/>• Alert on issues<br/><br/>Success: 100%"]
+    end
+    
+    subgraph MONITORING["📊 MONITORING & ALERTS"]
+        direction LR
+        
+        PROMETHEUS["📈 PROMETHEUS<br/>Backup metrics<br/>• Success rate<br/>• Duration<br/>• Size<br/>• Errors"]
+        
+        ALERTA["🚨 ALERTA<br/>Backup alerts<br/>• Failed backup<br/>• Integrity error<br/>• Storage full<br/>• Auto-escalate"]
+        
+        GRAFANA["📊 GRAFANA<br/>Backup dashboard<br/>• Last backup time<br/>• Success rate<br/>• Storage usage<br/>• Recovery time"]
+    end
+    
+    %% Connections - Data Sources to Tier 1
+    NEO4J_INT --> R2_PRIMARY
+    NEO4J_SUPER --> R2_PRIMARY
+    LANCEDB_PROD --> R2_PRIMARY
+    PG_APP --> R2_PRIMARY
+    REDIS_PROD --> R2_PRIMARY
+    NEO4J_AGENT --> R2_PRIMARY
+    LANCEDB_AGENT --> R2_PRIMARY
+    PG_AGENT --> R2_PRIMARY
+    REDIS_AGENT --> R2_PRIMARY
+    VAULTWARDEN --> R2_PRIMARY
+    WINDMILL_WORKFLOWS --> R2_PRIMARY
+    SKILLS_LIB --> R2_PRIMARY
+    CONFIGS --> R2_PRIMARY
+    
+    %% Connections - Critical Data to Tier 2
+    VAULTWARDEN --> GDRIVE_SECONDARY
+    PG_APP --> GDRIVE_SECONDARY
+    NEO4J_INT --> GDRIVE_SECONDARY
+    CONFIGS --> GDRIVE_SECONDARY
+    
+    %% Connections - Tier 1 to Tier 3
+    R2_PRIMARY -.->|After 30 days| R2_GLACIER
+    
+    %% Connections - Code to Tier 4
+    WINDMILL_WORKFLOWS --> GITHUB_BACKUP
+    SKILLS_LIB --> GITHUB_BACKUP
+    CONFIGS --> GITHUB_BACKUP
+    
+    %% Connections - CDC
+    PG_APP --> CDC
+    NEO4J_INT --> CDC
+    NEO4J_SUPER --> CDC
+    CDC --> LAKEHOUSE
+    LAKEHOUSE --> R2_GLACIER
+    
+    %% Connections - Automation
+    WINDMILL --> R2_PRIMARY
+    WINDMILL --> GDRIVE_SECONDARY
+    DATA_AGENT --> WINDMILL
+    DATA_AGENT --> CDC
+    
+    %% Connections - Monitoring
+    WINDMILL --> PROMETHEUS
+    DATA_AGENT --> PROMETHEUS
+    PROMETHEUS --> ALERTA
+    PROMETHEUS --> GRAFANA
+    
+    %% Styling
+    classDef tier1Style fill:#FFEBEE,stroke:#C62828,stroke-width:3px
+    classDef tier2Style fill:#FFF9C4,stroke:#F9A825,stroke-width:3px
+    classDef tier3Style fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef tier4Style fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef dataStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef cdcStyle fill:#E0F2F1,stroke:#00897B,stroke-width:2px
+    classDef automationStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    classDef monitoringStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    
+    class R2_PRIMARY tier1Style
+    class GDRIVE_SECONDARY tier2Style
+    class R2_GLACIER tier3Style
+    class GITHUB_BACKUP tier4Style
+    class NEO4J_INT,NEO4J_SUPER,LANCEDB_PROD,PG_APP,REDIS_PROD,NEO4J_AGENT,LANCEDB_AGENT,PG_AGENT,REDIS_AGENT,VAULTWARDEN,WINDMILL_WORKFLOWS,SKILLS_LIB,CONFIGS dataStyle
+    class CDC,LAKEHOUSE cdcStyle
+    class WINDMILL,DATA_AGENT automationStyle
+    class PROMETHEUS,ALERTA,GRAFANA monitoringStyle

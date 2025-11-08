@@ -1,0 +1,52 @@
+[
+  {
+    "id": "TC001",
+    "title": "get gap analysis metrics",
+    "description": "Verify that the GET /gap_analysis endpoint returns real-time GAP analysis metrics including total tasks, completed, in progress, pending counts, and gap percentage accurately."
+  },
+  {
+    "id": "TC002",
+    "title": "get tracker app data by phase",
+    "description": "Test the GET /tracker_app_data endpoint with phase_id parameter to retrieve all tasks with enriched data such as parent, children, and dependencies for the specified phase."
+  },
+  {
+    "id": "TC003",
+    "title": "update task status",
+    "description": "Validate the PUT /tasks/{id} endpoint to update a task's status, started_at, and completed_at timestamps, ensuring status transitions are correctly saved and reflected."
+  },
+  {
+    "id": "TC004",
+    "title": "load milestone tasks for setup wizard",
+    "description": "Check the GET /tracker_app_data?is_milestone=true endpoint to load milestone tasks correctly for display in the Setup Wizard."
+  },
+  {
+    "id": "TC005",
+    "title": "save setup wizard configuration",
+    "description": "Ensure the POST localStorage endpoint saves the Setup Wizard configuration data including business info, infrastructure, financial, and AI models accurately to localStorage."
+  },
+  {
+    "id": "TC006",
+    "title": "display founder guide content",
+    "description": "Verify that the GET static_content endpoint returns the complete Founder Guide content with all sections accessible and expandable/collapsible."
+  },
+  {
+    "id": "TC007",
+    "title": "get tasks for visual gantt chart",
+    "description": "Test the GET /tasks endpoint to retrieve all tasks required for the Visual Gantt Chart timeline visualization with correct status and scheduling data."
+  },
+  {
+    "id": "TC008",
+    "title": "get phases for timeline sections",
+    "description": "Validate the GET /phases endpoint to fetch phase information used to segment the timeline view correctly."
+  },
+  {
+    "id": "TC009",
+    "title": "get tasks organized by status for kanban board",
+    "description": "Check the GET /tasks endpoint to retrieve tasks organized by status for display on the Kanban Board columns."
+  },
+  {
+    "id": "TC010",
+    "title": "update task status on kanban drag drop",
+    "description": "Test the PUT /tasks/{id} endpoint to update task status when a task card is dragged and dropped between Kanban Board columns, ensuring real-time sync."
+  }
+]

@@ -1,0 +1,53 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#42A5F5','secondaryColor':'#F3E5F5','tertiaryColor':'#E8F5E9'}}}%%
+
+%% TRM AI V10 - 4 VPS INFRASTRUCTURE
+%% Philosophy: "AI CÓ MÁY TÍNH RIÊNG" - $98/mo, 490x ROI
+%% Link: See NEW-V10-00-MASTER-OVERVIEW.mmd
+
+graph TB
+    subgraph VPS1["🏢 VPS1: CONTROL (24GB)"]
+        VPS1_INFRA["Infrastructure: 5.8GB<br/>Coolify, Traefik, Kopia, Kamal"]
+        VPS1_MONITOR["Observability: 8GB<br/>Grafana, Prometheus, Loki"]
+        VPS1_AUTO["Automation: 800MB<br/>Windmill"]
+        VPS1_REALTIME["Real-Time: 1.3GB<br/>Supabase, Reflex"]
+        VPS1_DEVOPS["DevOps: 2.4GB<br/>Gitea, Trivy, Infisical"]
+        VPS1_MCP["MCP: 1GB<br/>ContextForge"]
+    end
+    
+    subgraph VPS2["🗄️ VPS2: DATABASES (24GB)"]
+        VPS2_PRODUCT["Product DBs: 12GB<br/>Neo4j x2, LanceDB, Postgres"]
+        VPS2_AGENT["Agent DBs: 4.8GB<br/>Neo4j, LanceDB, Postgres"]
+        VPS2_LAKEHOUSE["Lakehouse: 2.2GB<br/>DuckDB, Airbyte, dbt"]
+    end
+    
+    subgraph VPS3["🤖 VPS3: AI BRAIN (12GB)"]
+        VPS3_PRODUCT["Product AI: 6GB<br/>LangGraph, Zep, Skills"]
+        VPS3_APPS["Apps: 2GB<br/>LobeChat, MetaMCP"]
+        VPS3_AGENT["Agent AI: 3GB<br/>8 Agents, LangGraph"]
+    end
+    
+    subgraph VPS4["⚡ VPS4: CODE EXEC (8GB)"]
+        VPS4_K3S["K3s: 1GB<br/>Kubernetes"]
+        VPS4_SKYPILOT["SkyPilot: 7GB<br/>Code execution pods"]
+    end
+    
+    VPS1 -->|"Deploy control"| VPS2
+    VPS1 -->|"Deploy control"| VPS3
+    VPS1 -->|"Deploy control"| VPS4
+    VPS3 -->|"Query data"| VPS2
+    VPS3 -->|"Execute code"| VPS4
+    
+    BENEFITS["💰 COST & ROI:<br/>✅ VPS1-3: $38/mo<br/>✅ VPS4: $10/mo<br/>✅ Total: $48/mo infra<br/>✅ 490x ROI ($76k → $155/mo)<br/>✅ 7.2GB RAM saved vs old"]
+    VPS1 -.-> BENEFITS
+    
+    classDef vps1Style fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef vps2Style fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px
+    classDef vps3Style fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef vps4Style fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef benefitStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px
+    
+    class VPS1_INFRA,VPS1_MONITOR,VPS1_AUTO,VPS1_REALTIME,VPS1_DEVOPS,VPS1_MCP vps1Style
+    class VPS2_PRODUCT,VPS2_AGENT,VPS2_LAKEHOUSE vps2Style
+    class VPS3_PRODUCT,VPS3_APPS,VPS3_AGENT vps3Style
+    class VPS4_K3S,VPS4_SKYPILOT vps4Style
+    class BENEFITS benefitStyle

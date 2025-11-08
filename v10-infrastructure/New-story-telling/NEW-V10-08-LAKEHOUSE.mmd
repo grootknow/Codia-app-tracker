@@ -1,0 +1,56 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#42A5F5','secondaryColor':'#F3E5F5','tertiaryColor':'#E8F5E9'}}}%%
+
+%% TRM AI V10 - DATA LAKEHOUSE
+%% Philosophy: "AI CÓ MÁY TÍNH RIÊNG" - 100x faster analytics
+%% Link: See NEW-V10-00-MASTER-OVERVIEW.mmd
+
+graph TB
+    subgraph SOURCES["📦 SOURCES"]
+        POSTGRES["🐘 PostgreSQL"]
+        NEO4J["🕸️ Neo4j"]
+        EXTERNAL["🌐 APIs"]
+    end
+    
+    subgraph EXTRACT["📥 EXTRACT"]
+        AIRBYTE["🔄 Airbyte<br/>300+ connectors"]
+        UNSTRUCTURED["📄 Unstructured.io<br/>PDF/Word extraction"]
+    end
+    
+    subgraph STORAGE["💾 STORAGE"]
+        ICEBERG["🧊 Iceberg<br/>Time travel"]
+        R2["☁️ R2<br/>$0.015/GB"]
+    end
+    
+    subgraph TRANSFORM["🛠️ TRANSFORM"]
+        DBT["🛠️ dbt<br/>SQL transforms"]
+    end
+    
+    subgraph ANALYTICS["📊 ANALYTICS"]
+        DUCKDB["🦆 DuckDB<br/>100x faster<br/>OLAP engine"]
+    end
+    
+    POSTGRES --> AIRBYTE
+    NEO4J --> AIRBYTE
+    EXTERNAL --> AIRBYTE
+    AIRBYTE --> UNSTRUCTURED
+    UNSTRUCTURED --> ICEBERG
+    ICEBERG --> R2
+    R2 --> DBT
+    DBT --> DUCKDB
+    
+    BENEFITS["🎯 BENEFITS:<br/>✅ 100x faster than Postgres<br/>✅ Unified data lake<br/>✅ Time travel queries<br/>✅ $3/mo storage cost"]
+    DUCKDB -.-> BENEFITS
+    
+    classDef sourceStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef extractStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px
+    classDef storageStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef transformStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef analyticsStyle fill:#E0F2F1,stroke:#00796B,stroke-width:3px
+    classDef benefitStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px
+    
+    class POSTGRES,NEO4J,EXTERNAL sourceStyle
+    class AIRBYTE,UNSTRUCTURED extractStyle
+    class ICEBERG,R2 storageStyle
+    class DBT transformStyle
+    class DUCKDB analyticsStyle
+    class BENEFITS benefitStyle

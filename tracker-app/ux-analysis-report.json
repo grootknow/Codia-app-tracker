@@ -1,0 +1,88 @@
+{
+  "timestamp": "2025-11-08T00:03:05.357Z",
+  "views": {
+    "dashboard": {
+      "stats": 0,
+      "buttons": 2,
+      "hasRecommendations": true,
+      "bodyPreview": "\n    CODIA TRACKERV10 InfrastructureDashboardTasksAnalyticsDashboardV10 Infrastructure - AI có máy tính riêngCompletion4.5%12 / 269 tasksIn Progress5Active tasksVelocity1.4tasks/day (7d avg)Hours3of 381h estimatedHuman TasksTasks for founder77View all →AI Agent TasksAutomated execution147View all →AI Project AnalysisCritical PathLongest path duration:17 days1 tasks on critical pathTeam Velocity1.43tasks/day1.6hhours/dayEstimated CompletionTarget date:5/7/2026~180 days remaining (HIGH confidence)",
+      "screenshot": "analysis-dashboard.png",
+      "findings": [
+        "❌ No stat cards rendered"
+      ]
+    },
+    "list": {
+      "filters": 3,
+      "hasSearchBox": true,
+      "taskCards": 77,
+      "hasBlockedBadge": true,
+      "hasProgress": false,
+      "hasCurrentStep": false,
+      "hasHumanTab": true,
+      "hasAITab": true,
+      "firstCardPreview": "<div class=\"flex items-start justify-between mb-2\"><div class=\"flex items-center gap-2\"><svg xmlns=\"http://www.w3.org/2000/svg\" width=\"24\" height=\"24\" viewBox=\"0 0 24 24\" fill=\"none\" stroke=\"currentCo",
+      "screenshot": "analysis-list.png",
+      "findings": []
+    },
+    "kanban": {
+      "columns": 4,
+      "columnNames": [
+        "Pending",
+        "In Progress",
+        "Blocked",
+        "Done"
+      ],
+      "filters": 3,
+      "hasSearchBox": true,
+      "taskCards": 0,
+      "isDraggable": false,
+      "screenshot": "analysis-kanban.png",
+      "findings": [
+        "⚠️ Expected 3 columns (PENDING, IN_PROGRESS, DONE)",
+        "❌ Cards not draggable"
+      ]
+    },
+    "gantt": {
+      "taskBars": 268,
+      "hasCriticalPath": true,
+      "phaseHeaders": 2,
+      "arrows": 0,
+      "hasTimeline": true,
+      "hasZoom": true,
+      "screenshot": "analysis-gantt.png",
+      "findings": []
+    },
+    "timeline": {
+      "phaseCards": 7,
+      "filters": 3,
+      "hasSearchBox": true,
+      "expandIcons": 302,
+      "visibleTasks": 271,
+      "progressBars": 0,
+      "screenshot": "analysis-timeline.png",
+      "findings": [
+        "⚠️ No progress bars"
+      ]
+    },
+    "sprint": {
+      "hasAISuggestions": true,
+      "hasVelocity": true,
+      "hasCapacity": true,
+      "backlogCards": 0,
+      "sprintCards": 0,
+      "hasSprints": true,
+      "screenshot": "analysis-sprint.png",
+      "findings": [
+        "⚠️ No backlog tasks"
+      ]
+    },
+    "analytics": {
+      "hasRecommendations": true,
+      "hasRisks": false,
+      "hasProgress": true,
+      "taskCards": 30,
+      "screenshot": "analysis-analytics.png",
+      "findings": []
+    }
+  }
+}

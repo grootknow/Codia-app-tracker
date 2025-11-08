@@ -1,0 +1,49 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#42A5F5','secondaryColor':'#F3E5F5','tertiaryColor':'#E8F5E9'}}}%%
+
+%% TRM AI V10 - CONTRACTOR MANAGEMENT
+%% Philosophy: "AI CÓ MÁY TÍNH RIÊNG" - AI manages contractors
+%% Link: See NEW-V10-00-MASTER-OVERVIEW.mmd
+
+graph TB
+    subgraph ONBOARDING["📥 ONBOARDING"]
+        NOTION["📝 Notion<br/>Contractor database"]
+        WINDMILL["⚡ Windmill<br/>Onboarding workflow"]
+    end
+    
+    subgraph ACCESS["🔐 ACCESS CONTROL"]
+        INFISICAL["🔐 Infisical<br/>Provision secrets"]
+        COOLIFY["🐳 Coolify<br/>Provision resources"]
+    end
+    
+    subgraph TRACKING["📊 TRACKING"]
+        POSTGRES["🐘 PostgreSQL<br/>Time tracking"]
+        NEO4J["🕸️ Neo4j<br/>Contractor graph"]
+    end
+    
+    subgraph OFFBOARDING["📤 OFFBOARDING"]
+        REVOKE["🔒 Revoke Access<br/>Auto-revoke secrets"]
+        BACKUP["💾 Backup Data<br/>Archive work"]
+    end
+    
+    NOTION -->|"Trigger"| WINDMILL
+    WINDMILL -->|"Provision"| INFISICAL
+    WINDMILL -->|"Provision"| COOLIFY
+    INFISICAL -->|"Log"| POSTGRES
+    POSTGRES -->|"Build graph"| NEO4J
+    NEO4J -->|"Offboard"| REVOKE
+    REVOKE -->|"Archive"| BACKUP
+    
+    BENEFITS["🎯 BENEFITS:<br/>✅ Auto-onboarding<br/>✅ Auto-offboarding<br/>✅ Audit trail<br/>✅ Zero manual work"]
+    WINDMILL -.-> BENEFITS
+    
+    classDef onboardStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef accessStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px
+    classDef trackStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef offboardStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef benefitStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px
+    
+    class NOTION,WINDMILL onboardStyle
+    class INFISICAL,COOLIFY accessStyle
+    class POSTGRES,NEO4J trackStyle
+    class REVOKE,BACKUP offboardStyle
+    class BENEFITS benefitStyle

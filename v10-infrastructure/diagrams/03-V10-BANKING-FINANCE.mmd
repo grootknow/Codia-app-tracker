@@ -1,0 +1,117 @@
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F3E5F5','primaryTextColor':'#7B1FA2','primaryBorderColor':'#7B1FA2','lineColor':'#424242','fontSize':'14px'}}}%%
+
+graph TB
+    %% ============================================================================
+    %% V9 BANKING & FINANCE ARCHITECTURE
+    %% ============================================================================
+    
+    subgraph FOUNDERS["👥 FOUNDERS"]
+        F1["👤 FOUNDER 1<br/>CEO/Admin<br/>Full access"]
+        F2["👤 FOUNDER 2<br/>CTO/Dev<br/>Limited access"]
+    end
+    
+    subgraph US_BANKING["🇺🇸 US BANKING"]
+        direction TB
+        
+        MERCURY["💳 MERCURY BANK<br/>━━━━━━━━━━━━━━━━━━━━<br/>Primary Checking Account<br/>FDIC Insured ($250k)<br/>ACH: Free<br/>Wire: $10-25<br/>Debit Cards: 2<br/>API: Yes (Windmill integration)"]
+        
+        WISE_US["💱 WISE BUSINESS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Multi-currency Wallet<br/>USD, EUR, GBP, SGD, VND<br/>Virtual Cards: Unlimited<br/>International Transfers: Low fees<br/>API: Yes"]
+    end
+    
+    subgraph PAYMENT_GATEWAYS["💳 PAYMENT GATEWAYS"]
+        direction TB
+        
+        STRIPE["💳 STRIPE<br/>━━━━━━━━━━━━━━━━━━━━<br/>Primary Payment Processor<br/>Connected to Mercury<br/>Fees: 2.9% + $0.30<br/>Webhooks: Yes (Windmill)<br/>API: Full access"]
+        
+        PAYPAL["💳 PAYPAL BUSINESS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Alternative Payment<br/>Connected to Mercury<br/>Fees: 3.49% + $0.49<br/>Use: Backup only"]
+        
+        LEMONSQUEEZY["🍋 LEMON SQUEEZY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Merchant of Record<br/>Handles: Tax, VAT, Compliance<br/>Fees: 5% + $0.50<br/>Use: International sales"]
+    end
+    
+    subgraph VIRTUAL_CARDS["💳 VIRTUAL CARDS"]
+        PRIVACY["💳 PRIVACY.COM<br/>━━━━━━━━━━━━━━━━━━━━<br/>Unlimited Virtual Cards<br/>Connected to Mercury<br/>Use: SaaS subscriptions<br/>Control: Spending limits<br/>Security: One-time use"]
+    end
+    
+    subgraph VN_BANKING["🇻🇳 VN BANKING (Personal)"]
+        VN_BANK["🏦 Vietcombank<br/>Personal VND Account<br/>For: Local expenses"]
+        
+        WISE_VN["💱 Wise Personal<br/>Multi-currency<br/>For: International transfers"]
+    end
+    
+    subgraph AUTOMATION["🤖 AI AUTOMATION (Windmill)"]
+        direction TB
+        
+        WINDMILL_SYNC["🔄 TRANSACTION SYNC<br/>━━━━━━━━━━━━━━━━━━━━<br/>Mercury API → PostgreSQL<br/>Stripe Webhooks → Notion<br/>Frequency: Real-time<br/>Latency: <1 minute"]
+        
+        WINDMILL_CATEGORIZE["🏷️ AUTO-CATEGORIZE<br/>━━━━━━━━━━━━━━━━━━━━<br/>AI categorizes transactions<br/>LangGraph + GPT-4<br/>Categories: 10+<br/>Accuracy: 95%"]
+        
+        WINDMILL_ALERT["🚨 SMART ALERTS<br/>━━━━━━━━━━━━━━━━━━━━<br/>High spend: >$100<br/>Unusual activity<br/>Low balance: <$1000<br/>Send to: Slack + Email"]
+        
+        WINDMILL_REPORT["📊 DAILY REPORTS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Revenue summary<br/>Expense breakdown<br/>Profit margin<br/>Send to: Notion + Slack"]
+    end
+    
+    %% ============================================================================
+    %% MONEY FLOWS
+    %% ============================================================================
+    
+    %% Revenue flows
+    STRIPE -->|Daily payout| MERCURY
+    PAYPAL -->|Weekly payout| MERCURY
+    LEMONSQUEEZY -->|Monthly payout| MERCURY
+    
+    %% Expense flows
+    MERCURY -->|Fund| PRIVACY
+    PRIVACY -->|Pay| SAAS[💰 SaaS Subscriptions<br/>Stripe, OpenAI, Cloudflare, etc.]
+    
+    MERCURY -->|Wire| WISE_US
+    WISE_US -->|International| CONTRACTORS[👥 Contractors<br/>Worldwide]
+    
+    MERCURY -->|Transfer| WISE_VN
+    WISE_VN -->|VND| VN_BANK
+    VN_BANK -->|Local| FOUNDERS
+    
+    %% Automation flows
+    MERCURY -.->|API sync| WINDMILL_SYNC
+    STRIPE -.->|Webhooks| WINDMILL_SYNC
+    WINDMILL_SYNC -->|Store| NOTION_DB[📊 Notion<br/>Transactions DB]
+    WINDMILL_SYNC -->|Categorize| WINDMILL_CATEGORIZE
+    WINDMILL_CATEGORIZE -->|Update| NOTION_DB
+    WINDMILL_SYNC -->|Check rules| WINDMILL_ALERT
+    WINDMILL_SYNC -->|Generate| WINDMILL_REPORT
+    
+    %% Founder access
+    F1 -.->|Full access| MERCURY
+    F1 -.->|Full access| STRIPE
+    F1 -.->|Full access| WISE_US
+    F2 -.->|View only| NOTION_DB
+    
+    %% ============================================================================
+    %% COST TRACKING
+    %% ============================================================================
+    
+    subgraph COST_BREAKDOWN["💰 MONTHLY COST TRACKING"]
+        direction LR
+        
+        INFRA_COST["🖥️ Infrastructure<br/>━━━━━━━━━━━━━━━━━━━━<br/>VPS: $37.95<br/>Storage: $18.50<br/>Total: $56.45"]
+        
+        AI_COST["🤖 AI Models<br/>━━━━━━━━━━━━━━━━━━━━<br/>Claude 4.5: $20<br/>Grok 4 Fast: $8<br/>Gemini 2.0: $5<br/>Total: $33 (variable)"]
+        
+        MCP_COST["🔧 External MCPs<br/>━━━━━━━━━━━━━━━━━━━━<br/>Apify: $10<br/>TwelveLabs: $15<br/>Perplexity: $5<br/>Replicate: $3<br/>Total: $33"]
+        
+        SAAS_COST["📦 SaaS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Notion: $10<br/>QuickBooks: $30<br/>Total: $40"]
+        
+        TOTAL_COST["💵 TOTAL<br/>━━━━━━━━━━━━━━━━━━━━<br/>Fixed: $129.45<br/>Variable: $0-50<br/>Average: $140/mo"]
+    end
+    
+    %% Styling
+    classDef founderStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef bankingStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px
+    classDef paymentStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef automationStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef costStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    
+    class F1,F2 founderStyle
+    class MERCURY,WISE_US,VN_BANK,WISE_VN bankingStyle
+    class STRIPE,PAYPAL,LEMONSQUEEZY,PRIVACY paymentStyle
+    class WINDMILL_SYNC,WINDMILL_CATEGORIZE,WINDMILL_ALERT,WINDMILL_REPORT automationStyle
+    class INFRA_COST,AI_COST,MCP_COST,SAAS_COST,TOTAL_COST costStyle

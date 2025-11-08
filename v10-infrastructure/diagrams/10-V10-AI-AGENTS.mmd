@@ -1,0 +1,176 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#FFEBEE',
+    'primaryTextColor': '#C62828',
+    'primaryBorderColor': '#E53935',
+    'lineColor': '#424242',
+    'secondaryColor': '#E1F5FE',
+    'tertiaryColor': '#F3E5F5',
+    'fontSize': '14px'
+  }
+}}%%
+
+graph TB
+    %% ============================================================================
+    %% V10 AI AGENTS - 8 AUTONOMOUS AGENTS
+    %% ============================================================================
+    %% Version: 10.0 ULTIMATE
+    %% Focus: 8 AI Agents for Autonomous Operations
+    %% Date: 2025-11-04
+    
+    subgraph AGENT_SYSTEM["🤖 AGENT AI SYSTEM (VPS3 - 3GB RAM)"]
+        direction TB
+        
+        subgraph ORCHESTRATOR["🧠 AGENT ORCHESTRATOR"]
+            LG_AGENT["🧠 LANGGRAPH AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Central Orchestrator<br/>1GB RAM | Port 8010<br/><br/>Responsibilities:<br/>• Route tasks to agents<br/>• Manage agent state<br/>• Handle errors<br/>• Coordinate workflows"]
+            
+            ZEP_AGENT["🧩 ZEP AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Agent Memory<br/>500MB | Port 8011<br/><br/>Stores:<br/>• Conversation history<br/>• Pattern storage<br/>• Agent learnings<br/>• Task history"]
+            
+            CONTEXTFORGE_AGENT["🔌 CONTEXTFORGE AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Internal MCP Gateway<br/>500MB | Port 8012<br/><br/>Provides:<br/>• Tool routing<br/>• API aggregation<br/>• Internal MCPs"]
+        end
+        
+        subgraph AGENTS["🤖 8 AUTONOMOUS AI AGENTS (1.5GB total)"]
+            direction LR
+            
+            AGENT_DEVOPS["🔧 DEVOPS COMMANDER<br/>━━━━━━━━━━━━━━━━━━━━<br/>190MB RAM<br/><br/>Responsibilities:<br/>• Deploy services<br/>• Restart containers<br/>• Scale resources<br/>• Update configs<br/><br/>Tools:<br/>• Coolify API<br/>• Docker API<br/>• Headscale VPN<br/><br/>Success: <5 min deploy"]
+            
+            AGENT_DATA["📊 DATA ORCHESTRATOR<br/>━━━━━━━━━━━━━━━━━━━━<br/>190MB RAM<br/><br/>Responsibilities:<br/>• Monitor CDC pipeline<br/>• Trigger backups<br/>• Data quality checks<br/>• ETL management<br/><br/>Tools:<br/>• Neo4j API<br/>• LanceDB API<br/>• PostgreSQL<br/><br/>Success: 100% backup"]
+            
+            AGENT_ALERT["🚨 ALERT COMMANDER<br/>━━━━━━━━━━━━━━━━━━━━<br/>190MB RAM<br/><br/>Responsibilities:<br/>• Monitor Alerta<br/>• Triage alerts<br/>• Auto-fix issues<br/>• Escalate critical<br/><br/>Tools:<br/>• Alerta API<br/>• Prometheus<br/>• Sentry<br/><br/>Success: 70% auto-fix"]
+            
+            AGENT_FINANCE["💰 FINANCE TRACKER<br/>━━━━━━━━━━━━━━━━━━━━<br/>190MB RAM<br/><br/>Responsibilities:<br/>• Track daily costs<br/>• Monitor API usage<br/>• Alert on overruns<br/>• Generate reports<br/><br/>Tools:<br/>• Mercury API<br/>• Stripe API<br/>• Prometheus<br/><br/>Success: 100% accuracy"]
+            
+            AGENT_DOC["📝 DOC WRITER<br/>━━━━━━━━━━━━━━━━━━━━<br/>190MB RAM<br/><br/>Responsibilities:<br/>• Auto-gen API docs<br/>• Update diagrams<br/>• Create runbooks<br/>• Maintain changelog<br/><br/>Tools:<br/>• GitHub API<br/>• Notion API<br/>• Mermaid<br/><br/>Success: <7 days fresh"]
+            
+            AGENT_COMPLIANCE["⚖️ COMPLIANCE GUARDIAN<br/>━━━━━━━━━━━━━━━━━━━━<br/>190MB RAM<br/><br/>Responsibilities:<br/>• GDPR checks<br/>• Security audits<br/>• Access control<br/>• Data residency<br/><br/>Tools:<br/>• Trivy scanner<br/>• Vaultwarden<br/>• Logto<br/><br/>Success: 100% compliance"]
+            
+            AGENT_TEST["🧪 TEST RUNNER<br/>━━━━━━━━━━━━━━━━━━━━<br/>190MB RAM<br/><br/>Responsibilities:<br/>• Run E2E tests<br/>• API integration<br/>• Load testing<br/>• Performance bench<br/><br/>Tools:<br/>• Playwright<br/>• k6<br/>• Gitea Actions<br/><br/>Success: >80% coverage"]
+            
+            AGENT_LEARNING["🎓 SYSTEM LEARNER<br/>━━━━━━━━━━━━━━━━━━━━<br/>190MB RAM<br/><br/>Responsibilities:<br/>• Analyze patterns<br/>• Detect anomalies<br/>• Suggest optimizations<br/>• Update skills<br/><br/>Tools:<br/>• Neo4j Agent<br/>• LanceDB Agent<br/>• Prometheus<br/><br/>Success: >90% detection"]
+        end
+    end
+    
+    subgraph AGENT_DBS["🗄️ AGENT DATABASES (VPS2 - 6GB RAM)"]
+        direction LR
+        
+        NEO4J_AGENT["🔵 NEO4J AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>1M triples<br/>2GB RAM<br/><br/>Stores:<br/>• Incident graph<br/>• Pattern relationships<br/>• Agent knowledge<br/>• System topology"]
+        
+        LANCEDB_AGENT["🚀 LANCEDB AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>400k vectors<br/>300MB RAM ⭐ 6.7x less!<br/><br/>Stores:<br/>• Agent embeddings<br/>• Similarity search<br/>• Pattern matching<br/>• Anomaly detection"]
+        
+        PG_AGENT["🗄️ POSTGRESQL AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>2 databases<br/>1GB RAM<br/><br/>Stores:<br/>• Agent state<br/>• Task queue<br/>• Audit logs<br/>• Metrics"]
+        
+        REDIS_AGENT["🔴 REDIS AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Task Queue<br/>500MB<br/><br/>Provides:<br/>• Task queue<br/>• Pub/Sub<br/>• Cache<br/>• Rate limiting"]
+    end
+    
+    subgraph OBSERVABILITY["📊 OBSERVABILITY (VPS1)"]
+        direction LR
+        
+        ALERTA["🚨 ALERTA<br/>━━━━━━━━━━━━━━━━━━━━<br/>Alert Hub<br/>800MB<br/><br/>Aggregates:<br/>• Prometheus alerts<br/>• Sentry errors<br/>• Loki warnings<br/>• Custom alerts"]
+        
+        PROMETHEUS["📈 PROMETHEUS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Metrics<br/>2GB<br/><br/>Monitors:<br/>• Agent health<br/>• Task success rate<br/>• Response time<br/>• Resource usage"]
+        
+        SENTRY["🐛 SENTRY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Error Tracking<br/>1GB<br/><br/>Tracks:<br/>• Agent errors<br/>• Stack traces<br/>• Error frequency<br/>• Impact analysis"]
+    end
+    
+    subgraph INFRASTRUCTURE["🔧 INFRASTRUCTURE (VPS1)"]
+        direction LR
+        
+        COOLIFY["🚀 COOLIFY<br/>━━━━━━━━━━━━━━━━━━━━<br/>PaaS Manager<br/>2GB<br/><br/>Manages:<br/>• Deployments<br/>• Containers<br/>• Services<br/>• Configs"]
+        
+        HEADSCALE["🌐 HEADSCALE<br/>━━━━━━━━━━━━━━━━━━━━<br/>VPN Mesh<br/>200MB<br/><br/>Provides:<br/>• Secure network<br/>• Inter-VPS comm<br/>• Access control"]
+    end
+    
+    subgraph CODE_EXECUTION["💻 CODE EXECUTION (VPS4 - 8GB RAM) ⭐ V10"]
+        direction LR
+        
+        SKYPILOT["🚀 SKYPILOT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Code Sandbox<br/>8GB RAM<br/><br/>Features:<br/>• Python/JS/Multi-lang<br/>• Session pooling<br/>• Persistent volumes<br/>• 300ms execution<br/>• $0 usage cost"]
+        
+        K3S["☸️ K3S<br/>━━━━━━━━━━━━━━━━━━━━<br/>Kubernetes<br/>500MB<br/><br/>Manages:<br/>• Execution pods<br/>• Auto-scaling<br/>• Resource limits"]
+    end
+    
+    subgraph EXTERNAL["☁️ EXTERNAL SERVICES"]
+        direction LR
+        
+        MERCURY["💳 MERCURY<br/>Banking API"]
+        STRIPE["💳 STRIPE<br/>Payment API"]
+        GITHUB["🐙 GITHUB<br/>Code API"]
+        NOTION["📓 NOTION<br/>Workspace API"]
+    end
+    
+    %% Connections - Orchestrator to Agents
+    LG_AGENT --> AGENT_DEVOPS
+    LG_AGENT --> AGENT_DATA
+    LG_AGENT --> AGENT_ALERT
+    LG_AGENT --> AGENT_FINANCE
+    LG_AGENT --> AGENT_DOC
+    LG_AGENT --> AGENT_COMPLIANCE
+    LG_AGENT --> AGENT_TEST
+    LG_AGENT --> AGENT_LEARNING
+    
+    %% Connections - Agents to Orchestrator (bidirectional)
+    AGENT_DEVOPS --> LG_AGENT
+    AGENT_DATA --> LG_AGENT
+    AGENT_ALERT --> LG_AGENT
+    AGENT_FINANCE --> LG_AGENT
+    AGENT_DOC --> LG_AGENT
+    AGENT_COMPLIANCE --> LG_AGENT
+    AGENT_TEST --> LG_AGENT
+    AGENT_LEARNING --> LG_AGENT
+    
+    %% Connections - Orchestrator to Databases
+    LG_AGENT --> NEO4J_AGENT
+    LG_AGENT --> LANCEDB_AGENT
+    LG_AGENT --> PG_AGENT
+    LG_AGENT --> REDIS_AGENT
+    ZEP_AGENT --> NEO4J_AGENT
+    ZEP_AGENT --> LANCEDB_AGENT
+    
+    %% Connections - Alert Agent to Alerta
+    AGENT_ALERT --> ALERTA
+    ALERTA -.->|Read alerts| AGENT_ALERT
+    AGENT_ALERT --> PROMETHEUS
+    AGENT_ALERT --> SENTRY
+    
+    %% Connections - DevOps Agent to Infrastructure
+    AGENT_DEVOPS --> COOLIFY
+    AGENT_DEVOPS --> HEADSCALE
+    
+    %% Connections - Data Agent to Databases
+    AGENT_DATA --> NEO4J_AGENT
+    AGENT_DATA --> LANCEDB_AGENT
+    AGENT_DATA --> PG_AGENT
+    
+    %% Connections - Finance Agent to External
+    AGENT_FINANCE --> MERCURY
+    AGENT_FINANCE --> STRIPE
+    
+    %% Connections - Doc Agent to External
+    AGENT_DOC --> GITHUB
+    AGENT_DOC --> NOTION
+    
+    %% Connections - Learning Agent to Databases
+    AGENT_LEARNING --> NEO4J_AGENT
+    AGENT_LEARNING --> LANCEDB_AGENT
+    AGENT_LEARNING --> PROMETHEUS
+    
+    %% Connections - Product AI to VPS4 Code Execution ⭐ V10
+    LG_AGENT -.->|Execute code| SKYPILOT
+    AGENT_TEST --> SKYPILOT
+    
+    %% Styling
+    classDef orchestratorStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:3px
+    classDef agentStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    classDef dbStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef observabilityStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef infraStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:2px
+    classDef vps4Style fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef externalStyle fill:#FFCCBC,stroke:#E64A19,stroke-width:2px
+    
+    class LG_AGENT,ZEP_AGENT,CONTEXTFORGE_AGENT orchestratorStyle
+    class AGENT_DEVOPS,AGENT_DATA,AGENT_ALERT,AGENT_FINANCE,AGENT_DOC,AGENT_COMPLIANCE,AGENT_TEST,AGENT_LEARNING agentStyle
+    class NEO4J_AGENT,LANCEDB_AGENT,PG_AGENT,REDIS_AGENT dbStyle
+    class ALERTA,PROMETHEUS,SENTRY observabilityStyle
+    class COOLIFY,HEADSCALE infraStyle
+    class SKYPILOT,K3S vps4Style
+    class MERCURY,STRIPE,GITHUB,NOTION externalStyle

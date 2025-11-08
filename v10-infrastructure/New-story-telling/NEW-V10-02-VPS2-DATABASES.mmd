@@ -1,0 +1,93 @@
+%%{init: {'theme':'base', 'themeVariables': { 'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#42A5F5','secondaryColor':'#F3E5F5','tertiaryColor':'#E8F5E9'}}}%%
+
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+%% TRM AI PRODUCTION SYSTEM V10 - VPS2 DATABASES & LAKEHOUSE
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+%% Philosophy: "AI CÓ MÁY TÍNH RIÊNG" - Data sovereignty, 100% ownership
+%% Link: See NEW-V10-00-MASTER-OVERVIEW.mmd for full context
+%% Date: 2025-01-05
+%% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+
+graph TB
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 1: PRODUCT AI DATABASES (12GB)
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    subgraph VPS2["🗄️ VPS2: ALL DATABASES (24GB)"]
+        subgraph PRODUCT_DBS["Product AI Databases - 12GB"]
+            NEO4J_PROD_GRAPH["🕸️ Neo4j Product Graph<br/>6GB | 22M nodes<br/>⚡ Knowledge graph"]
+            NEO4J_PROD_CACHE["💾 Neo4j Product Cache<br/>3GB | 10M nodes<br/>⚡ Query cache"]
+            LANCE_PROD["🔍 LanceDB Product<br/>500MB | 15M vectors<br/>⚡ 8x less RAM than Qdrant!"]
+            POSTGRES_PROD["🐘 PostgreSQL Product<br/>1.5GB | Structured data"]
+            REDIS_PROD["⚡ Redis Product<br/>500MB | Session cache"]
+            NOCODB["📊 NocoDB<br/>500MB | No-code database UI"]
+        end
+        
+        subgraph AGENT_DBS["Agent AI Databases - 4.8GB"]
+            NEO4J_AGENT["🕸️ Neo4j Agent<br/>2GB | Infrastructure graph"]
+            LANCE_AGENT["🔍 LanceDB Agent<br/>300MB | 5M vectors<br/>⚡ 6.7x less RAM!"]
+            POSTGRES_AGENT["🐘 PostgreSQL Agent<br/>1.5GB | Logs & metrics"]
+            REDIS_AGENT["⚡ Redis Agent<br/>1GB | Task queue"]
+        end
+        
+        subgraph LAKEHOUSE["Data Lakehouse - 2.2GB"]
+            DUCKDB["🦆 DuckDB<br/>500MB | OLAP analytics<br/>⚡ 100x faster than Postgres"]
+            AIRBYTE["🔄 Airbyte<br/>500MB | Data pipelines<br/>⚡ 300+ connectors"]
+            DBT["🛠️ dbt<br/>200MB | Transform data<br/>⚡ SQL-based"]
+            UNSTRUCTURED["📄 Unstructured.io<br/>500MB | Document ETL<br/>⚡ PDF/Word extraction"]
+            ICEBERG["🧊 Apache Iceberg<br/>500MB | Table format<br/>⚡ Time travel"]
+        end
+    end
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 2: DATA FLOWS
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    %% Product AI Data Flow
+    NEO4J_PROD_GRAPH -->|"Cache queries"| NEO4J_PROD_CACHE
+    LANCE_PROD -->|"Vector search"| NEO4J_PROD_GRAPH
+    POSTGRES_PROD -->|"Structured data"| NEO4J_PROD_GRAPH
+    REDIS_PROD -->|"Session cache"| POSTGRES_PROD
+    NOCODB -->|"UI access"| POSTGRES_PROD
+    
+    %% Agent AI Data Flow
+    NEO4J_AGENT -->|"Infrastructure state"| POSTGRES_AGENT
+    LANCE_AGENT -->|"Semantic search"| NEO4J_AGENT
+    REDIS_AGENT -->|"Task queue"| POSTGRES_AGENT
+    
+    %% Lakehouse Flow
+    AIRBYTE -->|"Extract data"| UNSTRUCTURED
+    UNSTRUCTURED -->|"Transform"| DBT
+    DBT -->|"Load to"| DUCKDB
+    DUCKDB -->|"Store in"| ICEBERG
+    ICEBERG -->|"Query from"| NEO4J_PROD_GRAPH
+    
+    %% Cross-System Sync
+    NEO4J_PROD_GRAPH -.->|"Sync insights"| NEO4J_AGENT
+    DUCKDB -.->|"Analytics"| POSTGRES_PROD
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% LAYER 3: KEY BENEFITS
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    BENEFITS["💰 BENEFITS:<br/>✅ LanceDB: 5.2GB RAM saved vs Qdrant<br/>✅ DuckDB: 100x faster analytics<br/>✅ 100% data ownership<br/>✅ No vendor lock-in<br/>✅ Unlimited storage"]
+    
+    VPS2 -.->|"Delivers"| BENEFITS
+    
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    %% STYLING
+    %% ━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━
+    
+    classDef graphStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px,color:#0D47A1
+    classDef vectorStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px,color:#4A148C
+    classDef sqlStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px,color:#1B5E20
+    classDef cacheStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px,color:#E65100
+    classDef lakehouseStyle fill:#E0F2F1,stroke:#00796B,stroke-width:3px,color:#004D40
+    classDef benefitStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px,color:#880E4F
+    
+    class NEO4J_PROD_GRAPH,NEO4J_PROD_CACHE,NEO4J_AGENT graphStyle
+    class LANCE_PROD,LANCE_AGENT vectorStyle
+    class POSTGRES_PROD,POSTGRES_AGENT,NOCODB sqlStyle
+    class REDIS_PROD,REDIS_AGENT cacheStyle
+    class DUCKDB,AIRBYTE,DBT,UNSTRUCTURED,ICEBERG lakehouseStyle
+    class BENEFITS benefitStyle

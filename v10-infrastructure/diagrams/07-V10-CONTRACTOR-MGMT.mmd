@@ -1,0 +1,121 @@
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#F3E5F5','primaryTextColor':'#7B1FA2','primaryBorderColor':'#7B1FA2','lineColor':'#424242','fontSize':'14px'}}}%%
+
+graph TB
+    %% ============================================================================
+    %% V9 CONTRACTOR MANAGEMENT - AI-AUTOMATED ONBOARDING/OFFBOARDING
+    %% ============================================================================
+    
+    subgraph CONTRACTOR_TYPES["👥 CONTRACTOR TYPES (5)"]
+        direction LR
+        
+        TYPE1["💻 DEVELOPER<br/>━━━━━━━━━━━━━━━━━━━━<br/>Access: VPS3, GitHub, Coolify<br/>Duration: 3-6 months<br/>Rate: $20-50/hour"]
+        
+        TYPE2["🎨 DESIGNER<br/>━━━━━━━━━━━━━━━━━━━━<br/>Access: Figma, Notion, Drive<br/>Duration: 1-3 months<br/>Rate: $15-40/hour"]
+        
+        TYPE3["✍️ WRITER<br/>━━━━━━━━━━━━━━━━━━━━<br/>Access: Notion, WordPress, Postiz<br/>Duration: Ongoing<br/>Rate: $10-30/hour"]
+        
+        TYPE4["📋 VA<br/>━━━━━━━━━━━━━━━━━━━━<br/>Access: Notion, Gmail, Slack<br/>Duration: Ongoing<br/>Rate: $5-15/hour"]
+        
+        TYPE5["🔧 SPECIALIST<br/>━━━━━━━━━━━━━━━━━━━━<br/>Access: All VPS, All DBs<br/>Duration: 1-6 months<br/>Rate: $50-150/hour"]
+    end
+    
+    subgraph ONBOARDING["🚀 AI-AUTOMATED ONBOARDING (Windmill)"]
+        direction TB
+        
+        TRIGGER_ON["📝 TRIGGER<br/>━━━━━━━━━━━━━━━━━━━━<br/>New row in Notion<br/>Database: 'Contractors'<br/>Status: 'Pending'"]
+        
+        STEP1["1️⃣ CREATE ACCOUNTS<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Logto SSO account<br/>• Vaultwarden vault<br/>• Slack invitation<br/>Duration: <2 min"]
+        
+        STEP2["2️⃣ PROVISION ACCESS<br/>━━━━━━━━━━━━━━━━━━━━<br/>• GitHub (if Developer)<br/>• VPS SSH (if Dev/Specialist)<br/>• Coolify (if Developer)<br/>• Notion workspace<br/>• Google Drive folders<br/>• Figma team (if Designer)<br/>Duration: <3 min"]
+        
+        STEP3["3️⃣ SEND WELCOME EMAIL<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Login credentials<br/>• Resource links<br/>• Next steps<br/>• AI assistant access<br/>Duration: <1 min"]
+        
+        STEP4["4️⃣ CREATE TASKS<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Complete profile<br/>• Review docs<br/>• Setup environment<br/>• First task<br/>Duration: <1 min"]
+        
+        STEP5["5️⃣ NOTIFY TEAM<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Slack #team<br/>• Schedule kickoff call<br/>• Add to calendar<br/>Duration: <1 min"]
+        
+        TOTAL_ON["⏱️ TOTAL TIME<br/>━━━━━━━━━━━━━━━━━━━━<br/>~8 minutes<br/>(100% automated)"]
+    end
+    
+    subgraph OFFBOARDING["🚫 AI-AUTOMATED OFFBOARDING (Windmill)"]
+        direction TB
+        
+        TRIGGER_OFF["📝 TRIGGER<br/>━━━━━━━━━━━━━━━━━━━━<br/>Status changed to<br/>'Offboarded'<br/>in Notion"]
+        
+        REVOKE1["1️⃣ REVOKE ACCESS (IMMEDIATE)<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Disable Logto account<br/>• Remove GitHub access<br/>• Remove VPS SSH keys<br/>• Disable Coolify account<br/>• Deactivate Slack<br/>• Remove Notion access<br/>• Revoke Google Drive<br/>• Remove Figma access<br/>Duration: <2 min"]
+        
+        ARCHIVE["2️⃣ ARCHIVE DATA<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Export contractor's work<br/>• Transfer ownership<br/>• Archive Vaultwarden vault<br/>Duration: <3 min"]
+        
+        FINANCE["3️⃣ FINANCIAL CLEANUP<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Calculate final payment<br/>• Create invoice<br/>• Process payment (manual)<br/>• Update Notion<br/>Duration: <5 min"]
+        
+        EMAIL_OFF["4️⃣ SEND OFFBOARDING EMAIL<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Thank you message<br/>• Final payment details<br/>• Work archive info<br/>Duration: <1 min"]
+        
+        SECURITY["5️⃣ SECURITY AUDIT<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Check orphaned access<br/>• Rotate shared credentials<br/>• Review logs<br/>• Update docs<br/>Duration: <5 min"]
+        
+        TOTAL_OFF["⏱️ TOTAL TIME<br/>━━━━━━━━━━━━━━━━━━━━<br/>~16 minutes<br/>(90% automated)"]
+    end
+    
+    subgraph NOTION_DB["📊 NOTION DATABASE: 'CONTRACTORS'"]
+        direction TB
+        
+        FIELDS["📋 FIELDS<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Name (text)<br/>• Email (email)<br/>• Role (select)<br/>• Start Date (date)<br/>• End Date (date)<br/>• Hourly Rate (number)<br/>• Total Hours (formula)<br/>• Total Cost (formula)<br/>• Status (select)<br/>• Access Level (select)<br/>• Manager (person)<br/>• Notes (text)"]
+        
+        RELATIONS["🔗 RELATIONS<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Tasks<br/>• Time Entries<br/>• Invoices<br/>• Projects"]
+    end
+    
+    subgraph TIME_TRACKING["⏱️ TIME TRACKING"]
+        direction LR
+        
+        TOGGL["⏱️ TOGGL TRACK<br/>━━━━━━━━━━━━━━━━━━━━<br/>Free for <5 users<br/>Integration: Windmill → Toggl API<br/>Sync: Daily (11pm)"]
+        
+        NOTION_TIME["📊 NOTION MANUAL<br/>━━━━━━━━━━━━━━━━━━━━<br/>Database: 'Time Tracking'<br/>Contractors log hours<br/>Windmill calculates totals"]
+    end
+    
+    subgraph PAYMENT["💰 PAYMENT AUTOMATION"]
+        direction TB
+        
+        WEEKLY_PAYMENT["💵 WEEKLY PAYMENT PROCESSING<br/>━━━━━━━━━━━━━━━━━━━━<br/>Trigger: Every Friday 5pm<br/>Steps:<br/>1. Query unpaid hours<br/>2. Calculate total owed<br/>3. Create invoices (QuickBooks)<br/>4. Send to contractors<br/>5. Wait for approval (manual)<br/>6. Process payment (Wise/Mercury)<br/>7. Mark as paid<br/>8. Send confirmation<br/>9. Post to Slack #finance"]
+        
+        METHODS["💳 PAYMENT METHODS<br/>━━━━━━━━━━━━━━━━━━━━<br/>• Wise: International (low fees)<br/>• Mercury: US contractors (ACH)<br/>• PayPal: Backup (high fees)"]
+    end
+    
+    %% Onboarding flow
+    TRIGGER_ON --> STEP1
+    STEP1 --> STEP2
+    STEP2 --> STEP3
+    STEP3 --> STEP4
+    STEP4 --> STEP5
+    STEP5 --> TOTAL_ON
+    
+    %% Offboarding flow
+    TRIGGER_OFF --> REVOKE1
+    REVOKE1 --> ARCHIVE
+    ARCHIVE --> FINANCE
+    FINANCE --> EMAIL_OFF
+    EMAIL_OFF --> SECURITY
+    SECURITY --> TOTAL_OFF
+    
+    %% Database connections
+    TRIGGER_ON -.->|Read| NOTION_DB
+    TRIGGER_OFF -.->|Read| NOTION_DB
+    STEP1 -.->|Update| NOTION_DB
+    REVOKE1 -.->|Update| NOTION_DB
+    
+    %% Time tracking
+    TOGGL -.->|Sync| NOTION_TIME
+    NOTION_TIME -.->|Calculate| WEEKLY_PAYMENT
+    
+    %% Styling
+    classDef typeStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:2px
+    classDef onStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:2px
+    classDef offStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    classDef dbStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef timeStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef payStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    
+    class TYPE1,TYPE2,TYPE3,TYPE4,TYPE5 typeStyle
+    class TRIGGER_ON,STEP1,STEP2,STEP3,STEP4,STEP5,TOTAL_ON onStyle
+    class TRIGGER_OFF,REVOKE1,ARCHIVE,FINANCE,EMAIL_OFF,SECURITY,TOTAL_OFF offStyle
+    class NOTION_DB,FIELDS,RELATIONS dbStyle
+    class TOGGL,NOTION_TIME timeStyle
+    class WEEKLY_PAYMENT,METHODS payStyle

@@ -1,0 +1,437 @@
+[
+  {
+    "id": "TC001",
+    "title": "Login and Landing on Master Map",
+    "description": "Verify user can log in successfully and lands on the Master Map screen showing overall project progress and KPIs.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the CODIA Tracker login page."
+      },
+      {
+        "type": "action",
+        "description": "Enter valid user credentials and submit login."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify login is successful and user is taken to the Master Map dashboard."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dashboard displays overall and phase-wise project progress bars and KPIs."
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Real-time Synchronization of Task Status Updates",
+    "description": "Verify that task updates made by one user are reflected in real-time across all other active clients and visualizations.",
+    "category": "integration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "With two users logged in on different clients, user A updates a task status in the Checklist to IN_PROGRESS."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user B receives the update instantly without manual refresh."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the status change is reflected consistently in the Master Map, Timeline, Gantt Chart, and Kanban Board for user B."
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Task Dependency Enforcement on Status Updates",
+    "description": "Verify that task dependencies and blockers prevent invalid status updates and enforce correct workflow.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Attempt to mark a task as DONE while its dependent task is still PENDING or BLOCKED."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the system prevents the status update and displays an appropriate error or warning."
+      },
+      {
+        "type": "action",
+        "description": "Update the prerequisite dependent task to DONE, then update the task to DONE."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify status update is successful and dependencies are respected."
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Setup Wizard Full Configuration Workflow",
+    "description": "Verify that the 5-step Setup Wizard correctly loads milestones, allows full configuration input, and saves data to localStorage.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Launch the Setup Wizard."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify milestone tasks are loaded from the database and displayed in the wizard."
+      },
+      {
+        "type": "action",
+        "description": "Enter valid configuration data for business info, infrastructure, financial, and AI models."
+      },
+      {
+        "type": "action",
+        "description": "Complete the Review step and save configuration."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify data is saved correctly to localStorage."
+      },
+      {
+        "type": "action",
+        "description": "Restart the wizard or reload page."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify saved configuration is pre-populated from localStorage."
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Founder Guide Section Accessibility and Navigation",
+    "description": "Verify that the Founder Guide loads correctly and all 6 sections can be expanded and collapsed with content displayed properly.",
+    "category": "ui",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Founder Guide section."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the full guide content loads without errors."
+      },
+      {
+        "type": "action",
+        "description": "Expand each section: Accounts, Domain, Finance, Security, Dev Tools, Legal."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify each section expands to show detailed instructions."
+      },
+      {
+        "type": "action",
+        "description": "Collapse each expanded section."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify each section collapses and hides content as expected."
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Visual Gantt Chart Interaction and Data Accuracy",
+    "description": "Verify the Visual Gantt Chart renders tasks accurately with correct coloring, tooltips, and allows zoom and detail modal interactions.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Visual Gantt Chart view."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all tasks are rendered with bars color-coded by status (Pending, In Progress, Done, Blocked)."
+      },
+      {
+        "type": "action",
+        "description": "Hover over task bars."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tooltips display detailed task information."
+      },
+      {
+        "type": "action",
+        "description": "Use zoom controls to adjust zoom from 50% to 200%."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify zoom in and out works smoothly and timeline adjusts accordingly."
+      },
+      {
+        "type": "action",
+        "description": "Click a task bar."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify detail modal opens with full task details."
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Kanban Board Drag-and-Drop Task Status Updates",
+    "description": "Verify that tasks can be dragged and dropped between Pending, In Progress, Done, and Blocked columns and updates persist.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Kanban Board."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tasks are displayed in their respective status columns."
+      },
+      {
+        "type": "action",
+        "description": "Drag a task card from Pending to In Progress column."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the task status updates immediately and persists after reload."
+      },
+      {
+        "type": "action",
+        "description": "Drag a task card to Blocked column."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify task reflects Blocked status and blockers are tracked."
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Activity Logs Real-time Feed and Accuracy",
+    "description": "Verify activity logs correctly display system and task events with accurate timestamps and update live without refresh.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to Activity Logs view."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify recent system and task events appear with correct timestamps."
+      },
+      {
+        "type": "action",
+        "description": "Perform a task update on another client."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the log feed updates live and displays the new event."
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Master Map Visualization and Data Consistency",
+    "description": "Verify Master Map graph visualizes tasks with accurate dependencies and relationships reflecting current project state.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Master Map screen."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all tasks are represented as nodes with visible dependency edges."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dependency relations on the graph match backend data."
+      },
+      {
+        "type": "action",
+        "description": "Update a task dependency status or blocker."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify Master Map updates in real-time to reflect changes."
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Mermaid Diagram Viewer Rendering and Toggle Functionality",
+    "description": "Verify Mermaid Diagram Viewer fetches database-stored diagrams correctly and toggles between visual and code views.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open Mermaid Diagram Viewer and load an .mmd document from the database."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the diagram renders correctly as interactive SVG."
+      },
+      {
+        "type": "action",
+        "description": "Toggle from Visual view to Code view."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify underlying Mermaid source code is displayed."
+      },
+      {
+        "type": "action",
+        "description": "Toggle back to Visual view."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the SVG interactive diagram re-displays correctly."
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "GAP Analysis Dashboard Data Accuracy and Refresh",
+    "description": "Verify GAP Analysis Dashboard accurately shows real-time project metrics according to backend data and refreshes automatically.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open GAP Analysis Dashboard."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify displayed metrics (total tasks, completed, in-progress, pending, GAP %) match backend data from /gap_analysis endpoint."
+      },
+      {
+        "type": "action",
+        "description": "Trigger task status updates from another client."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify dashboard updates automatically to reflect latest metrics."
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "Timeline View Chronological Task Ordering and Milestone Display",
+    "description": "Verify Timeline View shows tasks in correct chronological order with milestones highlighted and status indicators visible.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open Timeline View."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tasks are ordered by date ascending and milestones are visually distinct."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify status indicators correspond to each task's current status."
+      },
+      {
+        "type": "action",
+        "description": "Update a task's status and verify the timeline reflects the changes."
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Supabase Backend API Endpoint Validation",
+    "description": "Verify all Supabase backend API endpoints respond correctly with expected data and handle errors suitably.",
+    "category": "integration",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Send GET requests to all endpoints like /tasks, /gap_analysis, /logs, /tracker_app_data, /phases and confirm valid 200 responses."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify data schemas match expected formats and data completeness."
+      },
+      {
+        "type": "action",
+        "description": "Send PUT requests for task updates with valid and invalid payloads."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify successful updates with valid data and appropriate error responses for invalid data."
+      },
+      {
+        "type": "action",
+        "description": "Test WebSocket subscription to real-time change notifications."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify subscription successfully receives task update events."
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Edge Case: Large Number of Tasks and Deep Hierarchies",
+    "description": "Verify that the application handles large task volumes and deep hierarchical task structures without UI or performance degradation.",
+    "category": "performance",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Import or generate a large dataset with >1000 tasks and multiple nested levels."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify Checklist and Master Map load and render all tasks correctly within reasonable time."
+      },
+      {
+        "type": "action",
+        "description": "Perform status updates and drag-and-drop operations on deep nested tasks."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify UI remains responsive and all updates sync in real-time."
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Error Handling on Network Failure During Updates",
+    "description": "Verify that the system gracefully handles network interruptions or backend errors during task update operations.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Simulate network failure or force API error during a task status update PUT request."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify user receives proper error feedback and update is not lost."
+      },
+      {
+        "type": "action",
+        "description": "Restore network and retry the update."
+      },
+      {
+        "type": "assertion",
+        "description": "Verify update succeeds and synchronizes across clients."
+      }
+    ]
+  }
+]

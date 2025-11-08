@@ -1,0 +1,128 @@
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#424242','fontSize':'14px'}}}%%
+
+graph TB
+    %% ============================================================================
+    %% V9 DEVICE & SERVICE MAPPING - 2 Founders × 4 Devices
+    %% ============================================================================
+    
+    subgraph FOUNDER1["👤 FOUNDER 1 - CEO/ADMIN"]
+        direction TB
+        
+        subgraph F1_DEVICES["💻 4 DEVICES"]
+            F1_LAPTOP1["💻 MacBook Pro M3<br/>━━━━━━━━━━━━━━━━━━━━<br/>Primary Work Device<br/>16GB RAM<br/>512GB SSD"]
+            
+            F1_LAPTOP2["💻 Windows Laptop<br/>━━━━━━━━━━━━━━━━━━━━<br/>Backup Device<br/>32GB RAM<br/>1TB SSD"]
+            
+            F1_PHONE1["📱 iPhone 15 Pro<br/>━━━━━━━━━━━━━━━━━━━━<br/>Primary Phone<br/>256GB"]
+            
+            F1_PHONE2["📱 Android Phone<br/>━━━━━━━━━━━━━━━━━━━━<br/>Backup Phone<br/>128GB"]
+        end
+        
+        subgraph F1_APPS["📦 INSTALLED APPS"]
+            F1_BROWSER["🌐 Chrome/Safari<br/>LobeChat, Notion, Gmail"]
+            F1_DESKTOP["🖥️ Desktop Apps<br/>VS Code, Docker, Postman"]
+            F1_MOBILE["📱 Mobile Apps<br/>Notion, Gmail, Slack"]
+            F1_SECURITY["🔐 Security<br/>Vaultwarden, 2FA"]
+        end
+    end
+    
+    subgraph FOUNDER2["👤 FOUNDER 2 - CTO/DEV"]
+        direction TB
+        
+        subgraph F2_DEVICES["💻 4 DEVICES"]
+            F2_LAPTOP1["💻 MacBook Pro M3<br/>━━━━━━━━━━━━━━━━━━━━<br/>Primary Dev Device<br/>32GB RAM<br/>1TB SSD"]
+            
+            F2_LAPTOP2["💻 Linux Laptop<br/>━━━━━━━━━━━━━━━━━━━━<br/>Testing Device<br/>16GB RAM<br/>512GB SSD"]
+            
+            F2_PHONE1["📱 iPhone 15<br/>━━━━━━━━━━━━━━━━━━━━<br/>Primary Phone<br/>128GB"]
+            
+            F2_PHONE2["📱 Android Phone<br/>━━━━━━━━━━━━━━━━━━━━<br/>Testing Phone<br/>256GB"]
+        end
+        
+        subgraph F2_APPS["📦 INSTALLED APPS"]
+            F2_BROWSER["🌐 Chrome/Firefox<br/>LobeChat, GitHub, Coolify"]
+            F2_DESKTOP["🖥️ Desktop Apps<br/>VS Code, Docker, Terminal"]
+            F2_MOBILE["📱 Mobile Apps<br/>GitHub, Slack, Termux"]
+            F2_SECURITY["🔐 Security<br/>Vaultwarden, SSH Keys"]
+        end
+    end
+    
+    subgraph DAILY_WORKFLOWS["🔄 DAILY WORKFLOWS (AI-ASSISTED)"]
+        direction TB
+        
+        MORNING["🌅 MORNING ROUTINE<br/>━━━━━━━━━━━━━━━━━━━━<br/>1. Check Notion Dashboard<br/>2. Review Slack messages<br/>3. Check email (AI summary)<br/>4. Daily standup (AI notes)<br/>Duration: 30 min"]
+        
+        WORK["💼 WORK SESSION<br/>━━━━━━━━━━━━━━━━━━━━<br/>1. LobeChat for tasks<br/>2. AI code assistance<br/>3. AI research reports<br/>4. AI content generation<br/>Duration: 6-8 hours"]
+        
+        EVENING["🌙 EVENING REVIEW<br/>━━━━━━━━━━━━━━━━━━━━<br/>1. Review AI task results<br/>2. Update Notion (AI sync)<br/>3. Plan tomorrow (AI suggest)<br/>4. Backup check (automated)<br/>Duration: 30 min"]
+    end
+    
+    subgraph AUTO_PROVISION["🤖 AUTO-PROVISIONING (Windmill)"]
+        direction TB
+        
+        NEW_DEVICE["📱 NEW DEVICE DETECTED<br/>━━━━━━━━━━━━━━━━━━━━<br/>Trigger: Device login<br/>Action: Auto-provision"]
+        
+        PROVISION_STEPS["🔧 PROVISION STEPS<br/>━━━━━━━━━━━━━━━━━━━━<br/>1. Create Logto account<br/>2. Install Vaultwarden<br/>3. Sync passwords<br/>4. Install required apps<br/>5. Configure settings<br/>6. Test access<br/>Duration: 10 min"]
+        
+        DEPROVISION["🗑️ DEPROVISION<br/>━━━━━━━━━━━━━━━━━━━━<br/>Trigger: Device removed<br/>Actions:<br/>1. Revoke Logto access<br/>2. Clear Vaultwarden<br/>3. Remote wipe (if lost)<br/>4. Notify Slack"]
+    end
+    
+    subgraph SERVICE_ACCESS["🔐 SERVICE ACCESS MATRIX"]
+        direction LR
+        
+        F1_ACCESS["👤 FOUNDER 1<br/>━━━━━━━━━━━━━━━━━━━━<br/>✅ Full Admin Access<br/>✅ All VPS SSH<br/>✅ All databases<br/>✅ Banking (Mercury)<br/>✅ All SaaS"]
+        
+        F2_ACCESS["👤 FOUNDER 2<br/>━━━━━━━━━━━━━━━━━━━━<br/>✅ Developer Access<br/>✅ VPS2, VPS3 SSH<br/>✅ Read-only databases<br/>❌ Banking (view only)<br/>✅ Dev SaaS"]
+    end
+    
+    subgraph SYNC_STRATEGY["🔄 DEVICE SYNC STRATEGY"]
+        direction TB
+        
+        NOTION_SYNC["📝 NOTION SYNC<br/>━━━━━━━━━━━━━━━━━━━━<br/>Method: Real-time (WebSocket)<br/>Conflict: Last-write-wins<br/>Offline: Queue changes"]
+        
+        VAULT_SYNC["🔐 VAULTWARDEN SYNC<br/>━━━━━━━━━━━━━━━━━━━━<br/>Method: Real-time<br/>Conflict: Server-side merge<br/>Offline: Read-only"]
+        
+        CODE_SYNC["💻 CODE SYNC<br/>━━━━━━━━━━━━━━━━━━━━<br/>Method: Git (manual)<br/>Conflict: Manual merge<br/>Offline: Local commits"]
+    end
+    
+    %% Device connections
+    F1_LAPTOP1 -->|Primary| F1_BROWSER
+    F1_LAPTOP1 -->|Primary| F1_DESKTOP
+    F1_PHONE1 -->|Primary| F1_MOBILE
+    
+    F2_LAPTOP1 -->|Primary| F2_BROWSER
+    F2_LAPTOP1 -->|Primary| F2_DESKTOP
+    F2_PHONE1 -->|Primary| F2_MOBILE
+    
+    %% Workflow connections
+    F1_BROWSER -.->|Daily| MORNING
+    MORNING -->|Work| WORK
+    WORK -->|Review| EVENING
+    
+    %% Auto-provision
+    F1_LAPTOP2 -.->|New device| NEW_DEVICE
+    NEW_DEVICE -->|Trigger| PROVISION_STEPS
+    
+    %% Access
+    F1_BROWSER -.->|Auth| F1_ACCESS
+    F2_BROWSER -.->|Auth| F2_ACCESS
+    
+    %% Sync
+    F1_BROWSER -->|Sync| NOTION_SYNC
+    F1_SECURITY -->|Sync| VAULT_SYNC
+    F2_DESKTOP -->|Sync| CODE_SYNC
+    
+    %% Styling
+    classDef founder1Style fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef founder2Style fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef deviceStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef workflowStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef autoStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    classDef syncStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    
+    class FOUNDER1,F1_DEVICES,F1_APPS,F1_ACCESS founder1Style
+    class FOUNDER2,F2_DEVICES,F2_APPS,F2_ACCESS founder2Style
+    class F1_LAPTOP1,F1_LAPTOP2,F1_PHONE1,F1_PHONE2,F2_LAPTOP1,F2_LAPTOP2,F2_PHONE1,F2_PHONE2 deviceStyle
+    class MORNING,WORK,EVENING workflowStyle
+    class NEW_DEVICE,PROVISION_STEPS,DEPROVISION autoStyle
+    class NOTION_SYNC,VAULT_SYNC,CODE_SYNC syncStyle

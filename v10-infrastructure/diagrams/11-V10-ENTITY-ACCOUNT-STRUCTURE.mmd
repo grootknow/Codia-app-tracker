@@ -1,0 +1,269 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E3F2FD',
+    'primaryTextColor': '#1565C0',
+    'primaryBorderColor': '#1976D2',
+    'lineColor': '#424242',
+    'secondaryColor': '#F3E5F5',
+    'tertiaryColor': '#E8F5E9',
+    'clusterBkg': '#FAFAFA',
+    'clusterBorder': '#9E9E9E',
+    'fontSize': '14px'
+  }
+}}%%
+
+graph TB
+    %% ============================================================================
+    %% V10 ENTITY & ACCOUNT STRUCTURE
+    %% ============================================================================
+    %% Mô tả: Cấu trúc thực thể, tài khoản, quyền truy cập, và quản lý tài sản
+    
+    %% ============================================================================
+    %% COMPANY ENTITY
+    %% ============================================================================
+    
+    subgraph COMPANY["🏛️ COMPANY ENTITY"]
+        direction TB
+        
+        COMPANY_INFO["🏢 ROOTKNOW INC.<br/>━━━━━━━━━━━━━━━━━━━━<br/>Type: Delaware C-Corp<br/>Status: Applied<br/>Registered Agent: Northwest<br/>Annual Fee: $500/year"]
+        
+        COMPANY_DOMAINS["🌐 DOMAINS<br/>━━━━━━━━━━━━━━━━━━━━<br/>rootknow.com (Primary)<br/>rootknow.ai (AI Brand)<br/>Registrar: Cloudflare<br/>Cost: $20/year"]
+    end
+    
+    %% ============================================================================
+    %% FOUNDERS - OWNERSHIP & ROLES
+    %% ============================================================================
+    
+    subgraph FOUNDERS["👥 FOUNDERS - Ownership Structure"]
+        direction TB
+        
+        FOUNDER1_ENTITY["👤 FOUNDER 1<br/>━━━━━━━━━━━━━━━━━━━━<br/>Role: CEO/Admin<br/>Email: admin@rootknow.com<br/>Ownership: 50%<br/>Access Level: FULL<br/>Devices: 4 (2 laptops, 2 phones)"]
+        
+        FOUNDER2_ENTITY["👤 FOUNDER 2<br/>━━━━━━━━━━━━━━━━━━━━<br/>Role: Dev/Marketing<br/>Email: dev@rootknow.com<br/>Ownership: 50%<br/>Access Level: LIMITED<br/>Devices: 4 (2 laptops, 2 phones)"]
+    end
+    
+    %% ============================================================================
+    %% GOOGLE WORKSPACE ACCOUNTS
+    %% ============================================================================
+    
+    subgraph GOOGLE_WORKSPACE["📧 GOOGLE WORKSPACE - Email & Drive"]
+        direction TB
+        
+        ADMIN_ACCOUNT["📧 admin@rootknow.com<br/>━━━━━━━━━━━━━━━━━━━━<br/>Type: Primary Account<br/>Storage: 100GB (Business)<br/>Features:<br/>• Gmail<br/>• Google Drive<br/>• Calendar<br/>• Meet<br/>Cost: FREE"]
+        
+        DEV_ACCOUNT["📧 dev@rootknow.com<br/>━━━━━━━━━━━━━━━━━━━━<br/>Type: Secondary Account<br/>Storage: 15GB (Free)<br/>Features:<br/>• Gmail<br/>• Google Drive<br/>• Calendar<br/>Cost: FREE"]
+    end
+    
+    %% ============================================================================
+    %% DEVICES - 8 TOTAL
+    %% ============================================================================
+    
+    subgraph DEVICES["💻 DEVICES - Physical Assets"]
+        direction TB
+        
+        F1_DEVICES["💻 FOUNDER 1 DEVICES<br/>━━━━━━━━━━━━━━━━━━━━<br/>1. MacBook Pro M3 16GB (primary)<br/>   Serial: [TRACK]<br/>   Apps: Vaultwarden, 2FA<br/><br/>2. Windows Laptop 32GB (backup)<br/>   Serial: [TRACK]<br/><br/>3. iPhone 15 Pro (PRIMARY 2FA!)<br/>   Serial: [TRACK]<br/>   🚨 CRITICAL: 2FA for all accounts!<br/><br/>4. Android Phone (backup 2FA)<br/>   Serial: [TRACK]"]
+        
+        F2_DEVICES["💻 FOUNDER 2 DEVICES<br/>━━━━━━━━━━━━━━━━━━━━<br/>1. MacBook Pro M3 16GB (dev)<br/>   Serial: [TRACK]<br/><br/>2. Linux Laptop 16GB (testing)<br/>   Serial: [TRACK]<br/><br/>3. iPhone 15<br/>   Serial: [TRACK]<br/><br/>4. Android Phone<br/>   Serial: [TRACK]"]
+        
+        MEDIA_EQUIPMENT["🎬 MEDIA EQUIPMENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Cameras: $10,700<br/>• Sony A7S III + lens<br/>• Canon R6 + lens<br/><br/>Lights: $3,100<br/>• Aputure 600d, 300d<br/><br/>Audio: $1,600<br/>• Rode, Sennheiser<br/><br/>Storage: $1,900<br/>• NAS 24TB<br/><br/>TOTAL: $20K investment!"]
+    end
+    
+    %% ============================================================================
+    %% POSTGRESQL - REAL SSOT!
+    %% ============================================================================
+    
+    subgraph POSTGRESQL_SSOT["🗄️ POSTGRESQL - SINGLE SOURCE OF TRUTH"]
+        direction TB
+        
+        DB_SCHEMA["🗄️ DATABASE SCHEMA (40+ TABLES)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Layer 0: entities, entity_domains<br/>Layer 1: persons, person_devices<br/>Layer 2: accounts (135+), account_dependencies<br/>Layer 3: infrastructure_nodes (VPS)<br/>Layer 4: services (35+), service_configs<br/>Layer 5: access_policies, access_grants<br/>Layer 6: equipment, software_licenses<br/>Layer 7: content_projects, media_assets<br/>Layer 8: distribution_channels, published_content<br/><br/>SYNCS TO: Notion (read-only view)<br/>POWERS: Tracker app (Vercel)<br/>BACKUP: R2 every 4-6 hours"]
+    end
+    
+    %% ============================================================================
+    %% NOTION - READ-ONLY VIEW
+    %% ============================================================================
+    
+    subgraph NOTION_VIEW["📓 NOTION - Read-Only View"]
+        direction TB
+        
+        NOTION_SYNC["📓 NOTION DATABASES<br/>━━━━━━━━━━━━━━━━━━━━<br/>⚠️ NOT SSOT ANYMORE!<br/>Data flows: PostgreSQL → Notion<br/><br/>Purpose: Team planning & visibility<br/>Cannot edit data (read-only)<br/>Syncs automatically from PostgreSQL<br/><br/>Databases:<br/>• Accounts (view only)<br/>• Access Control (view + trigger)<br/>• Tasks & Projects<br/>• Content Calendar"]
+    end
+    
+    %% ============================================================================
+    %% AUTHENTICATION & IDENTITY
+    %% ============================================================================
+    
+    subgraph AUTH_IDENTITY["🔐 AUTHENTICATION & IDENTITY"]
+        direction TB
+        
+        LOGTO_SSO["🎫 LOGTO SSO<br/>━━━━━━━━━━━━━━━━━━━━<br/>Purpose: Single Sign-On<br/>Location: VPS1<br/>Users: 20+<br/>Features:<br/>• OAuth2/OIDC<br/>• MFA (TOTP)<br/>• Social Login<br/>• Session Management<br/>Integration: All VPS services"]
+        
+        VAULTWARDEN["🔐 VAULTWARDEN<br/>━━━━━━━━━━━━━━━━━━━━<br/>Purpose: Password Manager<br/>Location: VPS1<br/>Vaults: 2 (Personal + Shared)<br/>Items: 100+<br/>Features:<br/>• End-to-end encryption<br/>• Secure sharing<br/>• Auto-fill<br/>• 2FA storage<br/>Sync: Notion Accounts DB"]
+    end
+    
+    %% ============================================================================
+    %% BANKING & FINANCE ACCOUNTS
+    %% ============================================================================
+    
+    subgraph BANKING_ACCOUNTS["💳 BANKING & FINANCE ACCOUNTS"]
+        direction TB
+        
+        US_BANKING["🇺🇸 US BANKING<br/>━━━━━━━━━━━━━━━━━━━━<br/>Primary: Mercury Business<br/>• Checking Account<br/>• Savings Account<br/>• Debit Cards (2)<br/>• ACH/Wire enabled<br/>• FDIC insured<br/><br/>Secondary: Wise Business<br/>• Multi-currency wallet<br/>• 50+ currencies<br/>• Virtual cards<br/>• International transfers"]
+        
+        PAYMENT_PROCESSORS["💳 PAYMENT PROCESSORS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Stripe:<br/>• Payment gateway<br/>• Subscription billing<br/>• Invoicing<br/><br/>PayPal:<br/>• Alternative payment<br/>• International<br/><br/>Privacy.com:<br/>• Virtual cards<br/>• Spend limits"]
+        
+        ACCOUNTING["📊 ACCOUNTING<br/>━━━━━━━━━━━━━━━━━━━━<br/>QuickBooks Online:<br/>• Bookkeeping<br/>• Invoicing<br/>• Expense tracking<br/>• Tax preparation<br/>• Bank sync<br/>Cost: $30/mo"]
+    end
+    
+    %% ============================================================================
+    %% VPS ACCOUNTS
+    %% ============================================================================
+    
+    subgraph VPS_ACCOUNTS["🖥️ VPS ACCOUNTS"]
+        direction TB
+        
+        VPS1_ACCOUNT["🖥️ VPS1 ACCOUNT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Provider: Contabo<br/>IP: 46.250.237.194<br/>RAM: 24GB<br/>Storage: 400GB NVMe<br/>OS: Ubuntu 22.04<br/>SSH Key: vps1-prod-key<br/>Access: Founder 1 (root)<br/>Cost: $15/mo"]
+        
+        VPS2_ACCOUNT["🗄️ VPS2 ACCOUNT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Provider: Contabo<br/>IP: 194.233.84.112<br/>RAM: 24GB<br/>Storage: 400GB NVMe<br/>OS: Ubuntu 22.04<br/>SSH Key: vps2-prod-key<br/>Access: Founder 1 (root)<br/>Cost: $15/mo"]
+        
+        VPS3_ACCOUNT["🤖 VPS3 ACCOUNT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Provider: Contabo<br/>IP: 194.233.95.149<br/>RAM: 12GB<br/>Storage: 200GB NVMe<br/>OS: Ubuntu 22.04<br/>SSH Key: vps3-prod-key<br/>Access: Founder 1 (root), Founder 2 (limited)<br/>Cost: $7.95/mo"]
+    end
+    
+    %% ============================================================================
+    %% CODE SAAS ACCOUNTS (100)
+    %% ============================================================================
+    
+    subgraph CODE_ACCOUNTS["💻 CODE ACCOUNTS (~100)"]
+        direction TB
+        
+        GITHUB_ORG["💻 GITHUB ORGANIZATION (ROOT!)<br/>━━━━━━━━━━━━━━━━━━━━<br/>🚨 CRITICAL: All code repos<br/>Organization: RootKnow<br/>Repos: 50+<br/>Actions: CI/CD pipelines<br/>Packages: npm, Docker<br/><br/>AUTH VIA: Google Workspace OAuth<br/>🚨 IF SUSPENDED → NO DEPLOYMENTS!"]
+        
+        CLOUDFLARE_ACCOUNT["☁️ CLOUDFLARE (ROOT!)<br/>━━━━━━━━━━━━━━━━━━━━<br/>🚨 CRITICAL: DNS + R2 + Tunnels<br/>Email: admin@rootknow.com<br/>Services:<br/>• DNS (rootknow.com, rootknow.ai)<br/>• R2 Storage (CODE + MEDIA)<br/>• Tunnels (secure VPS access)<br/>• Zero Trust<br/>Cost: $15-75/mo (R2 usage)<br/><br/>🚨 IF SUSPENDED → ALL OFFLINE!"]
+        
+        AI_API_ACCOUNTS["🤖 AI API ACCOUNTS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Anthropic (Claude):<br/>• API Key: sk-ant-...<br/>• Cost: $20-50/mo<br/><br/>xAI (Grok):<br/>• API Key: xai-...<br/>• Cost: $10-30/mo<br/><br/>Google (Gemini):<br/>• API Key: AIza...<br/>• Cost: $5-15/mo<br/><br/>PAID BY: Mercury Bank"]
+        
+        DEVOPS_ACCOUNTS["🔧 DEVOPS ACCOUNTS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Vercel (deploys)<br/>npm (packages)<br/>Docker Hub (images)<br/>GitLab (mirror)<br/>Supabase (tracker DB)<br/><br/>AUTH VIA: GitHub OAuth"]
+    end
+    
+    %% ============================================================================
+    %% MEDIA ACCOUNTS (35)
+    %% ============================================================================
+    
+    subgraph MEDIA_ACCOUNTS["🎬 MEDIA ACCOUNTS (~35)"]
+        direction TB
+        
+        DISTRIBUTION["📺 DISTRIBUTION CHANNELS<br/>━━━━━━━━━━━━━━━━━━━━<br/>YouTube:<br/>• Auth via Google Workspace<br/>• Revenue: Ad revenue<br/><br/>TikTok: @rootknow_ai<br/>Instagram: @rootknow.ai<br/>LinkedIn: RootKnow Inc.<br/>Twitter: @rootknow<br/>Medium, Substack"]
+        
+        CREATION_TOOLS["🎨 CREATION TOOLS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Adobe Creative Cloud:<br/>• $55/mo - CRITICAL!<br/>• Premiere, After Effects, Photoshop<br/><br/>Canva Pro: $10/mo<br/>Figma: $15/mo<br/>Descript: $20/mo<br/>ElevenLabs: $20/mo<br/><br/>TOTAL: $120/mo"]
+        
+        ASSETS_TOOLS["🎵 ASSETS & TOOLS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Artlist: $25/mo (music)<br/>Envato: $25/mo (stock)<br/>TubeBuddy: $15/mo (SEO)<br/>Buffer: $10/mo (scheduling)<br/><br/>TOTAL: $75/mo<br/><br/>GRAND TOTAL MEDIA: $170/mo"]
+    end
+    
+    %% ============================================================================
+    %% CONTRACTOR ACCOUNTS
+    %% ============================================================================
+    
+    subgraph CONTRACTOR_MGMT["👥 CONTRACTOR MANAGEMENT"]
+        direction TB
+        
+        CONTRACTOR_ONBOARDING["🚀 ONBOARDING FLOW<br/>━━━━━━━━━━━━━━━━━━━━<br/>Trigger: Notion new row<br/>Automation (Windmill):<br/>1. Create Logto account<br/>2. Provision access (VPS3 only)<br/>3. Send welcome email<br/>4. Create onboarding tasks<br/>5. Notify team (Slack)<br/>Duration: 8 min (100% auto)"]
+        
+        CONTRACTOR_ACCESS["🔐 ACCESS LEVELS<br/>━━━━━━━━━━━━━━━━━━━━<br/>Level 1: Read-only<br/>• View docs<br/>• No VPS access<br/><br/>Level 2: Developer<br/>• VPS3 limited SSH<br/>• Git access<br/>• Deploy to staging<br/><br/>Level 3: Senior<br/>• VPS3 full access<br/>• Production deploy<br/>• Database read"]
+        
+        CONTRACTOR_OFFBOARDING["🚫 OFFBOARDING FLOW<br/>━━━━━━━━━━━━━━━━━━━━<br/>Trigger: Status = Offboarded<br/>Automation (Windmill):<br/>1. Revoke all access (immediate)<br/>2. Archive data<br/>3. Calculate final payment<br/>4. Send exit email<br/>5. Security audit<br/>Duration: 16 min (90% auto)"]
+    end
+    
+    %% ============================================================================
+    %% CONNECTIONS - HOLISTIC DEPENDENCIES!
+    %% ============================================================================
+    
+    %% Layer 0: Company → Founders
+    COMPANY_INFO --> FOUNDER1_ENTITY
+    COMPANY_INFO --> FOUNDER2_ENTITY
+    
+    %% Layer 1: Founders → Devices
+    FOUNDER1_ENTITY --> F1_DEVICES
+    FOUNDER2_ENTITY --> F2_DEVICES
+    FOUNDER1_ENTITY --> MEDIA_EQUIPMENT
+    
+    %% Layer 1: Founders → Google Workspace
+    FOUNDER1_ENTITY --> ADMIN_ACCOUNT
+    FOUNDER2_ENTITY --> DEV_ACCOUNT
+    
+    %% Layer 2: Devices → Critical Apps
+    F1_DEVICES -.->|Primary 2FA| ADMIN_ACCOUNT
+    F1_DEVICES -.->|Syncs| VAULTWARDEN
+    
+    %% Layer 2: PostgreSQL SSOT
+    DB_SCHEMA -.->|Syncs to| NOTION_SYNC
+    DB_SCHEMA -.->|Powers| VAULTWARDEN
+    DB_SCHEMA -.->|Powers| LOGTO_SSO
+    
+    %% Layer 2: Account Dependencies (CRITICAL!)
+    ADMIN_ACCOUNT -->|OAuth| GITHUB_ORG
+    ADMIN_ACCOUNT -->|Auth| NOTION_SYNC
+    GITHUB_ORG -->|Auth| DEVOPS_ACCOUNTS
+    ADMIN_ACCOUNT -->|Auth| DISTRIBUTION
+    
+    %% Layer 2: Payment Chain (CRITICAL!)
+    US_BANKING -->|Pays| VPS1_ACCOUNT
+    US_BANKING -->|Pays| VPS2_ACCOUNT
+    US_BANKING -->|Pays| VPS3_ACCOUNT
+    US_BANKING -->|Pays| CLOUDFLARE_ACCOUNT
+    US_BANKING -->|Pays| AI_API_ACCOUNTS
+    US_BANKING -->|Pays| CREATION_TOOLS
+    US_BANKING -->|Pays| ASSETS_TOOLS
+    
+    %% Layer 2: Founders → Banking
+    FOUNDER1_ENTITY --> US_BANKING
+    FOUNDER1_ENTITY --> PAYMENT_PROCESSORS
+    FOUNDER1_ENTITY --> ACCOUNTING
+    
+    %% Layer 2: Founders → VPS Accounts
+    FOUNDER1_ENTITY --> VPS1_ACCOUNT
+    FOUNDER1_ENTITY --> VPS2_ACCOUNT
+    FOUNDER1_ENTITY --> VPS3_ACCOUNT
+    FOUNDER2_ENTITY -.->|Limited| VPS3_ACCOUNT
+    
+    %% Layer 2: Founders → CODE Accounts
+    FOUNDER1_ENTITY --> CLOUDFLARE_ACCOUNT
+    FOUNDER1_ENTITY --> AI_API_ACCOUNTS
+    FOUNDER1_ENTITY --> DEVOPS_ACCOUNTS
+    
+    %% Layer 2: Founders → MEDIA Accounts
+    FOUNDER1_ENTITY --> DISTRIBUTION
+    FOUNDER1_ENTITY --> CREATION_TOOLS
+    FOUNDER1_ENTITY --> ASSETS_TOOLS
+    
+    %% Layer 3: Contractor Management
+    NOTION_SYNC -.->|Trigger| CONTRACTOR_ONBOARDING
+    CONTRACTOR_ONBOARDING --> LOGTO_SSO
+    CONTRACTOR_ONBOARDING --> CONTRACTOR_ACCESS
+    NOTION_SYNC -.->|Trigger| CONTRACTOR_OFFBOARDING
+    
+    %% Styling
+    classDef companyStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef founderStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef deviceStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef googleStyle fill:#FBBC04,stroke:#EA4335,stroke-width:3px
+    classDef postgresStyle fill:#336791,stroke:#336791,stroke-width:3px,color:#FFFFFF
+    classDef notionStyle fill:#F7F6F3,stroke:#000000,stroke-width:2px
+    classDef authStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef bankingStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:3px
+    classDef vpsStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:3px
+    classDef codeAccountStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef mediaAccountStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:3px
+    classDef contractorStyle fill:#FFF9C4,stroke:#F57F17,stroke-width:3px
+    
+    class COMPANY_INFO,COMPANY_DOMAINS companyStyle
+    class FOUNDER1_ENTITY,FOUNDER2_ENTITY founderStyle
+    class F1_DEVICES,F2_DEVICES,MEDIA_EQUIPMENT deviceStyle
+    class ADMIN_ACCOUNT,DEV_ACCOUNT googleStyle
+    class DB_SCHEMA postgresStyle
+    class NOTION_SYNC notionStyle
+    class LOGTO_SSO,VAULTWARDEN authStyle
+    class US_BANKING,PAYMENT_PROCESSORS,ACCOUNTING bankingStyle
+    class VPS1_ACCOUNT,VPS2_ACCOUNT,VPS3_ACCOUNT vpsStyle
+    class GITHUB_ORG,CLOUDFLARE_ACCOUNT,AI_API_ACCOUNTS,DEVOPS_ACCOUNTS codeAccountStyle
+    class DISTRIBUTION,CREATION_TOOLS,ASSETS_TOOLS mediaAccountStyle
+    class CONTRACTOR_ONBOARDING,CONTRACTOR_ACCESS,CONTRACTOR_OFFBOARDING contractorStyle

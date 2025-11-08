@@ -1,0 +1,252 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E3F2FD',
+    'primaryTextColor': '#1565C0',
+    'primaryBorderColor': '#1976D2',
+    'lineColor': '#424242',
+    'secondaryColor': '#F3E5F5',
+    'tertiaryColor': '#E8F5E9',
+    'clusterBkg': '#FAFAFA',
+    'clusterBorder': '#9E9E9E',
+    'fontSize': '14px'
+  }
+}}%%
+
+graph TB
+    %% ============================================================================
+    %% V10 MASTER DATA MAP - HOLISTIC SYSTEM
+    %% ============================================================================
+    %% Purpose: Show the REAL data flow, dependencies, and constraints
+    %% Center: ACCOUNTS (not infrastructure, not apps - ACCOUNTS!)
+    
+    %% ============================================================================
+    %% LAYER 0: ENTITY (TOP LEVEL)
+    %% ============================================================================
+    
+    subgraph ENTITY["🏛️ ENTITY: ROOTKNOW INC."]
+        COMPANY["🏢 RootKnow Inc.<br/>━━━━━━━━━━━━━━━━━━━━<br/>Type: Delaware C-Corp<br/>EIN: [PENDING]<br/>Status: Applied<br/>Domains: rootknow.com, rootknow.ai"]
+        
+        OWNERSHIP["👥 OWNERSHIP<br/>━━━━━━━━━━━━━━━━━━━━<br/>Founder 1: 50% (CEO/Admin)<br/>Founder 2: 50% (CTO/Dev)"]
+    end
+    
+    %% ============================================================================
+    %% LAYER 1: FOUNDERS (PEOPLE)
+    %% ============================================================================
+    
+    subgraph FOUNDERS["👥 FOUNDERS"]
+        F1["👤 FOUNDER 1<br/>━━━━━━━━━━━━━━━━━━━━<br/>Email: admin@rootknow.com<br/>Role: CEO/Admin<br/>Access: FULL<br/>Devices: 4"]
+        
+        F2["👤 FOUNDER 2<br/>━━━━━━━━━━━━━━━━━━━━<br/>Email: dev@rootknow.com<br/>Role: CTO/Dev<br/>Access: LIMITED<br/>Devices: 4"]
+    end
+    
+    %% ============================================================================
+    %% LAYER 2: DEVICES (PHYSICAL ASSETS)
+    %% ============================================================================
+    
+    subgraph DEVICES_F1["💻 FOUNDER 1 DEVICES"]
+        F1_MAC["💻 MacBook Pro M3<br/>Serial: [TRACK]<br/>2FA: Yes<br/>Vaultwarden: Yes"]
+        F1_WIN["💻 Windows Laptop<br/>Serial: [TRACK]<br/>Backup device"]
+        F1_IPHONE["📱 iPhone 15 Pro<br/>Serial: [TRACK]<br/>2FA App: CRITICAL!"]
+        F1_ANDROID["📱 Android Phone<br/>Backup 2FA"]
+    end
+    
+    subgraph DEVICES_F2["💻 FOUNDER 2 DEVICES"]
+        F2_MAC["💻 MacBook Pro M3<br/>Serial: [TRACK]"]
+        F2_LINUX["💻 Linux Laptop<br/>Testing"]
+        F2_IPHONE["📱 iPhone 15"]
+        F2_ANDROID["📱 Android Phone"]
+    end
+    
+    %% ============================================================================
+    %% LAYER 3: ACCOUNTS (CENTER OF EVERYTHING!)
+    %% ============================================================================
+    
+    subgraph ACCOUNT_CENTER["🎯 ACCOUNT CENTER - THE CORE!"]
+        direction TB
+        
+        subgraph ROOT_ACCOUNTS["🔑 ROOT ACCOUNTS (CRITICAL!)"]
+            GOOGLE_WS["📧 Google Workspace<br/>admin@rootknow.com<br/>━━━━━━━━━━━━━━━━━━━━<br/>🚨 PARENT OF:<br/>- Gmail, Drive, Calendar<br/>- OAuth for GitHub, Notion<br/>🚨 IF SUSPENDED → CASCADE FAILURE!"]
+            
+            GITHUB_ORG["💻 GitHub Organization<br/>RootKnow<br/>━━━━━━━━━━━━━━━━━━━━<br/>🚨 PARENT OF:<br/>- All repositories<br/>- Container registry<br/>- Actions runners<br/>🚨 AUTHENTICATES VIA: Google OAuth"]
+            
+            CONTABO["🖥️ Contabo Account<br/>━━━━━━━━━━━━━━━━━━━━<br/>🚨 PARENT OF:<br/>- VPS1, VPS2, VPS3<br/>🚨 PAYMENT FAIL → ALL VPS DOWN!"]
+            
+            CLOUDFLARE["☁️ Cloudflare<br/>━━━━━━━━━━━━━━━━━━━━<br/>🚨 PARENT OF:<br/>- DNS (all domains!)<br/>- R2 Storage<br/>- Tunnels<br/>🚨 SUSPENDED → ALL OFFLINE!"]
+        end
+        
+        subgraph CODE_ACCOUNTS["💻 CODE ACCOUNTS (100)"]
+            MERCURY["🏦 Mercury Bank<br/>━━━━━━━━━━━━━━━━━━━━<br/>PAYS FOR: Everything!<br/>DEPENDS ON: EIN"]
+            
+            AI_ACCOUNTS["🤖 AI APIs<br/>━━━━━━━━━━━━━━━━━━━━<br/>Claude: $20-50/mo<br/>Grok: $10-30/mo<br/>Gemini: $5-15/mo<br/>PAID BY: Mercury"]
+            
+            DEVOPS["🔧 DevOps Tools<br/>━━━━━━━━━━━━━━━━━━━━<br/>Vercel, npm, Docker Hub<br/>AUTH VIA: GitHub"]
+        end
+        
+        subgraph MEDIA_ACCOUNTS["🎬 MEDIA ACCOUNTS (35)"]
+            YOUTUBE["📺 YouTube Channel<br/>━━━━━━━━━━━━━━━━━━━━<br/>AUTH VIA: Google Workspace<br/>REVENUE: Ad revenue<br/>DEPENDS ON: Content workflow"]
+            
+            ADOBE["🎨 Adobe Creative Cloud<br/>━━━━━━━━━━━━━━━━━━━━<br/>$55/mo<br/>CRITICAL FOR: Video editing<br/>PAID BY: Mercury"]
+            
+            SOCIAL["📱 Social Media<br/>━━━━━━━━━━━━━━━━━━━━<br/>TikTok, Instagram, LinkedIn<br/>CROSS-POST FROM: YouTube"]
+        end
+    end
+    
+    %% ============================================================================
+    %% LAYER 4: INFRASTRUCTURE (RUNS ON ACCOUNTS!)
+    %% ============================================================================
+    
+    subgraph INFRASTRUCTURE["🖥️ INFRASTRUCTURE"]
+        VPS1["🖥️ VPS1 - Control<br/>━━━━━━━━━━━━━━━━━━━━<br/>ACCOUNT: Contabo<br/>IP: 46.250.237.194<br/>SSH: vps1-prod-key<br/>REQUIRES: Cloudflare DNS"]
+        
+        VPS2["🗄️ VPS2 - Databases<br/>━━━━━━━━━━━━━━━━━━━━<br/>ACCOUNT: Contabo<br/>IP: 194.233.84.112<br/>STORES: 22M triples + 10M vectors"]
+        
+        VPS3["🤖 VPS3 - AI Brain<br/>━━━━━━━━━━━━━━━━━━━━<br/>ACCOUNT: Contabo<br/>IP: 194.233.95.149<br/>USES: Claude/Grok/Gemini APIs"]
+        
+        R2["☁️ R2 Storage<br/>━━━━━━━━━━━━━━━━━━━━<br/>ACCOUNT: Cloudflare<br/>PURPOSE: Backups + Media<br/>COST: $15-75/mo"]
+    end
+    
+    %% ============================================================================
+    %% LAYER 5: APPLICATIONS (RUN ON INFRASTRUCTURE, USE ACCOUNTS!)
+    %% ============================================================================
+    
+    subgraph APPLICATIONS["📦 APPLICATIONS"]
+        subgraph VPS1_APPS["VPS1 Apps"]
+            COOLIFY["🐳 Coolify<br/>ACCOUNT: None (self-hosted)<br/>DEPLOYS TO: VPS2, VPS3<br/>AUTH VIA: Logto"]
+            
+            LOGTO["🎫 Logto SSO<br/>AUTHENTICATES: All services<br/>USERS: Founders + Contractors<br/>DB: PostgreSQL on VPS1"]
+            
+            VAULTWARDEN["🔐 Vaultwarden<br/>STORES: All credentials!<br/>SYNCS WITH: Devices<br/>BACKUP: R2 every 4h"]
+        end
+        
+        subgraph VPS2_APPS["VPS2 Apps"]
+            NEO4J["📊 Neo4j (3 instances)<br/>STORES: Knowledge graphs<br/>USED BY: LangGraph<br/>BACKUP: R2 daily"]
+            
+            LANCEDB["🚀 LanceDB (2 instances)<br/>STORES: Vectors<br/>USED BY: RAG<br/>BACKUP: R2 snapshots"]
+        end
+        
+        subgraph VPS3_APPS["VPS3 Apps"]
+            LANGGRAPH["🔄 LangGraph<br/>USES: Neo4j, LanceDB, Redis<br/>API KEYS: Claude, Grok, Gemini<br/>ACCESSED VIA: LobeChat"]
+            
+            LOBECHAT["💬 LobeChat UI<br/>AUTH VIA: Logto<br/>BACKEND: LangGraph<br/>USERS: Founders"]
+        end
+    end
+    
+    %% ============================================================================
+    %% LAYER 6: MEDIA PRODUCTION (NEW!)
+    %% ============================================================================
+    
+    subgraph MEDIA_PRODUCTION["🎬 MEDIA PRODUCTION"]
+        EQUIPMENT["💎 Equipment<br/>$20K investment<br/>━━━━━━━━━━━━━━━━━━━━<br/>Cameras, lights, audio<br/>ASSIGNED TO: Founders<br/>TRACKED IN: Database"]
+        
+        NAS["💾 NAS Storage<br/>24TB (RAID 5)<br/>━━━━━━━━━━━━━━━━━━━━<br/>STORES: Raw footage<br/>BACKUP TO: R2 every 4h"]
+        
+        CONTENT["🎥 Content Projects<br/>━━━━━━━━━━━━━━━━━━━━<br/>WORKFLOW: Pre→Pro→Post→Dist<br/>TOOLS: Adobe CC<br/>PUBLISH TO: YouTube, TikTok"]
+    end
+    
+    %% ============================================================================
+    %% LAYER 7: DATA FLOWS & DEPENDENCIES
+    %% ============================================================================
+    
+    subgraph DATA_FLOWS["📊 DATA FLOWS"]
+        POSTGRES["🗄️ PostgreSQL<br/>━━━━━━━━━━━━━━━━━━━━<br/>SSOT for all data<br/>40+ tables<br/>SYNCS TO: Notion (view only)"]
+        
+        NOTION["📓 Notion<br/>━━━━━━━━━━━━━━━━━━━━<br/>READ-ONLY view<br/>SYNCS FROM: PostgreSQL<br/>USED BY: Team planning"]
+        
+        TRACKER["📊 Tracker App<br/>━━━━━━━━━━━━━━━━━━━━<br/>READS: PostgreSQL (Supabase)<br/>SHOWS: All phases + tasks<br/>DEPLOYED: Vercel"]
+    end
+    
+    %% ============================================================================
+    %% CONNECTIONS - THE CRITICAL DEPENDENCIES!
+    %% ============================================================================
+    
+    %% Entity → Founders
+    COMPANY --> F1
+    COMPANY --> F2
+    
+    %% Founders → Devices
+    F1 --> F1_MAC
+    F1 --> F1_IPHONE
+    F2 --> F2_MAC
+    
+    %% Founders → Root Accounts
+    F1 -->|Owns| GOOGLE_WS
+    F1 -->|Owns| GITHUB_ORG
+    F1 -->|Owns| CONTABO
+    F1 -->|Owns| CLOUDFLARE
+    F1 -->|Owns| MERCURY
+    
+    %% Account Dependencies (CRITICAL!)
+    GOOGLE_WS -->|OAuth| GITHUB_ORG
+    GOOGLE_WS -->|OAuth| NOTION
+    GITHUB_ORG -->|Auth| DEVOPS
+    MERCURY -->|Pays| CONTABO
+    MERCURY -->|Pays| CLOUDFLARE
+    MERCURY -->|Pays| ADOBE
+    MERCURY -->|Pays| AI_ACCOUNTS
+    
+    %% Accounts → Infrastructure
+    CONTABO -->|Hosts| VPS1
+    CONTABO -->|Hosts| VPS2
+    CONTABO -->|Hosts| VPS3
+    CLOUDFLARE -->|DNS| VPS1
+    CLOUDFLARE -->|Provides| R2
+    
+    %% Infrastructure → Apps
+    VPS1 -->|Runs| COOLIFY
+    VPS1 -->|Runs| LOGTO
+    VPS1 -->|Runs| VAULTWARDEN
+    VPS2 -->|Runs| NEO4J
+    VPS2 -->|Runs| LANCEDB
+    VPS3 -->|Runs| LANGGRAPH
+    VPS3 -->|Runs| LOBECHAT
+    
+    %% Apps → Accounts (for API keys, etc.)
+    LANGGRAPH -->|Uses| AI_ACCOUNTS
+    LOBECHAT -->|Auth| LOGTO
+    VAULTWARDEN -->|Stores credentials for| GOOGLE_WS
+    VAULTWARDEN -->|Stores credentials for| GITHUB_ORG
+    
+    %% Apps → Data
+    COOLIFY -->|Metadata| POSTGRES
+    LOGTO -->|Users| POSTGRES
+    NEO4J -->|Knowledge| POSTGRES
+    
+    %% Media → Accounts
+    EQUIPMENT -->|Tracked in| POSTGRES
+    CONTENT -->|Uses| ADOBE
+    CONTENT -->|Publishes to| YOUTUBE
+    YOUTUBE -->|Authenticated via| GOOGLE_WS
+    NAS -->|Backs up to| R2
+    
+    %% Data flows
+    POSTGRES -->|Syncs to| NOTION
+    POSTGRES -->|Powers| TRACKER
+    
+    %% Devices → Apps
+    F1_MAC -->|Edits via| ADOBE
+    F1_MAC -->|Accesses| VAULTWARDEN
+    F1_IPHONE -->|2FA for| GOOGLE_WS
+    
+    %% Styling
+    classDef entityStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:4px
+    classDef founderStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef deviceStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef rootAccountStyle fill:#FFEBEE,stroke:#C62828,stroke-width:4px
+    classDef codeAccountStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:2px
+    classDef mediaAccountStyle fill:#FCE4EC,stroke:#C2185B,stroke-width:2px
+    classDef vpsStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    classDef appStyle fill:#FFF9C4,stroke:#F57F17,stroke-width:2px
+    classDef mediaStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef dataStyle fill:#E0F2F1,stroke:#00796B,stroke-width:2px
+    
+    class COMPANY,OWNERSHIP entityStyle
+    class F1,F2 founderStyle
+    class F1_MAC,F1_WIN,F1_IPHONE,F1_ANDROID,F2_MAC,F2_LINUX,F2_IPHONE,F2_ANDROID deviceStyle
+    class GOOGLE_WS,GITHUB_ORG,CONTABO,CLOUDFLARE rootAccountStyle
+    class MERCURY,AI_ACCOUNTS,DEVOPS codeAccountStyle
+    class YOUTUBE,ADOBE,SOCIAL mediaAccountStyle
+    class VPS1,VPS2,VPS3,R2 vpsStyle
+    class COOLIFY,LOGTO,VAULTWARDEN,NEO4J,LANCEDB,LANGGRAPH,LOBECHAT appStyle
+    class EQUIPMENT,NAS,CONTENT mediaStyle
+    class POSTGRES,NOTION,TRACKER dataStyle

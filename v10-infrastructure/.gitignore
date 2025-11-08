@@ -1,0 +1,74 @@
+# TRM AI Production System - Git Ignore
+
+# Sensitive files (NEVER commit)
+*.env
+*.env.local
+.env
+.env.*
+secrets/
+credentials/
+*.key
+*.pem
+*.p12
+*.pfx
+
+# API Keys & Tokens
+*_api_key*
+*_token*
+*_secret*
+**/api-keys/
+**/tokens/
+
+# Database dumps & backups
+*.dump
+*.backup
+*.bak
+*.sql
+*.db
+backups/
+dumps/
+
+# Docker volumes & data
+**/data/
+**/volumes/
+docker-compose.override.yml
+
+# Logs
+*.log
+logs/
+*.log.*
+
+# OS files
+.DS_Store
+Thumbs.db
+desktop.ini
+*.swp
+*.swo
+*~
+
+# IDE
+.vscode/
+.idea/
+*.sublime-*
+.project
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+*.temp
+
+# Node modules (if any)
+node_modules/
+npm-debug.log*
+
+# Python (if any)
+__pycache__/
+*.py[cod]
+*.so
+.Python
+venv/
+.venv/
+
+# Keep structure
+!.gitkeep

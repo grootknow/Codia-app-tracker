@@ -1,0 +1,155 @@
+%%{init: {
+  'theme': 'base',
+  'themeVariables': {
+    'primaryColor': '#E8F5E9',
+    'primaryTextColor': '#388E3C',
+    'primaryBorderColor': '#4CAF50',
+    'lineColor': '#424242',
+    'secondaryColor': '#E1F5FE',
+    'tertiaryColor': '#FFF3E0',
+    'fontSize': '14px'
+  }
+}}%%
+
+graph TB
+    %% ============================================================================
+    %% V10 CI/CD PIPELINE - GITEA ACTIONS + TRIVY
+    %% ============================================================================
+    %% Version: 10.0 ULTIMATE
+    %% Focus: Complete CI/CD with Security Scanning
+    %% Date: 2025-11-04
+    
+    subgraph DEVELOPER["👨‍💻 DEVELOPER"]
+        DEV["👨‍💻 DEVELOPER<br/>━━━━━━━━━━━━━━━━━━━━<br/>Actions:<br/>• Write code<br/>• Commit changes<br/>• Push to main<br/>• Create PR<br/>• Review results"]
+    end
+    
+    subgraph GITEA_SYSTEM["🔄 GITEA SYSTEM (VPS1 - 1GB)"]
+        direction TB
+        
+        GITEA["🔄 GITEA<br/>━━━━━━━━━━━━━━━━━━━━<br/>Port 3001<br/><br/>Features:<br/>• Git repository<br/>• Gitea Actions<br/>• Webhooks<br/>• SSH access<br/>• Web UI"]
+        
+        GITEA_DB["🗄️ GITEA DB<br/>━━━━━━━━━━━━━━━━━━━━<br/>PostgreSQL<br/>500MB<br/><br/>Stores:<br/>• Repos<br/>• Users<br/>• Issues<br/>• PRs"]
+        
+        RUNNER["🏃 GITEA RUNNER<br/>━━━━━━━━━━━━━━━━━━━━<br/>500MB<br/><br/>Executes:<br/>• Workflows<br/>• Build jobs<br/>• Tests<br/>• Deployments"]
+    end
+    
+    subgraph PIPELINE["🔄 CI/CD PIPELINE"]
+        direction TB
+        
+        TRIGGER["1️⃣ TRIGGER<br/>━━━━━━━━━━━━━━━━━━━━<br/>Events:<br/>• Push to main<br/>• Pull request<br/>• Tag created<br/>• Manual trigger<br/><br/>Duration: <1s"]
+        
+        SECURITY["2️⃣ SECURITY SCAN<br/>━━━━━━━━━━━━━━━━━━━━<br/>Tool: Trivy<br/><br/>Scans:<br/>• Filesystem<br/>• Dependencies<br/>• Secrets<br/>• Misconfigs<br/><br/>Blocks on:<br/>• CRITICAL<br/>• HIGH<br/><br/>Duration: 30-60s"]
+        
+        BUILD["3️⃣ BUILD<br/>━━━━━━━━━━━━━━━━━━━━<br/>Actions:<br/>• Checkout code<br/>• Install deps<br/>• Run tests<br/>• Build Docker<br/>• Tag image<br/><br/>Duration: 2-3 min"]
+        
+        PUSH["4️⃣ PUSH TO REGISTRY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Registry: Zot<br/>Port: 5000<br/><br/>Actions:<br/>• Tag image<br/>• Push to Zot<br/>• Verify upload<br/>• Update manifest<br/><br/>Duration: 30s"]
+        
+        DEPLOY["5️⃣ DEPLOY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Tool: Coolify<br/><br/>Actions:<br/>• Trigger webhook<br/>• Pull image<br/>• Stop old<br/>• Start new<br/>• Health check<br/><br/>Duration: 1-2 min"]
+        
+        VERIFY["6️⃣ VERIFY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Checks:<br/>• Health endpoint<br/>• Smoke tests<br/>• Metrics check<br/>• Error rate<br/><br/>Duration: 30s"]
+        
+        NOTIFY["7️⃣ NOTIFY<br/>━━━━━━━━━━━━━━━━━━━━<br/>Channels:<br/>• Slack<br/>• Email<br/>• Grafana<br/>• DevOps Agent<br/><br/>Duration: <5s"]
+    end
+    
+    subgraph SECURITY_TOOLS["🛡️ SECURITY TOOLS (VPS1)"]
+        direction LR
+        
+        TRIVY["🛡️ TRIVY<br/>━━━━━━━━━━━━━━━━━━━━<br/>500MB | On-demand<br/><br/>Scans:<br/>• Filesystem<br/>• Container images<br/>• IaC configs<br/>• Secrets<br/><br/>Databases:<br/>• CVE database<br/>• Vulnerability DB<br/>• Updated daily<br/><br/>Output:<br/>• SARIF format<br/>• JSON report<br/>• Exit code"]
+        
+        TRIVYIGNORE["📝 .trivyignore<br/>━━━━━━━━━━━━━━━━━━━━<br/>False positives<br/>Accepted risks<br/>Temporary ignores"]
+    end
+    
+    subgraph REGISTRY["📦 DOCKER REGISTRY (VPS1)"]
+        direction TB
+        
+        ZOT["📦 ZOT REGISTRY<br/>━━━━━━━━━━━━━━━━━━━━<br/>500MB | Port 5000<br/><br/>Features:<br/>• OCI-compliant<br/>• Image signing<br/>• Vulnerability scan<br/>• Garbage collection<br/><br/>Storage:<br/>• Local filesystem<br/>• Backed up to R2<br/>• Retention: 30 days"]
+    end
+    
+    subgraph DEPLOYMENT["🚀 DEPLOYMENT (VPS1)"]
+        direction TB
+        
+        COOLIFY["🚀 COOLIFY<br/>━━━━━━━━━━━━━━━━━━━━<br/>2GB | Port 8000<br/><br/>Manages:<br/>• VPS2 services<br/>• VPS3 services<br/>• Docker compose<br/>• Health checks<br/>• Rollbacks<br/><br/>Features:<br/>• Zero-downtime<br/>• Auto-rollback<br/>• Health monitoring"]
+    end
+    
+    subgraph MONITORING_CICD["📊 MONITORING"]
+        direction LR
+        
+        PROMETHEUS_CICD["📈 PROMETHEUS<br/>CI/CD Metrics<br/>• Build duration<br/>• Success rate<br/>• Deploy frequency<br/>• Rollback rate"]
+        
+        GRAFANA_CICD["📊 GRAFANA<br/>CI/CD Dashboard<br/>• Pipeline status<br/>• Build trends<br/>• Security issues<br/>• Deploy history"]
+        
+        ALERTA_CICD["🚨 ALERTA<br/>CI/CD Alerts<br/>• Build failed<br/>• Security vuln<br/>• Deploy failed<br/>• Rollback triggered"]
+    end
+    
+    subgraph AGENTS_CICD["🤖 AI AGENTS"]
+        direction LR
+        
+        DEVOPS_AGENT["🔧 DEVOPS AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Monitors:<br/>• Pipeline status<br/>• Build failures<br/>• Deploy issues<br/><br/>Actions:<br/>• Auto-retry builds<br/>• Rollback on error<br/>• Notify team<br/>• Create incident"]
+        
+        TEST_AGENT["🧪 TEST AGENT<br/>━━━━━━━━━━━━━━━━━━━━<br/>Runs:<br/>• E2E tests<br/>• API tests<br/>• Load tests<br/><br/>Reports:<br/>• Test results<br/>• Coverage<br/>• Performance"]
+    end
+    
+    %% Connections - Developer to Gitea
+    DEV --> GITEA
+    
+    %% Connections - Gitea internal
+    GITEA --> GITEA_DB
+    GITEA --> RUNNER
+    
+    %% Connections - Pipeline flow
+    GITEA --> TRIGGER
+    TRIGGER --> SECURITY
+    SECURITY --> BUILD
+    BUILD --> PUSH
+    PUSH --> DEPLOY
+    DEPLOY --> VERIFY
+    VERIFY --> NOTIFY
+    
+    %% Connections - Security
+    SECURITY --> TRIVY
+    TRIVY --> TRIVYIGNORE
+    
+    %% Connections - Registry
+    PUSH --> ZOT
+    DEPLOY --> ZOT
+    
+    %% Connections - Deployment
+    DEPLOY --> COOLIFY
+    
+    %% Connections - Monitoring
+    RUNNER --> PROMETHEUS_CICD
+    COOLIFY --> PROMETHEUS_CICD
+    PROMETHEUS_CICD --> GRAFANA_CICD
+    PROMETHEUS_CICD --> ALERTA_CICD
+    
+    %% Connections - Agents
+    ALERTA_CICD --> DEVOPS_AGENT
+    DEVOPS_AGENT --> COOLIFY
+    RUNNER --> TEST_AGENT
+    
+    %% Connections - Notifications
+    NOTIFY --> DEV
+    NOTIFY --> DEVOPS_AGENT
+    
+    %% Rollback flow
+    VERIFY -.->|Failed| COOLIFY
+    COOLIFY -.->|Rollback| VERIFY
+    
+    %% Styling
+    classDef developerStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef giteaStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef pipelineStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:2px
+    classDef securityStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    classDef registryStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:2px
+    classDef deployStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    classDef monitoringStyle fill:#FFF9C4,stroke:#F9A825,stroke-width:2px
+    classDef agentStyle fill:#FFCCBC,stroke:#E64A19,stroke-width:2px
+    
+    class DEV developerStyle
+    class GITEA,GITEA_DB,RUNNER giteaStyle
+    class TRIGGER,BUILD,PUSH,DEPLOY,VERIFY,NOTIFY pipelineStyle
+    class SECURITY,TRIVY,TRIVYIGNORE securityStyle
+    class ZOT registryStyle
+    class COOLIFY deployStyle
+    class PROMETHEUS_CICD,GRAFANA_CICD,ALERTA_CICD monitoringStyle
+    class DEVOPS_AGENT,TEST_AGENT agentStyle

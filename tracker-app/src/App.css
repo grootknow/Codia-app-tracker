@@ -1,0 +1,109 @@
+@import 'tailwindcss/base';
+@import 'tailwindcss/components';
+@import 'tailwindcss/utilities';
+
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-size: 14px;
+  line-height: 1.4;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background-primary);
+  color: var(--color-text-secondary);
+}
+
+#root {
+  width: 100%;
+  height: 100vh;
+}
+
+/* Typography Hierarchy */
+h1 {
+  font-size: 2rem;        /* 32px - Page titles */
+  font-weight: 700;
+  line-height: 1.2;
+}
+
+h2 {
+  font-size: 1.5rem;      /* 24px - Section headings */
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+h3 {
+  font-size: 1.25rem;     /* 20px - Subsection headings */
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+h4 {
+  font-size: 1.125rem;    /* 18px - Card titles */
+  font-weight: 600;
+  line-height: 1.35;
+}
+
+p, span, div {
+  font-size: 0.875rem;    /* 14px - Body text */
+  line-height: 1.4;
+}
+
+small, .caption {
+  font-size: 0.75rem;     /* 12px - Captions */
+  line-height: 1.4;
+}
+
+/* Smooth Scrolling */
+* {
+  scroll-behavior: smooth;
+}
+
+/* Focus States */
+button:focus-visible,
+input:focus-visible,
+select:focus-visible {
+  outline: 2px solid #1E90FF;
+  outline-offset: 2px;
+}
+
+/* Selection */
+::selection {
+  background: var(--color-brand-primary);
+  color: var(--color-text-onPrimary);
+}
+
+/* Smooth transitions */
+button, select {
+  transition: all 0.3s ease;
+}
+
+/* Progress bar animation */
+@keyframes slideIn {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.progress-bar {
+  animation: slideIn 0.5s ease-out;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  header h1 {
+    font-size: 1.875rem;
+  }
+
+  nav {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+}

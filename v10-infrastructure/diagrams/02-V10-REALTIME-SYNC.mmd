@@ -1,0 +1,114 @@
+%%{init: {'theme':'base', 'themeVariables': {'primaryColor':'#E3F2FD','primaryTextColor':'#1565C0','primaryBorderColor':'#1976D2','lineColor':'#424242','fontSize':'14px'}}}%%
+
+graph TB
+    %% ============================================================================
+    %% V10 ULTIMATE REALTIME SYNC - Supabase Realtime + WebSocket + CDC + Event Bus
+    %% ============================================================================
+    
+    subgraph USER_LAYER["👥 USER LAYER"]
+        FOUNDER["👤 Founder<br/>LobeChat Client"]
+        NOTION_USER["📝 Notion<br/>Web/Mobile App"]
+    end
+    
+    subgraph VPS3_REALTIME["🤖 VPS3: REALTIME COMPONENTS"]
+        WEBSOCKET["🔌 WEBSOCKET SERVER<br/>━━━━━━━━━━━━━━━━━━━━<br/>Port: 8888<br/>Tech: Socket.IO<br/>Connections: 100+<br/>Latency: <50ms"]
+        
+        LANGGRAPH_RT["🔄 LANGGRAPH<br/>━━━━━━━━━━━━━━━━━━━━<br/>Event Consumer<br/>Subscribe to all channels<br/>Process in <100ms"]
+    end
+    
+    subgraph VPS2_EVENTBUS["🗄️ VPS2: EVENT BUS & CDC"]
+        direction TB
+        
+        subgraph REDIS_PUBSUB["📡 REDIS PUB/SUB"]
+            EVENTS_NOTION["📝 /events/notion/*<br/>━━━━━━━━━━━━━━━━━━━━<br/>Task updates<br/>Database changes<br/>User actions"]
+            
+            EVENTS_DB["🗄️ /events/db/*<br/>━━━━━━━━━━━━━━━━━━━━<br/>PostgreSQL changes<br/>Neo4j changes<br/>Qdrant updates"]
+            
+            EVENTS_AI["🤖 /events/ai/*<br/>━━━━━━━━━━━━━━━━━━━━<br/>Task completed<br/>AI responses<br/>Workflow results"]
+        end
+        
+        CDC["🔄 CDC (Change Data Capture)<br/>━━━━━━━━━━━━━━━━━━━━<br/>PostgreSQL: Logical Replication<br/>Neo4j: CDC Plugin<br/>Latency: <100ms"]
+        
+        POSTGRES_CDC["🗄️ PostgreSQL<br/>Logical Replication Slot"]
+        NEO4J_CDC["📊 Neo4j<br/>CDC Plugin"]
+    end
+    
+    subgraph VPS1_WEBHOOKS["🖥️ VPS1: WEBHOOK RECEIVER & REALTIME"]
+        WINDMILL_WEBHOOK["🌪️ Windmill Webhook<br/>━━━━━━━━━━━━━━━━━━━━<br/>Port: 8000/webhook<br/>Receives: Notion webhooks<br/>Process: <50ms"]
+        
+        SUPABASE_RT["⚡ SUPABASE REALTIME<br/>━━━━━━━━━━━━━━━━━━━━<br/>Port: 4000<br/>WebSocket Sync<br/>Broadcast + Presence<br/>Latency: <100ms"]
+    end
+    
+    %% ============================================================================
+    %% DATA FLOWS
+    %% ============================================================================
+    
+    %% Flow 1: User → AI (Chat)
+    FOUNDER -->|WebSocket| WEBSOCKET
+    WEBSOCKET -->|Push message| LANGGRAPH_RT
+    LANGGRAPH_RT -->|Query DB| POSTGRES_CDC
+    LANGGRAPH_RT -->|Publish result| EVENTS_AI
+    EVENTS_AI -.->|WebSocket push| WEBSOCKET
+    WEBSOCKET -.->|Response| FOUNDER
+    
+    %% Flow 2: Notion → AI (Vận hành)
+    NOTION_USER -->|Webhook <1s| WINDMILL_WEBHOOK
+    WINDMILL_WEBHOOK -->|Publish| EVENTS_NOTION
+    WINDMILL_WEBHOOK -.->|Broadcast| SUPABASE_RT
+    SUPABASE_RT -.->|WebSocket| WEBSOCKET
+    EVENTS_NOTION -->|Subscribe| LANGGRAPH_RT
+    LANGGRAPH_RT -->|Process| EVENTS_AI
+    
+    %% Flow 3: Database → AI (CDC)
+    POSTGRES_CDC -.->|Change detected| CDC
+    NEO4J_CDC -.->|Change detected| CDC
+    CDC -->|Publish| EVENTS_DB
+    EVENTS_DB -->|Subscribe| LANGGRAPH_RT
+    
+    %% Flow 4: AI → User (Realtime update)
+    LANGGRAPH_RT -->|Task complete| EVENTS_AI
+    EVENTS_AI -.->|WebSocket broadcast| WEBSOCKET
+    WEBSOCKET -.->|Push notification| FOUNDER
+    
+    %% ============================================================================
+    %% LATENCY BREAKDOWN
+    %% ============================================================================
+    
+    subgraph LATENCY["⚡ LATENCY COMPARISON"]
+        direction LR
+        
+        V7_LATENCY["❌ V7 (CRUD)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Notion update<br/>↓ 5-15 min (polling)<br/>↓ PostgreSQL write<br/>↓ AI sees change<br/>TOTAL: 5-15 minutes"]
+        
+        V10_LATENCY["✅ V10 ULTIMATE (Realtime)<br/>━━━━━━━━━━━━━━━━━━━━<br/>Notion update<br/>↓ <1s (Windmill webhook)<br/>↓ Supabase Realtime broadcast<br/>↓ Redis Pub/Sub<br/>↓ AI consumes event<br/>↓ WebSocket push<br/>TOTAL: <100ms ⭐ 2x faster!"]
+    end
+    
+    %% ============================================================================
+    %% TECHNOLOGIES
+    %% ============================================================================
+    
+    subgraph TECH_STACK["🛠️ TECHNOLOGY STACK"]
+        direction LR
+        
+        TECH_WS["WebSocket<br/>━━━━━━━━━━━━━━━━━━━━<br/>Socket.IO<br/>Bidirectional<br/>100+ connections"]
+        
+        TECH_REDIS["Redis Pub/Sub<br/>━━━━━━━━━━━━━━━━━━━━<br/>Event Bus<br/>3 channels<br/>1000+ msg/min"]
+        
+        TECH_CDC_PG["PostgreSQL CDC<br/>━━━━━━━━━━━━━━━━━━━━<br/>Logical Replication<br/>pg_notify<br/>No Kafka needed"]
+        
+        TECH_WEBHOOK["Webhooks<br/>━━━━━━━━━━━━━━━━━━━━<br/>Windmill receiver<br/>Notion → Windmill<br/>HTTP POST"]
+    end
+    
+    %% Styling
+    classDef userStyle fill:#E3F2FD,stroke:#1976D2,stroke-width:3px
+    classDef realtimeStyle fill:#E1F5FE,stroke:#0277BD,stroke-width:3px
+    classDef eventStyle fill:#FFF3E0,stroke:#F57C00,stroke-width:3px
+    classDef webhookStyle fill:#E8F5E9,stroke:#388E3C,stroke-width:3px
+    classDef latencyStyle fill:#FFEBEE,stroke:#C62828,stroke-width:2px
+    classDef techStyle fill:#F3E5F5,stroke:#7B1FA2,stroke-width:2px
+    
+    class FOUNDER,NOTION_USER userStyle
+    class WEBSOCKET,LANGGRAPH_RT realtimeStyle
+    class REDIS_PUBSUB,EVENTS_NOTION,EVENTS_DB,EVENTS_AI,CDC,POSTGRES_CDC,NEO4J_CDC eventStyle
+    class WINDMILL_WEBHOOK webhookStyle
+    class V7_LATENCY,V9_LATENCY latencyStyle
+    class TECH_WS,TECH_REDIS,TECH_CDC_PG,TECH_WEBHOOK techStyle
