@@ -640,24 +640,26 @@ export const CustomGanttPro = () => {
       if (Math.abs(deltaX) > 1) {
         setHasDragged(true);
         
-        // Calculate delta based on view mode for HOUR precision
+        // Calculate delta in FRACTIONAL hours for smooth movement
         let deltaHours = 0;
         if (viewMode === 'hour') {
           // In hour view: dayWidth = width of 1 day, so 1 hour = dayWidth / 24
           const hourWidth = dayWidth / 24;
-          deltaHours = Math.round(deltaX / hourWidth);
+          deltaHours = deltaX / hourWidth; // Keep as float for precision
         } else if (viewMode === 'day') {
           // In day view: 1 day = dayWidth, convert to hours (1 day = 24 hours)
           const deltaDays = deltaX / dayWidth;
-          deltaHours = Math.round(deltaDays * 24);
+          deltaHours = deltaDays * 24; // Keep as float
         } else {
           // Week/Month view: use days
-          const deltaDays = Math.round(deltaX / dayWidth);
+          const deltaDays = deltaX / dayWidth;
           deltaHours = deltaDays * 24;
         }
         
-        // Only update if moved at least 1 hour (or 1 day in week/month view)
-        if (deltaHours !== 0) {
+        // Update if moved at least 0.5 hours (30 minutes) for better responsiveness
+        if (Math.abs(deltaHours) >= 0.5) {
+          // Round to nearest 0.5 hour for cleaner increments
+          deltaHours = Math.round(deltaHours * 2) / 2;
           const startDate = new Date(draggedTask.start_date || draggedTask.started_at);
           // Add hours instead of days
           const newStartDate = new Date(startDate.getTime() + deltaHours * 60 * 60 * 1000);
@@ -680,21 +682,23 @@ export const CustomGanttPro = () => {
       if (Math.abs(deltaX) > 1) {
         setHasDragged(true);
         
-        // Calculate delta based on view mode for HOUR precision
+        // Calculate delta in FRACTIONAL hours for smooth movement
         let deltaHours = 0;
         if (viewMode === 'hour') {
           const hourWidth = dayWidth / 24;
-          deltaHours = Math.round(deltaX / hourWidth);
+          deltaHours = deltaX / hourWidth; // Keep as float
         } else if (viewMode === 'day') {
           const deltaDays = deltaX / dayWidth;
-          deltaHours = Math.round(deltaDays * 24);
+          deltaHours = deltaDays * 24; // Keep as float
         } else {
-          const deltaDays = Math.round(deltaX / dayWidth);
+          const deltaDays = deltaX / dayWidth;
           deltaHours = deltaDays * 24;
         }
         
-        // Only update if changed at least 1 hour
-        if (deltaHours !== 0) {
+        // Update if moved at least 0.5 hours (30 minutes)
+        if (Math.abs(deltaHours) >= 0.5) {
+          // Round to nearest 0.5 hour
+          deltaHours = Math.round(deltaHours * 2) / 2;
           const startDate = new Date(resizingTask.start_date || resizingTask.started_at);
           const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
           
