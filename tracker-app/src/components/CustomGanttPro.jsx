@@ -1209,6 +1209,10 @@ export const CustomGanttPro = () => {
         // Determine if this is a critical dependency
         const isCritical = task.priority === 'HIGH' || depTask.priority === 'HIGH';
         
+        // Scale arrow width based on zoom level (smaller at low zoom, larger at high zoom)
+        const baseWidth = isCritical ? 4 : 3;
+        const scaledWidth = Math.max(1, Math.min(baseWidth * zoomLevel, baseWidth * 2));
+        
         arrows.push(
           <g key={`arrow-${depTask.id}-${task.id}`}>
             <line 
@@ -1217,7 +1221,7 @@ export const CustomGanttPro = () => {
               x2={toPos.left} 
               y2={toY}
               stroke={isCritical ? "#dc2626" : "#3b82f6"} 
-              strokeWidth={isCritical ? "4" : "3"}
+              strokeWidth={scaledWidth}
               markerEnd={isCritical ? "url(#arrowhead-critical)" : "url(#arrowhead)"}
               opacity="0.9"
               className="transition-all hover:opacity-100"
@@ -1234,6 +1238,11 @@ export const CustomGanttPro = () => {
       return null;
     }
     
+    // Scale arrowhead size based on zoom level
+    const arrowheadScale = Math.max(0.5, Math.min(zoomLevel, 1.5));
+    const normalArrowSize = 8 * arrowheadScale;
+    const criticalArrowSize = 10 * arrowheadScale;
+    
     return (
       <svg 
         className="absolute top-0 left-0 pointer-events-none z-20"
@@ -1243,28 +1252,27 @@ export const CustomGanttPro = () => {
           minWidth: scaledGanttWidth,
           minHeight: totalHeight
         }}
-        preserveAspectRatio="none"
       >
         <defs>
           <marker
             id="arrowhead"
-            markerWidth="8"
-            markerHeight="8"
-            refX="7"
-            refY="4"
+            markerWidth={normalArrowSize}
+            markerHeight={normalArrowSize}
+            refX={normalArrowSize - 1}
+            refY={normalArrowSize / 2}
             orient="auto"
           >
-            <polygon points="0 0, 8 4, 0 8" fill="#3b82f6" />
+            <polygon points={`0 0, ${normalArrowSize} ${normalArrowSize / 2}, 0 ${normalArrowSize}`} fill="#3b82f6" />
           </marker>
           <marker
             id="arrowhead-critical"
-            markerWidth="10"
-            markerHeight="10"
-            refX="9"
-            refY="5"
+            markerWidth={criticalArrowSize}
+            markerHeight={criticalArrowSize}
+            refX={criticalArrowSize - 1}
+            refY={criticalArrowSize / 2}
             orient="auto"
           >
-            <polygon points="0 0, 10 5, 0 10" fill="#dc2626" />
+            <polygon points={`0 0, ${criticalArrowSize} ${criticalArrowSize / 2}, 0 ${criticalArrowSize}`} fill="#dc2626" />
           </marker>
         </defs>
         {arrows}
@@ -1733,6 +1741,12 @@ export const CustomGanttPro = () => {
         <div className="flex items-center gap-2 flex-wrap">
           {/* View Mode - Compact on mobile */}
           <div className="flex items-center gap-0.5 sm:gap-1 border border-border-default rounded-md overflow-hidden">
+            <button
+              onClick={() => setViewMode('hour')}
+              className={`px-2 sm:px-3 py-1 text-xs sm:text-sm ${viewMode === 'hour' ? 'bg-blue-500 text-white' : 'bg-background-primary hover:bg-background-tertiary'}`}
+            >
+              Hour
+            </button>
             <button
               onClick={() => setViewMode('day')}
               className={`px-2 sm:px-3 py-1 text-xs sm:text-sm ${viewMode === 'day' ? 'bg-blue-500 text-white' : 'bg-background-primary hover:bg-background-tertiary'}`}
