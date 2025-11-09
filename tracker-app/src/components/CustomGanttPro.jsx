@@ -1312,7 +1312,8 @@ export const CustomGanttPro = () => {
                     style={{ width: `${hourWidth}px`, minWidth: `${hourWidth}px` }}
                     className="border-r border-border-default text-center text-[10px] flex items-center justify-center"
                   >
-                    {hourIdx % 4 === 0 ? `${hourIdx}h` : ''}
+                    {/* Show ALL hours at high zoom, every 4 hours at low zoom */}
+                    {showMinutes ? `${hourIdx}h` : (hourIdx % 4 === 0 ? `${hourIdx}h` : '')}
                   </div>
                 ))}
               </div>
@@ -1326,16 +1327,16 @@ export const CustomGanttPro = () => {
                 <div key={dayIdx} className="flex" style={{ width: `${dayWidth}px` }}>
                   {Array.from({ length: 24 }, (_, hourIdx) => {
                     const minuteWidth = hourWidth / 60;
-                    // Show every 15 minutes
-                    return Array.from({ length: 4 }, (_, minIdx) => {
-                      const minute = minIdx * 15;
+                    // Show every 10 minutes for better readability
+                    return Array.from({ length: 6 }, (_, minIdx) => {
+                      const minute = minIdx * 10;
                       return (
                         <div
                           key={`${hourIdx}-${minIdx}`}
-                          style={{ width: `${minuteWidth * 15}px`, minWidth: `${minuteWidth * 15}px` }}
+                          style={{ width: `${minuteWidth * 10}px`, minWidth: `${minuteWidth * 10}px` }}
                           className="border-r border-border-default/50 text-center text-[9px] flex items-center justify-center text-text-tertiary"
                         >
-                          {minute === 0 ? '' : `${minute}m`}
+                          {minute === 0 ? '00' : `${minute}`}
                         </div>
                       );
                     });
