@@ -904,8 +904,19 @@ export const CustomGanttPro = () => {
             position: 'bottom-right'
           });
           
-          // Reload to show cascaded changes
+          // Reload to show cascaded changes - but preserve current task's updated dates!
+          const currentTaskUpdated = {
+            ...task,
+            start_datetime: startDate.toISOString(),
+            due_datetime: endDate.toISOString(),
+            start_date: format(startDate, 'yyyy-MM-dd'),
+            due_date: format(endDate, 'yyyy-MM-dd')
+          };
           await loadData();
+          // Re-apply the current task's dates after reload
+          setTasks(prev => prev.map(t => 
+            t.id === taskId ? { ...t, ...currentTaskUpdated } : t
+          ));
         } else {
           toast.success('✅ Task dates updated', {
             duration: 2000,
@@ -1314,16 +1325,32 @@ export const CustomGanttPro = () => {
           <div className="flex border-b border-border-default bg-background-tertiary h-8">
             {days.map((day, dayIdx) => (
               <div key={dayIdx} className="flex" style={{ width: `${dayWidth}px` }}>
-                {Array.from({ length: 24 }, (_, hourIdx) => (
-                  <div
-                    key={hourIdx}
-                    style={{ width: `${hourWidth}px`, minWidth: `${hourWidth}px` }}
-                    className="border-r border-border-default text-center text-[10px] flex items-center justify-center"
-                  >
-                    {/* Show ALL hours at high zoom, every 4 hours at low zoom */}
-                    {showMinutes ? `${hourIdx}h` : (hourIdx % 4 === 0 ? `${hourIdx}h` : '')}
-                  </div>
-                ))}
+                {showMinutes ? (
+                  // High zoom: Show ALL 24 hours
+                  Array.from({ length: 24 }, (_, hourIdx) => (
+                    <div
+                      key={hourIdx}
+                      style={{ width: `${hourWidth}px`, minWidth: `${hourWidth}px` }}
+                      className="border-r border-border-default text-center text-[10px] flex items-center justify-center"
+                    >
+                      {`${hourIdx}h`}
+                    </div>
+                  ))
+                ) : (
+                  // Low zoom: Show only every 4 hours (0h, 4h, 8h, 12h, 16h, 20h)
+                  Array.from({ length: 6 }, (_, idx) => {
+                    const hourIdx = idx * 4;
+                    return (
+                      <div
+                        key={hourIdx}
+                        style={{ width: `${hourWidth * 4}px`, minWidth: `${hourWidth * 4}px` }}
+                        className="border-r border-border-default text-center text-[10px] flex items-center justify-center"
+                      >
+                        {`${hourIdx}h`}
+                      </div>
+                    );
+                  })
+                )}
               </div>
             ))}
           </div>
