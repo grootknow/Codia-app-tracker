@@ -626,9 +626,10 @@ export const CustomGanttPro = () => {
     
     e.preventDefault();
     
-    // THROTTLE: Update max every 16ms (60fps) to avoid performance issues
+    // THROTTLE: Update max every 32ms (30fps) for smoother performance
+    // Lower FPS = less re-renders = smoother at high zoom
     const now = Date.now();
-    if (now - lastDragUpdateRef.current < 16) return;
+    if (now - lastDragUpdateRef.current < 32) return;
     lastDragUpdateRef.current = now;
     
     if (draggedTask) {
@@ -639,12 +640,27 @@ export const CustomGanttPro = () => {
       if (Math.abs(deltaX) > 1) {
         setHasDragged(true);
         
-        const deltaDays = Math.round(deltaX / dayWidth);
+        // Calculate delta based on view mode for HOUR precision
+        let deltaHours = 0;
+        if (viewMode === 'hour') {
+          // In hour view: dayWidth = width of 1 day, so 1 hour = dayWidth / 24
+          const hourWidth = dayWidth / 24;
+          deltaHours = Math.round(deltaX / hourWidth);
+        } else if (viewMode === 'day') {
+          // In day view: 1 day = dayWidth, convert to hours (1 day = 24 hours)
+          const deltaDays = deltaX / dayWidth;
+          deltaHours = Math.round(deltaDays * 24);
+        } else {
+          // Week/Month view: use days
+          const deltaDays = Math.round(deltaX / dayWidth);
+          deltaHours = deltaDays * 24;
+        }
         
-        // Only update position if moved at least 1 day
-        if (deltaDays !== 0) {
+        // Only update if moved at least 1 hour (or 1 day in week/month view)
+        if (deltaHours !== 0) {
           const startDate = new Date(draggedTask.start_date || draggedTask.started_at);
-          const newStartDate = addDays(startDate, deltaDays);
+          // Add hours instead of days
+          const newStartDate = new Date(startDate.getTime() + deltaHours * 60 * 60 * 1000);
           const duration = draggedTask.estimated_hours ? Math.ceil(draggedTask.estimated_hours / 8) : 3;
           const newEndDate = addDays(newStartDate, duration);
           
@@ -664,10 +680,21 @@ export const CustomGanttPro = () => {
       if (Math.abs(deltaX) > 1) {
         setHasDragged(true);
         
-        const deltaDays = Math.round(deltaX / dayWidth);
+        // Calculate delta based on view mode for HOUR precision
+        let deltaHours = 0;
+        if (viewMode === 'hour') {
+          const hourWidth = dayWidth / 24;
+          deltaHours = Math.round(deltaX / hourWidth);
+        } else if (viewMode === 'day') {
+          const deltaDays = deltaX / dayWidth;
+          deltaHours = Math.round(deltaDays * 24);
+        } else {
+          const deltaDays = Math.round(deltaX / dayWidth);
+          deltaHours = deltaDays * 24;
+        }
         
-        // Only update size if changed at least 1 day
-        if (deltaDays !== 0) {
+        // Only update if changed at least 1 hour
+        if (deltaHours !== 0) {
           const startDate = new Date(resizingTask.start_date || resizingTask.started_at);
           const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
           
@@ -675,14 +702,16 @@ export const CustomGanttPro = () => {
           let newEndDate = endDate;
           
           if (resizeEdge === 'left') {
-            newStartDate = addDays(startDate, deltaDays);
+            // Add hours to start date
+            newStartDate = new Date(startDate.getTime() + deltaHours * 60 * 60 * 1000);
             if (newStartDate >= endDate) {
-              newStartDate = addDays(endDate, -1);
+              newStartDate = new Date(endDate.getTime() - 60 * 60 * 1000); // 1 hour before end
             }
           } else {
-            newEndDate = addDays(endDate, deltaDays);
+            // Add hours to end date
+            newEndDate = new Date(endDate.getTime() + deltaHours * 60 * 60 * 1000);
             if (newEndDate <= startDate) {
-              newEndDate = addDays(startDate, 1);
+              newEndDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour after start
             }
           }
           
