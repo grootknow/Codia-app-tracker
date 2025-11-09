@@ -980,33 +980,16 @@ export const CustomGanttPro = () => {
   };
 
   // Get task dependencies
-  // DB has: depends_on (array), blocked_by (unused)
-  // Code was checking blocking_dependencies (doesn't exist!) first
+  // DB field: depends_on (array of task IDs)
   const getTaskDependencies = (task) => {
-    // Priority order: depends_on (primary in DB) > blocked_by (fallback) > blocking_dependencies (doesn't exist)
-    let deps = null;
-    let fieldUsed = null;
+    if (!task) return [];
     
-    if (task.depends_on) {
-      deps = task.depends_on;
-      fieldUsed = 'depends_on';
-    } else if (task.blocked_by) {
-      deps = task.blocked_by;
-      fieldUsed = 'blocked_by';
-    } else if (task.blocking_dependencies) {
-      deps = task.blocking_dependencies;
-      fieldUsed = 'blocking_dependencies';
-    }
+    const deps = task.depends_on;
     
     if (!deps || (Array.isArray(deps) && deps.length === 0)) return [];
     
     // Handle both array and single ID
     const depArray = Array.isArray(deps) ? deps : [deps];
-    
-    // Debug log (only in development)
-    if (depArray.length > 0 && process.env.NODE_ENV === 'development') {
-      console.log(`Task ${task.id} (${task.name}): Using ${fieldUsed} = ${JSON.stringify(depArray)}`);
-    }
     
     return depArray
       .map(depId => tasks.find(t => t.id === depId))
