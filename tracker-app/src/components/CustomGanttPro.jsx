@@ -36,7 +36,7 @@ export const CustomGanttPro = () => {
   const [selectedTask, setSelectedTask] = useState(null);
   const [hoveredTask, setHoveredTask] = useState(null);
   const [sortBy, setSortBy] = useState('priority'); // 'priority' | 'start' | 'end' | 'duration'
-  const [showCriticalPath, setShowCriticalPath] = useState(true);
+  const [showCriticalPath, setShowCriticalPath] = useState(false);
   const [showDependencies, setShowDependencies] = useState(true);
   const [showBaseline, setShowBaseline] = useState(false);
   const [collapsedPhases, setCollapsedPhases] = useState(new Set());
@@ -477,6 +477,77 @@ export const CustomGanttPro = () => {
       toast.error('Failed to duplicate task');
     }
   };
+
+  // Calculate critical path - longest chain of dependent tasks
+  const calculateCriticalPath = useMemo(() => {
+    if (!showCriticalPath || tasks.length === 0) return new Set();
+    
+    const taskMap = new Map(tasks.map(t => [t.id, t]));
+    const durations = new Map();
+    const criticalTasks = new Set();
+    
+    // Calculate duration for each task
+    const getDuration = (task) => {
+      if (durations.has(task.id)) return durations.get(task.id);
+      
+      const taskDuration = task.estimated_hours ? Math.ceil(task.estimated_hours / 8) : 3;
+      
+      // If no dependencies, duration is just task duration
+      if (!task.dependencies || task.dependencies.length === 0) {
+        durations.set(task.id, taskDuration);
+        return taskDuration;
+      }
+      
+      // Find max duration path through dependencies
+      let maxDepDuration = 0;
+      task.dependencies.forEach(depId => {
+        const depTask = taskMap.get(depId);
+        if (depTask) {
+          const depDuration = getDuration(depTask);
+          if (depDuration > maxDepDuration) maxDepDuration = depDuration;
+        }
+      });
+      
+      const totalDuration = maxDepDuration + taskDuration;
+      durations.set(task.id, totalDuration);
+      return totalDuration;
+    };
+    
+    // Calculate all durations
+    tasks.forEach(task => getDuration(task));
+    
+    // Find tasks with max duration (critical path)
+    const maxDuration = Math.max(...Array.from(durations.values()));
+    
+    // Trace back critical path
+    const traceCriticalPath = (task) => {
+      if (criticalTasks.has(task.id)) return;
+      
+      const taskDuration = durations.get(task.id);
+      if (taskDuration === maxDuration || criticalTasks.size > 0) {
+        criticalTasks.add(task.id);
+        
+        // Add critical dependencies
+        if (task.dependencies) {
+          task.dependencies.forEach(depId => {
+            const depTask = taskMap.get(depId);
+            if (depTask && durations.get(depId) === taskDuration - (task.estimated_hours ? Math.ceil(task.estimated_hours / 8) : 3)) {
+              traceCriticalPath(depTask);
+            }
+          });
+        }
+      }
+    };
+    
+    // Start from tasks with max duration
+    tasks.forEach(task => {
+      if (durations.get(task.id) === maxDuration) {
+        traceCriticalPath(task);
+      }
+    });
+    
+    return criticalTasks;
+  }, [tasks, showCriticalPath]);
 
   // Auto-schedule: Calculate optimal dates based on dependencies
   const autoSchedule = async () => {
@@ -1008,6 +1079,16 @@ export const CustomGanttPro = () => {
             Baseline
           </label>
           
+          {/* Critical Path */}
+          <label className="flex items-center gap-2 cursor-pointer text-sm">
+            <input 
+              type="checkbox" 
+              checked={showCriticalPath} 
+              onChange={() => setShowCriticalPath(!showCriticalPath)} 
+            />
+            <span className="text-red-600 font-medium">Critical Path</span>
+          </label>
+          
           <div className="border-l border-border-default h-6 mx-2"></div>
           
           {/* Export */}
@@ -1245,6 +1326,7 @@ export const CustomGanttPro = () => {
                           <div
                             style={{ left: `${left}px`, width: `${width}px`, top: '5px', height: '30px' }}
                             className={`absolute rounded-md cursor-move transition-all duration-200 ${
+                              calculateCriticalPath.has(task.id) ? 'bg-red-500 ring-2 ring-red-600' :
                               task.status === 'DONE' ? 'bg-green-500' :
                               task.status === 'IN_PROGRESS' ? 'bg-blue-500' :
                               'bg-gray-400'
