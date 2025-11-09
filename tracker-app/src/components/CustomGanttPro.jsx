@@ -603,28 +603,31 @@ export const CustomGanttPro = () => {
     if (draggedTask) {
       const deltaX = e.clientX - dragStartX;
       const deltaDays = Math.round(deltaX / dayWidth);
-      if (deltaDays !== 0) {
-        setHasDragged(true); // Mark as dragged
-        // Update task dates
+      
+      // Always update cursor position, but only update dates if moved at least 1 day
+      if (Math.abs(deltaX) > dayWidth / 2) { // More responsive - trigger at half day
+        setHasDragged(true);
         const startDate = new Date(draggedTask.start_date || draggedTask.started_at);
         const newStartDate = addDays(startDate, deltaDays);
         const duration = draggedTask.estimated_hours ? Math.ceil(draggedTask.estimated_hours / 8) : 3;
         const newEndDate = addDays(newStartDate, duration);
         
-        // Optimistic update - update local state immediately
+        // Optimistic update
         setTasks(prev => prev.map(t => 
           t.id === draggedTask.id 
             ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
             : t
         ));
         setDraggedTask({ ...draggedTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
-        setDragStartX(e.clientX);
+        setDragStartX(e.clientX); // Reset reference point
       }
     } else if (resizingTask && resizeEdge) {
       const deltaX = e.clientX - dragStartX;
       const deltaDays = Math.round(deltaX / dayWidth);
-      if (deltaDays !== 0) {
-        setHasDragged(true); // Mark as dragged
+      
+      // More responsive - trigger at half day
+      if (Math.abs(deltaX) > dayWidth / 2) {
+        setHasDragged(true);
         const startDate = new Date(resizingTask.start_date || resizingTask.started_at);
         const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
         
@@ -633,26 +636,24 @@ export const CustomGanttPro = () => {
         
         if (resizeEdge === 'left') {
           newStartDate = addDays(startDate, deltaDays);
-          // Validate: start cannot be after end
           if (newStartDate >= endDate) {
-            newStartDate = addDays(endDate, -1); // Keep at least 1 day duration
+            newStartDate = addDays(endDate, -1);
           }
         } else {
           newEndDate = addDays(endDate, deltaDays);
-          // Validate: end cannot be before start
           if (newEndDate <= startDate) {
-            newEndDate = addDays(startDate, 1); // Keep at least 1 day duration
+            newEndDate = addDays(startDate, 1);
           }
         }
         
-        // Optimistic update - update local state immediately
+        // Optimistic update
         setTasks(prev => prev.map(t => 
           t.id === resizingTask.id 
             ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
             : t
         ));
         setResizingTask({ ...resizingTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
-        setDragStartX(e.clientX);
+        setDragStartX(e.clientX); // Reset reference point
       }
     }
   };
