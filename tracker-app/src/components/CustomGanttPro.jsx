@@ -1065,10 +1065,21 @@ export const CustomGanttPro = () => {
     
     console.log(`🔍 Arrows Debug: ${arrows.length} arrows rendered, ${taskYPositions.size} tasks positioned`);
     
+    if (arrows.length === 0) {
+      console.warn('⚠️ No arrows to render - check if tasks have depends_on field');
+      return null;
+    }
+    
     return (
       <svg 
         className="absolute top-0 left-0 pointer-events-none z-20"
-        style={{ width: scaledGanttWidth, height: totalHeight }}
+        style={{ 
+          width: '100%',
+          height: '100%',
+          minWidth: scaledGanttWidth,
+          minHeight: totalHeight
+        }}
+        preserveAspectRatio="none"
       >
         <defs>
           <marker
@@ -1355,6 +1366,16 @@ export const CustomGanttPro = () => {
                 const deps = getTaskDependencies(t); // Returns task objects
                 return deps.some(dep => dep.id === tooltip.task.id);
               });
+              
+              // Debug log
+              if (tooltip.task.depends_on && tooltip.task.depends_on.length > 0) {
+                console.log(`📊 Tooltip for "${tooltip.task.name}":`, {
+                  depends_on: tooltip.task.depends_on,
+                  predecessors: predecessors.length,
+                  successors: successors.length
+                });
+              }
+              
               return (
                 <>
                   {predecessors.length > 0 && (
