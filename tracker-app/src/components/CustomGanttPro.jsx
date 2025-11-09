@@ -316,6 +316,9 @@ export const CustomGanttPro = () => {
   // ==================== EVENT HANDLERS ====================
   
   const handleTaskClick = (task) => {
+    // Set selected task for highlighting
+    setSelectedTask(task);
+    
     const taskElement = leftPanelRef.current?.querySelector(`[data-task-id="${task.id}"]`);
     const timelineEl = timelineRef.current;
     const leftPanelEl = leftPanelRef.current;
@@ -344,6 +347,7 @@ export const CustomGanttPro = () => {
 
   const handleBarClick = (task, e) => {
     if (e) e.stopPropagation();
+    // Just set selected, don't open modal immediately
     setSelectedTask(task);
   };
 
@@ -1278,6 +1282,7 @@ export const CustomGanttPro = () => {
                         'hover:bg-background-tertiary'
                       }`}
                       onClick={() => handleTaskClick(task)}
+                      onDoubleClick={() => setSelectedTask(task)}
                       onMouseEnter={(e) => {
                         setHoveredTask(task.id);
                         setTooltip({
