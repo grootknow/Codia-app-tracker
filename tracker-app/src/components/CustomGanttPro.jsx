@@ -996,6 +996,7 @@ export const CustomGanttPro = () => {
   // Render dependency arrows (with proper Y positioning accounting for phases)
   const renderDependencyArrows = () => {
     if (!showDependencies) return null;
+    if (!tasks.length || !phases.length) return null; // Wait for data
     
     const arrows = [];
     
