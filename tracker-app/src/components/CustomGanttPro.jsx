@@ -48,6 +48,8 @@ export const CustomGanttPro = () => {
   const [tooltip, setTooltip] = useState({ visible: false, task: null, x: 0, y: 0 });
   const [contextMenu, setContextMenu] = useState({ visible: false, task: null, x: 0, y: 0 });
   const [filterStatus, setFilterStatus] = useState('ALL');
+  const [hasDragged, setHasDragged] = useState(false);
+  const [taskColumnCollapsed, setTaskColumnCollapsed] = useState(false);
   const [filterPriority, setFilterPriority] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [zoomLevel, setZoomLevel] = useState(1); // 0.5 to 2
@@ -365,9 +367,12 @@ export const CustomGanttPro = () => {
   const handleBarClick = (task, e) => {
     if (e) e.stopPropagation();
     
-    // Immediately open modal when clicking on Gantt bar
-    setHighlightedTask(task);
-    setSelectedTask(task);
+    // Only open modal if NOT dragged
+    if (!hasDragged) {
+      setHighlightedTask(task);
+      setSelectedTask(task);
+    }
+    setHasDragged(false); // Reset for next interaction
   };
 
   const handleBarRightClick = (task, e) => {
@@ -425,6 +430,7 @@ export const CustomGanttPro = () => {
   // Drag & Drop handlers
   const handleBarMouseDown = (e, task, edge = null) => {
     e.stopPropagation();
+    setHasDragged(false); // Reset drag flag
     if (edge) {
       setResizingTask(task);
       setResizeEdge(edge);
@@ -439,6 +445,7 @@ export const CustomGanttPro = () => {
       const deltaX = e.clientX - dragStartX;
       const deltaDays = Math.round(deltaX / dayWidth);
       if (deltaDays !== 0) {
+        setHasDragged(true); // Mark as dragged
         // Update task dates
         const startDate = new Date(draggedTask.start_date || draggedTask.started_at);
         const newStartDate = addDays(startDate, deltaDays);
@@ -458,6 +465,7 @@ export const CustomGanttPro = () => {
       const deltaX = e.clientX - dragStartX;
       const deltaDays = Math.round(deltaX / dayWidth);
       if (deltaDays !== 0) {
+        setHasDragged(true); // Mark as dragged
         const startDate = new Date(resizingTask.start_date || resizingTask.started_at);
         const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
         
@@ -1278,32 +1286,43 @@ export const CustomGanttPro = () => {
       
       {/* Gantt Chart */}
       <div className="flex-1 flex overflow-hidden relative gantt-export-area">
-        {/* Left Panel - Tasks */}
-        <div 
-          ref={leftPanelRef}
-          className="w-[400px] flex-shrink-0 overflow-y-auto border-r border-border-default"
-          style={{ scrollbarWidth: 'thin' }}
+        {/* Toggle Task Column Button */}
+        <button
+          onClick={() => setTaskColumnCollapsed(!taskColumnCollapsed)}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-40 bg-background-secondary border border-border-default rounded-r-md px-1 py-4 hover:bg-background-tertiary transition-all shadow-lg"
+          style={{ left: taskColumnCollapsed ? '0' : '400px' }}
+          title={taskColumnCollapsed ? 'Show Tasks' : 'Hide Tasks'}
         >
-          {/* Header */}
-          <div className="h-[60px] flex items-center justify-between px-4 sticky top-0 z-20 bg-background-secondary border-b border-border-default">
-            <h4 className="font-bold text-text-primary">Tasks</h4>
-            <div className="flex items-center gap-1">
-              <button
-                onClick={() => setCollapsedPhases(new Set())}
-                className="text-xs px-2 py-1 rounded hover:bg-background-tertiary"
-                title="Expand All Phases"
-              >
-                ⬇️ Expand All
-              </button>
-              <button
-                onClick={() => setCollapsedPhases(new Set(phases.map(p => p.id)))}
-                className="text-xs px-2 py-1 rounded hover:bg-background-tertiary"
-                title="Collapse All Phases"
-              >
-                ⬆️ Collapse All
-              </button>
+          {taskColumnCollapsed ? <ChevronRight className="w-4 h-4" /> : <ChevronLeft className="w-4 h-4" />}
+        </button>
+        
+        {/* Left Panel - Tasks */}
+        {!taskColumnCollapsed && (
+          <div 
+            ref={leftPanelRef}
+            className="w-[400px] flex-shrink-0 overflow-y-auto border-r border-border-default transition-all"
+            style={{ scrollbarWidth: 'thin' }}
+          >
+            {/* Header */}
+            <div className="h-[60px] flex items-center justify-between px-4 sticky top-0 z-20 bg-background-secondary border-b border-border-default">
+              <h4 className="font-bold text-text-primary">Tasks</h4>
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => setCollapsedPhases(new Set())}
+                  className="text-xs px-2 py-1 rounded hover:bg-background-tertiary"
+                  title="Expand All Phases"
+                >
+                  ⬇️ Expand All
+                </button>
+                <button
+                  onClick={() => setCollapsedPhases(new Set(phases.map(p => p.id)))}
+                  className="text-xs px-2 py-1 rounded hover:bg-background-tertiary"
+                  title="Collapse All Phases"
+                >
+                  ⬆️ Collapse All
+                </button>
+              </div>
             </div>
-          </div>
           
           {/* Task List */}
           <div className="relative">
@@ -1401,7 +1420,8 @@ export const CustomGanttPro = () => {
               </React.Fragment>
             ))}
           </div>
-        </div>
+          </div>
+        )}
         
         {/* Right Panel - Timeline */}
         <div 
