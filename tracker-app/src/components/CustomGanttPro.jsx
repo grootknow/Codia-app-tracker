@@ -60,9 +60,22 @@ export const CustomGanttPro = () => {
   const modalTimerRef = useRef(null);
 
   // ==================== STATE PERSISTENCE ====================
+  // Debug: Log initial state on mount
+  useEffect(() => {
+    console.log('🔄 Gantt State Restored:', {
+      viewMode,
+      zoomLevel,
+      showCriticalPath,
+      showDependencies,
+      showBaseline,
+      taskColumnCollapsed
+    });
+  }, []);
+
   // Save state to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('gantt_viewMode', viewMode);
+    console.log('💾 Saved viewMode:', viewMode);
   }, [viewMode]);
 
   useEffect(() => {
@@ -991,13 +1004,13 @@ export const CustomGanttPro = () => {
         <defs>
           <marker
             id="arrowhead"
-            markerWidth="10"
-            markerHeight="10"
-            refX="9"
+            markerWidth="6"
+            markerHeight="6"
+            refX="5"
             refY="3"
             orient="auto"
           >
-            <polygon points="0 0, 10 3, 0 6" fill="#3b82f6" />
+            <polygon points="0 0, 6 3, 0 6" fill="#3b82f6" />
           </marker>
         </defs>
         {arrows}

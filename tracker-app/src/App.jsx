@@ -60,8 +60,30 @@ function App() {
 
   return (
     <div className="h-screen flex bg-background-primary text-text-secondary">
-      <Sidebar activePage={activePage} setActivePage={setActivePage} />
+      {/* Sidebar - hidden on mobile, shown on tablet+ */}
+      <div className="hidden md:block">
+        <Sidebar activePage={activePage} setActivePage={setActivePage} />
+      </div>
+      
+      {/* Main content */}
       <main className="flex-1 overflow-y-auto">
+        {/* Mobile header with navigation */}
+        <div className="md:hidden sticky top-0 z-50 bg-background-secondary border-b border-border-default p-4">
+          <div className="flex items-center justify-between">
+            <h1 className="text-lg font-bold text-text-primary">CODIA TRACKER</h1>
+            <select
+              value={activePage}
+              onChange={(e) => setActivePage(e.target.value)}
+              className="px-3 py-2 rounded-lg bg-background-tertiary text-text-primary border border-border-default"
+            >
+              <option value="dashboard">Dashboard</option>
+              <option value="tasks">Tasks</option>
+              <option value="analytics">Analytics</option>
+              <option value="activity">Activity Logs</option>
+            </select>
+          </div>
+        </div>
+        
         {renderPage()}
       </main>
     </div>
