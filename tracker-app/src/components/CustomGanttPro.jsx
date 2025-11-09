@@ -615,6 +615,10 @@ export const CustomGanttPro = () => {
       document.body.style.cursor = 'grabbing'; // Global cursor
     }
     setDragStartX(e.clientX);
+    
+    // Attach global listeners for drag/resize
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
   };
 
   const handleMouseMove = (e) => {
@@ -696,6 +700,11 @@ export const CustomGanttPro = () => {
 
   const handleMouseUp = async () => {
     console.log('🖱️ MouseUp - hasDragged:', hasDragged);
+    
+    // Remove global listeners
+    document.removeEventListener('mousemove', handleMouseMove);
+    document.removeEventListener('mouseup', handleMouseUp);
+    
     // Reset cursor
     document.body.style.cursor = '';
     
@@ -1911,7 +1920,13 @@ export const CustomGanttPro = () => {
                   
                   {/* Task rows */}
                   {!collapsedPhases.has(phase.id) && phaseTasks.map((task) => {
-                    const { left, width } = getTaskPosition(task);
+                    // Use updated position if this task is being dragged/resized
+                    const displayTask = 
+                      draggedTask?.id === task.id ? draggedTask :
+                      resizingTask?.id === task.id ? resizingTask :
+                      task;
+                    
+                    const { left, width } = getTaskPosition(displayTask);
                     const progress = task.progress_percentage || 0;
                     
                     // Calculate bar height based on row height
@@ -1919,12 +1934,17 @@ export const CustomGanttPro = () => {
                     const barTop = (rowHeight - barHeight) / 2; // Center vertically
                     
                     return (
-                      <div key={`bar-${task.id}`} className="relative border-b border-border-default" style={{ height: `${rowHeight}px` }}>
+                      <div 
+                        key={`bar-${task.id}`} 
+                        className="relative border-b border-border-default" 
+                        style={{ height: `${rowHeight}px` }}>
                         {task.is_milestone ? (
                           // Milestone Diamond
                           <div
                             style={{ left: `${left}px`, top: `${barTop}px` }}
-                            className={`absolute w-6 h-6 bg-yellow-400 border-2 border-yellow-600 transform rotate-45 cursor-pointer transition-all z-10 ${
+                            className={`absolute w-6 h-6 bg-yellow-400 border-2 border-yellow-600 transform rotate-45 cursor-pointer ${
+                              draggedTask?.id === task.id ? '' : 'transition-all'
+                            } z-10 ${
                               highlightedTask?.id === task.id || selectedTask?.id === task.id ? 'scale-125 ring-4 ring-blue-400' :
                               hoveredTask === task.id ? 'scale-110 ring-2 ring-blue-300' :
                               'hover:scale-110'
@@ -1939,7 +1959,9 @@ export const CustomGanttPro = () => {
                           // Regular Task Bar
                           <div
                             style={{ left: `${left}px`, width: `${width}px`, top: `${barTop}px`, height: `${barHeight}px` }}
-                            className={`absolute rounded-md transition-all duration-200 ${
+                            className={`absolute rounded-md ${
+                              draggedTask?.id === task.id || resizingTask?.id === task.id ? '' : 'transition-all duration-200'
+                            } ${
                               draggedTask?.id === task.id || resizingTask?.id === task.id ? 'cursor-grabbing' : 'cursor-grab'
                             } ${
                               calculateCriticalPath.has(task.id) ? 'bg-red-500 ring-2 ring-red-600' :

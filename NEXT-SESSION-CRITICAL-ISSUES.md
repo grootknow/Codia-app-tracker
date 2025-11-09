@@ -1,5 +1,28 @@
 # 🚨 CRITICAL ISSUES - NEXT SESSION
 
+## ⚠️ LESSON LEARNED: ALWAYS TEST LOCAL FIRST!
+
+**CRITICAL WORKFLOW:**
+1. ✅ Make changes
+2. ✅ Test with `npm run dev` (localhost:3001)
+3. ✅ Use Puppeteer MCP to automate testing
+4. ✅ Verify fixes work locally
+5. ✅ THEN commit + push + deploy
+
+**WHY:**
+- Saves tokens (no wasted deployments)
+- Catches bugs early (infinite loops, visual issues)
+- Faster iteration (no wait for Vercel)
+
+**Tools:**
+- `npm run dev` - Local dev server
+- Puppeteer MCP - Automated browser testing
+- Browser Preview - Manual testing
+
+---
+
+# 🚨 CRITICAL ISSUES - NEXT SESSION (RESOLVED)
+
 ## ⚠️ DRAG/RESIZE VẪN KẸT!
 
 ### Problem
