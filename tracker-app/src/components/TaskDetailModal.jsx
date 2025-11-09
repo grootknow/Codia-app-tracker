@@ -13,7 +13,10 @@ export const TaskDetailModal = ({ task, onClose, onUpdate, allTasks = [] }) => {
 
   // Calculate dependencies and blocked tasks
   React.useEffect(() => {
-    if (!task || !allTasks.length) return;
+    if (!task || !allTasks.length) {
+      console.warn('⚠️ Modal: Missing data', { hasTask: !!task, allTasksCount: allTasks.length });
+      return;
+    }
 
     // Get tasks this depends on (predecessors)
     const deps = task.depends_on || [];
@@ -26,6 +29,13 @@ export const TaskDetailModal = ({ task, onClose, onUpdate, allTasks = [] }) => {
       return taskDeps.includes(task.id);
     });
     setBlockedBy(blocked);
+    
+    console.log(`📋 Modal "${task.name}":`, {
+      depends_on: deps,
+      predecessors: depTasks.length,
+      successors: blocked.length,
+      allTasksCount: allTasks.length
+    });
   }, [task, allTasks]);
 
   // ✅ FIXED: Use toast instead of alert + added validation
