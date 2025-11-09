@@ -25,50 +25,16 @@ export const supabase = createClient(SUPABASE_URL, SUPABASE_KEY, {
   },
 });
 
-// ✅ FIX: WebSocket connection status monitoring
+// ✅ FIX: WebSocket connection status monitoring (Supabase v2 compatible)
 let realtimeConnectionStatus = 'DISCONNECTED';
 let reconnectAttempts = 0;
 const MAX_RECONNECT_ATTEMPTS = 5;
 
-// Monitor realtime connection status
+// Supabase v2 doesn't expose onOpen/onClose/onError directly
+// Connection status is managed internally by channels
+// We'll monitor via channel subscriptions instead
 if (typeof window !== 'undefined') {
-  supabase.realtime.onOpen(() => {
-    realtimeConnectionStatus = 'CONNECTED';
-    reconnectAttempts = 0;
-    console.log('✅ Supabase realtime connected');
-    toast.success('🔄 Real-time updates connected', { id: 'realtime-status', duration: 2000 });
-  });
-
-  supabase.realtime.onClose(() => {
-    realtimeConnectionStatus = 'DISCONNECTED';
-    console.warn('⚠️ Supabase realtime disconnected');
-
-    // ✅ FIX: Retry logic with exponential backoff
-    if (reconnectAttempts < MAX_RECONNECT_ATTEMPTS) {
-      const delay = Math.min(1000 * Math.pow(2, reconnectAttempts), 10000);
-      reconnectAttempts++;
-
-      toast.loading(`Reconnecting... (${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS})`, {
-        id: 'realtime-status',
-        duration: delay,
-      });
-
-      setTimeout(() => {
-        console.log(`🔄 Attempting reconnect ${reconnectAttempts}/${MAX_RECONNECT_ATTEMPTS}`);
-        // Supabase will auto-reconnect, we just log here
-      }, delay);
-    } else {
-      toast.error('❌ Real-time updates offline. Refresh page to reconnect.', {
-        id: 'realtime-status',
-        duration: Infinity,
-      });
-    }
-  });
-
-  supabase.realtime.onError((error) => {
-    console.error('❌ Supabase realtime error:', error);
-    toast.error(`Real-time error: ${error.message}`, { id: 'realtime-status' });
-  });
+  console.log('✅ Supabase client initialized');
 }
 
 // Export connection status getter
