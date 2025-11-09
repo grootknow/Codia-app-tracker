@@ -51,13 +51,22 @@ export const CustomGanttPro = () => {
   const [filterPriority, setFilterPriority] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [zoomLevel, setZoomLevel] = useState(1); // 0.5 to 2
+  const [highlightedTask, setHighlightedTask] = useState(null); // For visual highlight before modal
   
   const timelineRef = useRef(null);
   const leftPanelRef = useRef(null);
+  const modalTimerRef = useRef(null);
 
   // ==================== DATA FETCHING ====================
   useEffect(() => {
     loadData();
+    
+    // Cleanup timer on unmount
+    return () => {
+      if (modalTimerRef.current) {
+        clearTimeout(modalTimerRef.current);
+      }
+    };
   }, []);
 
   // Keyboard shortcuts
@@ -316,9 +325,15 @@ export const CustomGanttPro = () => {
   // ==================== EVENT HANDLERS ====================
   
   const handleTaskClick = (task) => {
-    // Set selected task for highlighting
-    setSelectedTask(task);
+    // Clear any pending modal timer
+    if (modalTimerRef.current) {
+      clearTimeout(modalTimerRef.current);
+    }
     
+    // Immediately highlight the task
+    setHighlightedTask(task);
+    
+    // Scroll to task
     const taskElement = leftPanelRef.current?.querySelector(`[data-task-id="${task.id}"]`);
     const timelineEl = timelineRef.current;
     const leftPanelEl = leftPanelRef.current;
@@ -343,12 +358,28 @@ export const CustomGanttPro = () => {
       timelineEl.scrollTo({ left: targetScrollLeft, top: targetScrollTop, behavior: 'smooth' });
       leftPanelEl.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
     }
+    
+    // Open modal after delay to show highlight
+    modalTimerRef.current = setTimeout(() => {
+      setSelectedTask(task);
+    }, 400);
   };
 
   const handleBarClick = (task, e) => {
     if (e) e.stopPropagation();
-    // Just set selected, don't open modal immediately
-    setSelectedTask(task);
+    
+    // Clear any pending modal timer
+    if (modalTimerRef.current) {
+      clearTimeout(modalTimerRef.current);
+    }
+    
+    // Immediately highlight
+    setHighlightedTask(task);
+    
+    // Open modal after delay
+    modalTimerRef.current = setTimeout(() => {
+      setSelectedTask(task);
+    }, 400);
   };
 
   const handleBarRightClick = (task, e) => {
@@ -1276,7 +1307,7 @@ export const CustomGanttPro = () => {
                       key={task.id}
                       data-task-id={task.id}
                       className={`h-10 flex items-center justify-between text-sm border-b border-border-default cursor-pointer transition-colors ${
-                        selectedTask?.id === task.id ? 'bg-blue-100 dark:bg-blue-900/30 border-l-4 border-l-blue-500' :
+                        highlightedTask?.id === task.id || selectedTask?.id === task.id ? 'bg-blue-100 dark:bg-blue-900/30 border-l-4 border-l-blue-500' :
                         hoveredTask === task.id ? 'bg-blue-50 dark:bg-blue-900/10' :
                         searchQuery && task.name?.toLowerCase().includes(searchQuery.toLowerCase()) ? 'bg-yellow-50 dark:bg-yellow-900/20' : 
                         'hover:bg-background-tertiary'
@@ -1415,7 +1446,7 @@ export const CustomGanttPro = () => {
                           <div
                             style={{ left: `${left}px`, top: '12px' }}
                             className={`absolute w-6 h-6 bg-yellow-400 border-2 border-yellow-600 transform rotate-45 cursor-pointer transition-all z-10 ${
-                              selectedTask?.id === task.id ? 'scale-125 ring-4 ring-blue-400' :
+                              highlightedTask?.id === task.id || selectedTask?.id === task.id ? 'scale-125 ring-4 ring-blue-400' :
                               hoveredTask === task.id ? 'scale-110 ring-2 ring-blue-300' :
                               'hover:scale-110'
                             }`}
@@ -1435,7 +1466,7 @@ export const CustomGanttPro = () => {
                               task.status === 'IN_PROGRESS' ? 'bg-blue-500' :
                               'bg-gray-400'
                             } ${
-                              selectedTask?.id === task.id ? 'ring-4 ring-blue-400 ring-offset-2 scale-105' :
+                              highlightedTask?.id === task.id || selectedTask?.id === task.id ? 'ring-4 ring-blue-400 ring-offset-2 scale-105' :
                               draggedTask?.id === task.id ? 'opacity-50 scale-105' : 
                               hoveredTask === task.id ? 'ring-2 ring-blue-300' :
                               'hover:opacity-80'
