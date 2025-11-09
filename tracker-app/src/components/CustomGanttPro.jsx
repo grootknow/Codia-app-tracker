@@ -79,6 +79,7 @@ export const CustomGanttPro = () => {
   const [highlightedTask, setHighlightedTask] = useState(null); // For visual highlight before modal
   const [originalDraggedTask, setOriginalDraggedTask] = useState(null); // Store original task state for revert
   const originalStartDateRef = useRef(null); // Store original start date for smooth drag calculation
+  const originalEndDateRef = useRef(null); // Store original end date for smooth resize calculation
   
   const timelineRef = useRef(null);
   const leftPanelRef = useRef(null);
@@ -621,6 +622,8 @@ export const CustomGanttPro = () => {
     // Store original start/end dates for smooth drag calculation (use TIMESTAMP if available)
     originalStartDateRef.current = task.start_datetime ? new Date(task.start_datetime) :
                                    new Date(task.start_date || task.started_at);
+    originalEndDateRef.current = task.due_datetime ? new Date(task.due_datetime) :
+                                 new Date(task.due_date || task.completed_at);
     
     if (edge) {
       setResizingTask(task);
@@ -721,25 +724,26 @@ export const CustomGanttPro = () => {
         }
         
         // ULTRA SMOOTH: Update visual on every movement!
+        // Use ORIGINAL dates, not updated ones!
         const originalStartDate = originalStartDateRef.current || 
                                  (resizingTask.start_datetime ? new Date(resizingTask.start_datetime) : new Date(resizingTask.start_date || resizingTask.started_at));
-        const startDate = originalStartDate;
-        const endDate = resizingTask.due_datetime ? new Date(resizingTask.due_datetime) : new Date(resizingTask.due_date || resizingTask.completed_at);
+        const originalEndDate = originalEndDateRef.current ||
+                               (resizingTask.due_datetime ? new Date(resizingTask.due_datetime) : new Date(resizingTask.due_date || resizingTask.completed_at));
         
-        let newStartDate = startDate;
-        let newEndDate = endDate;
+        let newStartDate = originalStartDate;
+        let newEndDate = originalEndDate;
         
         if (resizeEdge === 'left') {
-          // Add EXACT hours (no rounding)
-          newStartDate = new Date(startDate.getTime() + deltaHours * 60 * 60 * 1000);
-          if (newStartDate >= endDate) {
-            newStartDate = new Date(endDate.getTime() - 60 * 60 * 1000); // 1 hour before end
+          // Add EXACT hours from ORIGINAL start date
+          newStartDate = new Date(originalStartDate.getTime() + deltaHours * 60 * 60 * 1000);
+          if (newStartDate >= originalEndDate) {
+            newStartDate = new Date(originalEndDate.getTime() - 60 * 60 * 1000); // 1 hour before end
           }
         } else {
-          // Add EXACT hours (no rounding)
-          newEndDate = new Date(endDate.getTime() + deltaHours * 60 * 60 * 1000);
-          if (newEndDate <= startDate) {
-            newEndDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour after start
+          // Add EXACT hours from ORIGINAL end date
+          newEndDate = new Date(originalEndDate.getTime() + deltaHours * 60 * 60 * 1000);
+          if (newEndDate <= originalStartDate) {
+            newEndDate = new Date(originalStartDate.getTime() + 60 * 60 * 1000); // 1 hour after start
           }
         }
         
@@ -795,7 +799,8 @@ export const CustomGanttPro = () => {
     setResizingTask(null);
     setResizeEdge(null);
     setOriginalDraggedTask(null);
-    originalStartDateRef.current = null; // Clear original date reference
+    originalStartDateRef.current = null; // Clear original date references
+    originalEndDateRef.current = null;
     console.log('✅ MouseUp complete');
   };
 
