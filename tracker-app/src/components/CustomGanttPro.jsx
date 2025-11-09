@@ -1896,10 +1896,10 @@ export const CustomGanttPro = () => {
           {/* Zoom Slider - Simplified */}
           <div className="flex items-center gap-1 sm:gap-2">
             <span className="text-xs text-text-tertiary hidden sm:inline">Zoom:</span>
-            <input
+            <input 
               type="range"
               min="0.3"
-              max="3"
+              max="5"
               step="0.1"
               value={zoomLevel}
               onChange={(e) => setZoomLevel(parseFloat(e.target.value))}
