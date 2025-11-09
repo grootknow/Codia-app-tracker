@@ -1355,6 +1355,38 @@ export const CustomGanttPro = () => {
             {tooltip.task.assigned_to && (
               <div>Assigned: <span className="text-white">{tooltip.task.assigned_to}</span></div>
             )}
+            {/* Dependencies Info */}
+            {(() => {
+              const predecessors = getTaskDependencies(tooltip.task);
+              const successors = tasks.filter(t => getTaskDependencies(t).includes(tooltip.task.id));
+              return (
+                <>
+                  {predecessors.length > 0 && (
+                    <div className="pt-1 border-t border-gray-700">
+                      <div className="text-yellow-400 font-semibold">⬅️ Depends on:</div>
+                      {predecessors.map(depId => {
+                        const depTask = tasks.find(t => t.id === depId);
+                        return depTask ? (
+                          <div key={depId} className="ml-2 text-xs">
+                            • {depTask.name} ({depTask.status})
+                          </div>
+                        ) : null;
+                      })}
+                    </div>
+                  )}
+                  {successors.length > 0 && (
+                    <div className="pt-1 border-t border-gray-700">
+                      <div className="text-blue-400 font-semibold">➡️ Blocks:</div>
+                      {successors.map(task => (
+                        <div key={task.id} className="ml-2 text-xs">
+                          • {task.name} ({task.status})
+                        </div>
+                      ))}
+                    </div>
+                  )}
+                </>
+              );
+            })()}
           </div>
         </div>
       )}
@@ -1873,9 +1905,24 @@ export const CustomGanttPro = () => {
                               ></div>
                             )}
                             
-                            {/* Task Name + Resource - Larger text */}
+                            {/* Task Name + Dependencies + Resource */}
                             <div className="absolute inset-0 flex items-center px-3 text-white font-semibold truncate pointer-events-none">
+                              {/* Dependency Indicators */}
+                              {getTaskDependencies(task).length > 0 && (
+                                <span className="mr-1 text-xs opacity-90" title={`Depends on ${getTaskDependencies(task).length} task(s)`}>
+                                  ⬅️
+                                </span>
+                              )}
                               <span className="truncate text-sm">{task.name}</span>
+                              {/* Show if this task blocks others */}
+                              {tasks.filter(t => {
+                                const deps = getTaskDependencies(t);
+                                return deps.includes(task.id);
+                              }).length > 0 && (
+                                <span className="ml-1 text-xs opacity-90" title="Blocks other tasks">
+                                  ➡️
+                                </span>
+                              )}
                               {task.assigned_to && width > 120 && (
                                 <span className="ml-auto text-xs opacity-90 flex-shrink-0">@{task.assigned_to.split('@')[0]}</span>
                               )}
