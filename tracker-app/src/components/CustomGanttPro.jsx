@@ -535,6 +535,27 @@ export const CustomGanttPro = () => {
 
   const updateTaskDates = async (taskId, startDate, endDate) => {
     try {
+      const task = tasks.find(t => t.id === taskId);
+      if (!task) return;
+
+      // VALIDATION: Check if task has dependencies (predecessors)
+      const deps = getTaskDependencies(task);
+      if (deps.length > 0) {
+        // Find latest end date of all predecessors
+        const latestPredecessorEnd = new Date(Math.max(...deps.map(d => new Date(d.due_date || d.completed_at))));
+        
+        // Task cannot start before predecessors finish
+        if (startDate < latestPredecessorEnd) {
+          toast.error(`⚠️ Cannot start before dependencies finish!\nEarliest start: ${format(latestPredecessorEnd, 'MMM d, yyyy')}`, {
+            duration: 4000
+          });
+          // Revert optimistic update
+          await loadData();
+          return;
+        }
+      }
+
+      // Update this task
       const { error } = await supabase
         .from('tasks')
         .update({ 
@@ -544,12 +565,59 @@ export const CustomGanttPro = () => {
         .eq('id', taskId);
       
       if (error) throw error;
-      
-      // Show success notification
-      toast.success('✅ Task dates updated', {
-        duration: 2000,
-        position: 'bottom-right'
+
+      // AUTO-CASCADE: Find tasks that depend on this one (successors)
+      const successors = tasks.filter(t => {
+        const taskDeps = t.blocking_dependencies || t.depends_on || t.blocked_by;
+        if (!taskDeps) return false;
+        const depArray = Array.isArray(taskDeps) ? taskDeps : [taskDeps];
+        return depArray.includes(taskId);
       });
+
+      // If moving this task forward, push successors forward too
+      if (successors.length > 0) {
+        const shouldCascade = window.confirm(
+          `This task has ${successors.length} dependent task(s).\n\nAuto-adjust their dates too?`
+        );
+
+        if (shouldCascade) {
+          for (const successor of successors) {
+            const successorStart = new Date(successor.start_date || successor.started_at);
+            const successorEnd = new Date(successor.due_date || successor.completed_at);
+            const duration = differenceInDays(successorEnd, successorStart);
+
+            // New start = this task's end date + 1 day
+            const newStart = addDays(endDate, 1);
+            const newEnd = addDays(newStart, duration);
+
+            await supabase
+              .from('tasks')
+              .update({
+                start_date: format(newStart, 'yyyy-MM-dd'),
+                due_date: format(newEnd, 'yyyy-MM-dd')
+              })
+              .eq('id', successor.id);
+          }
+
+          toast.success(`✅ Updated task + ${successors.length} dependent task(s)`, {
+            duration: 3000,
+            position: 'bottom-right'
+          });
+          
+          // Reload to show cascaded changes
+          await loadData();
+        } else {
+          toast.success('✅ Task dates updated', {
+            duration: 2000,
+            position: 'bottom-right'
+          });
+        }
+      } else {
+        toast.success('✅ Task dates updated', {
+          duration: 2000,
+          position: 'bottom-right'
+        });
+      }
     } catch (error) {
       console.error('Error updating task dates:', error);
       toast.error('Failed to update task dates');
@@ -560,6 +628,22 @@ export const CustomGanttPro = () => {
 
   const deleteTask = async (taskId) => {
     try {
+      // Check if other tasks depend on this one
+      const dependents = tasks.filter(t => {
+        const taskDeps = t.blocking_dependencies || t.depends_on || t.blocked_by;
+        if (!taskDeps) return false;
+        const depArray = Array.isArray(taskDeps) ? taskDeps : [taskDeps];
+        return depArray.includes(taskId);
+      });
+
+      if (dependents.length > 0) {
+        const dependentNames = dependents.map(t => t.name).join('\n- ');
+        const confirmed = window.confirm(
+          `⚠️ WARNING: ${dependents.length} task(s) depend on this!\n\n- ${dependentNames}\n\nDeleting will break dependencies. Continue?`
+        );
+        if (!confirmed) return;
+      }
+
       const { error } = await supabase
         .from('tasks')
         .delete()
