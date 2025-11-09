@@ -802,12 +802,18 @@ export const CustomGanttPro = () => {
     if (hasDragged) {
       if (draggedTask) {
         console.log('💾 Saving drag:', draggedTask.name);
-        const success = await updateTaskDates(draggedTask.id, new Date(draggedTask.start_date), new Date(draggedTask.due_date));
+        // Use start_datetime/due_datetime for timestamp precision!
+        const startDate = new Date(draggedTask.start_datetime || draggedTask.start_date);
+        const endDate = new Date(draggedTask.due_datetime || draggedTask.due_date);
+        const success = await updateTaskDates(draggedTask.id, startDate, endDate);
         // If validation failed, revert will happen in updateTaskDates
       }
       if (resizingTask) {
         console.log('💾 Saving resize:', resizingTask.name);
-        const success = await updateTaskDates(resizingTask.id, new Date(resizingTask.start_date), new Date(resizingTask.due_date));
+        // Use start_datetime/due_datetime for timestamp precision!
+        const startDate = new Date(resizingTask.start_datetime || resizingTask.start_date);
+        const endDate = new Date(resizingTask.due_datetime || resizingTask.due_date);
+        const success = await updateTaskDates(resizingTask.id, startDate, endDate);
         // If validation failed, revert will happen in updateTaskDates
       }
     }
@@ -1255,10 +1261,10 @@ export const CustomGanttPro = () => {
       return null;
     }
     
-    // Scale arrowhead size based on zoom level
-    const arrowheadScale = Math.max(0.5, Math.min(zoomLevel, 1.5));
-    const normalArrowSize = 8 * arrowheadScale;
-    const criticalArrowSize = 10 * arrowheadScale;
+    // Scale arrowhead size based on zoom level - keep small!
+    const arrowheadScale = Math.max(0.3, Math.min(zoomLevel * 0.5, 0.8));
+    const normalArrowSize = 6 * arrowheadScale;
+    const criticalArrowSize = 7 * arrowheadScale;
     
     return (
       <svg 
