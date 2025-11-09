@@ -580,7 +580,6 @@ export const CustomGanttPro = () => {
   const handleBarMouseDown = (e, task, edge = null) => {
     e.preventDefault();
     e.stopPropagation();
-    console.log('🖱️ MouseDown:', edge ? `Resize ${edge}` : 'Drag', task.name);
     setHasDragged(false); // Reset drag flag
     setTooltip({ visible: false, task: null, x: 0, y: 0 }); // Hide tooltip during drag
     setHoveredTask(null); // Clear hover state
@@ -589,11 +588,9 @@ export const CustomGanttPro = () => {
       setResizingTask(task);
       setResizeEdge(edge);
       document.body.style.cursor = 'col-resize'; // Global cursor
-      console.log('✅ Resize mode activated:', edge);
     } else {
       setDraggedTask(task);
       document.body.style.cursor = 'grabbing'; // Global cursor
-      console.log('✅ Drag mode activated');
     }
     setDragStartX(e.clientX);
   };
