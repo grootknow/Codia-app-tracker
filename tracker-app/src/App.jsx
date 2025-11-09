@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Sidebar } from './components/Sidebar';
 import { DashboardPage } from './pages/DashboardPage';
 import { TasksPage } from './pages/TasksPage';
@@ -7,7 +7,35 @@ import { AIActivityStream } from './components/AIActivityStream';
 import './App.css';
 
 function App() {
-  const [activePage, setActivePage] = useState('dashboard');
+  // Remember last visited page and support browser back/forward
+  const [activePage, setActivePage] = useState(() => {
+    // Check URL hash first, then localStorage
+    const hash = window.location.hash.slice(1); // Remove #
+    if (hash && ['dashboard', 'tasks', 'analytics', 'activity'].includes(hash)) {
+      return hash;
+    }
+    return localStorage.getItem('lastActivePage') || 'dashboard';
+  });
+
+  // Save to localStorage and update URL whenever page changes
+  useEffect(() => {
+    localStorage.setItem('lastActivePage', activePage);
+    // Update URL hash without reload
+    window.history.pushState(null, '', `#${activePage}`);
+  }, [activePage]);
+
+  // Listen to browser back/forward buttons
+  useEffect(() => {
+    const handlePopState = () => {
+      const hash = window.location.hash.slice(1);
+      if (hash && ['dashboard', 'tasks', 'analytics', 'activity'].includes(hash)) {
+        setActivePage(hash);
+      }
+    };
+
+    window.addEventListener('popstate', handlePopState);
+    return () => window.removeEventListener('popstate', handlePopState);
+  }, []);
 
   const renderPage = () => {
     switch (activePage) {
