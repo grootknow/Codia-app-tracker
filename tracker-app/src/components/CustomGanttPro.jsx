@@ -578,18 +578,28 @@ export const CustomGanttPro = () => {
 
   // Drag & Drop handlers
   const handleBarMouseDown = (e, task, edge = null) => {
+    e.preventDefault();
     e.stopPropagation();
     setHasDragged(false); // Reset drag flag
+    setTooltip({ visible: false, task: null, x: 0, y: 0 }); // Hide tooltip during drag
+    setHoveredTask(null); // Clear hover state
+    
     if (edge) {
       setResizingTask(task);
       setResizeEdge(edge);
+      document.body.style.cursor = 'col-resize'; // Global cursor
     } else {
       setDraggedTask(task);
+      document.body.style.cursor = 'grabbing'; // Global cursor
     }
     setDragStartX(e.clientX);
   };
 
   const handleMouseMove = (e) => {
+    if (!draggedTask && !resizingTask) return; // Early exit if not dragging
+    
+    e.preventDefault(); // Prevent text selection during drag
+    
     if (draggedTask) {
       const deltaX = e.clientX - dragStartX;
       const deltaDays = Math.round(deltaX / dayWidth);
@@ -648,6 +658,9 @@ export const CustomGanttPro = () => {
   };
 
   const handleMouseUp = async () => {
+    // Reset cursor
+    document.body.style.cursor = '';
+    
     // Only save if actually dragged (not just clicked)
     if (hasDragged) {
       if (draggedTask) {
@@ -1758,7 +1771,10 @@ export const CustomGanttPro = () => {
         <div 
           ref={timelineRef}
           className="flex-1 overflow-auto relative"
-          style={{ scrollbarWidth: 'thin' }}
+          style={{ 
+            scrollbarWidth: 'thin',
+            userSelect: (draggedTask || resizingTask) ? 'none' : 'auto' // Prevent text selection during drag
+          }}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
@@ -1862,7 +1878,9 @@ export const CustomGanttPro = () => {
                           // Regular Task Bar
                           <div
                             style={{ left: `${left}px`, width: `${width}px`, top: `${barTop}px`, height: `${barHeight}px` }}
-                            className={`absolute rounded-md cursor-move transition-all duration-200 ${
+                            className={`absolute rounded-md transition-all duration-200 ${
+                              draggedTask?.id === task.id ? 'cursor-grabbing' : 'cursor-grab'
+                            } ${
                               calculateCriticalPath.has(task.id) ? 'bg-red-500 ring-2 ring-red-600' :
                               task.status === 'DONE' ? 'bg-green-500' :
                               task.status === 'IN_PROGRESS' ? 'bg-blue-500' :
@@ -1877,20 +1895,26 @@ export const CustomGanttPro = () => {
                             onClick={(e) => handleBarClick(task, e)}
                             onContextMenu={(e) => handleBarRightClick(task, e)}
                             onMouseEnter={(e) => {
-                              setHoveredTask(task.id);
-                              setTooltip({
-                                visible: true,
-                                task,
-                                x: e.clientX,
-                                y: e.clientY
-                              });
+                              // Only show tooltip if not dragging
+                              if (!draggedTask && !resizingTask) {
+                                setHoveredTask(task.id);
+                                setTooltip({
+                                  visible: true,
+                                  task,
+                                  x: e.clientX,
+                                  y: e.clientY
+                                });
+                              }
                             }}
                             onMouseLeave={() => {
-                              setHoveredTask(null);
-                              setTooltip({ visible: false, task: null, x: 0, y: 0 });
+                              if (!draggedTask && !resizingTask) {
+                                setHoveredTask(null);
+                                setTooltip({ visible: false, task: null, x: 0, y: 0 });
+                              }
                             }}
                             onMouseMove={(e) => {
-                              if (tooltip.visible && tooltip.task?.id === task.id) {
+                              // Update tooltip position only if not dragging
+                              if (!draggedTask && !resizingTask && tooltip.visible && tooltip.task?.id === task.id) {
                                 setTooltip({
                                   visible: true,
                                   task,
@@ -1913,16 +1937,18 @@ export const CustomGanttPro = () => {
                             
                             {/* Resize Handles - Always visible with cursor change */}
                             <div 
-                              className="absolute left-0 top-0 bottom-0 w-4 cursor-col-resize hover:bg-white/50 bg-white/30 transition-all"
+                              className="absolute left-0 top-0 bottom-0 w-4 cursor-col-resize hover:bg-white/50 bg-white/30 transition-all z-10"
                               onMouseDown={(e) => handleBarMouseDown(e, task, 'left')}
                               title="Drag to change start date"
+                              style={{ pointerEvents: draggedTask || resizingTask ? 'none' : 'auto' }}
                             >
                               <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded"></div>
                             </div>
                             <div 
-                              className="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize hover:bg-white/50 bg-white/30 transition-all"
+                              className="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize hover:bg-white/50 bg-white/30 transition-all z-10"
                               onMouseDown={(e) => handleBarMouseDown(e, task, 'right')}
                               title="Drag to change end date"
+                              style={{ pointerEvents: draggedTask || resizingTask ? 'none' : 'auto' }}
                             >
                               <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded"></div>
                             </div>
