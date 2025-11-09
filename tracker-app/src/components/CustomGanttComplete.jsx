@@ -368,7 +368,6 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
   };
 
   const handleTaskClick = (task) => {
-    setSelectedTask(task);
     const timelineEl = timelineRef.current;
     if (timelineEl) {
       const { left, width } = getTaskPosition(task);
@@ -379,6 +378,10 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
         behavior: 'smooth'
       });
     }
+    // Delay modal open to show scroll animation
+    setTimeout(() => {
+      setSelectedTask(task);
+    }, 600); // Wait for smooth scroll animation
   };
 
   if (loading) {
@@ -465,7 +468,6 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                          hoveredTask && !highlightedIds.has(task.id) ? 'opacity-30' : 'opacity-100'
                        }`}
                        onClick={() => {
-                         setSelectedTask(task);
                          setLocalHighlightedTask(task.id);
                          handleTaskClick(task);
                        }}
