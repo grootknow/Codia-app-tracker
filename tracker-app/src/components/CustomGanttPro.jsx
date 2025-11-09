@@ -53,6 +53,24 @@ export const CustomGanttPro = () => {
   const [filterPriority, setFilterPriority] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
   const [zoomLevel, setZoomLevel] = useState(() => parseFloat(localStorage.getItem('gantt_zoomLevel')) || 1);
+  
+  // Smart zoom: Auto-switch view mode based on zoom level
+  useEffect(() => {
+    // Auto-adjust view mode based on zoom level for better visibility
+    if (zoomLevel >= 1.5 && viewMode === 'month') {
+      setViewMode('week');
+    } else if (zoomLevel >= 1.5 && viewMode === 'week') {
+      setViewMode('day');
+    } else if (zoomLevel >= 1.8 && viewMode === 'day') {
+      setViewMode('hour');
+    } else if (zoomLevel <= 0.7 && viewMode === 'hour') {
+      setViewMode('day');
+    } else if (zoomLevel <= 0.7 && viewMode === 'day') {
+      setViewMode('week');
+    } else if (zoomLevel <= 0.5 && viewMode === 'week') {
+      setViewMode('month');
+    }
+  }, [zoomLevel, viewMode]);
   const [highlightedTask, setHighlightedTask] = useState(null); // For visual highlight before modal
   
   const timelineRef = useRef(null);
@@ -981,17 +999,20 @@ export const CustomGanttPro = () => {
     
     const arrows = [];
     
-    // Build a map of task ID to Y position
+    // Build a map of task ID to Y position (accounting for bar vertical centering)
     const taskYPositions = new Map();
-    let currentY = 40; // Start after first phase header (10px for phase header)
+    let currentY = 40; // Start after first phase header
     
     phases.forEach(phase => {
       const phaseTasks = sortedTasks.filter(t => t.phase_id === phase.id);
       
       if (!collapsedPhases.has(phase.id)) {
         phaseTasks.forEach((task, idx) => {
-          // Center of the row
-          const taskCenterY = currentY + idx * rowHeight + rowHeight / 2;
+          // Calculate bar height and top offset (same as in render)
+          const barHeight = Math.max(rowHeight - 10, 20);
+          const barTop = (rowHeight - barHeight) / 2;
+          // Center of the actual bar (not row)
+          const taskCenterY = currentY + idx * rowHeight + barTop + barHeight / 2;
           taskYPositions.set(task.id, taskCenterY);
         });
         currentY += phaseTasks.length * rowHeight;
@@ -1570,15 +1591,18 @@ export const CustomGanttPro = () => {
             <span className="text-xs text-text-tertiary">Zoom:</span>
             <input
               type="range"
-              min="0.5"
-              max="2"
+              min="0.3"
+              max="3"
               step="0.1"
               value={zoomLevel}
               onChange={(e) => setZoomLevel(parseFloat(e.target.value))}
               className="w-24 h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer"
-              title={`Zoom: ${Math.round(zoomLevel * 100)}%`}
+              title={`Zoom: ${Math.round(zoomLevel * 100)}% (Auto-adjusts time scale)`}
             />
             <span className="text-xs text-text-tertiary w-10">{Math.round(zoomLevel * 100)}%</span>
+            <span className="text-xs text-text-tertiary ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 rounded">
+              {viewMode === 'hour' ? '📅 Hour' : viewMode === 'day' ? '📅 Day' : viewMode === 'week' ? '📅 Week' : '📅 Month'}
+            </span>
             <button
               onClick={() => setZoomLevel(1)}
               className="text-xs px-2 py-0.5 rounded bg-gray-200 hover:bg-gray-300"
