@@ -460,16 +460,23 @@ export const CustomGanttPro = () => {
     return flattenHierarchy(roots);
   }, [tasks, sortBy, collapsedTasks, filterStatus, filterPriority, searchQuery]);
 
-  // Get task position
+  // Get task position (with TIMESTAMP support for hour precision)
   const getTaskPosition = (task) => {
-    const startDate = task.start_date ? new Date(task.start_date) : 
+    // Use new TIMESTAMP columns first, fallback to DATE columns
+    const startDate = task.start_datetime ? new Date(task.start_datetime) :
+                     task.start_date ? new Date(task.start_date) : 
                      task.started_at ? new Date(task.started_at) : new Date();
     const duration = task.estimated_hours ? Math.max(1, Math.ceil(task.estimated_hours / 8)) : 3;
-    const endDate = task.due_date ? new Date(task.due_date) :
+    const endDate = task.due_datetime ? new Date(task.due_datetime) :
+                   task.due_date ? new Date(task.due_date) :
                    task.completed_at ? new Date(task.completed_at) : addDays(startDate, duration);
     
-    const left = differenceInDays(startDate, projectDates.start) * dayWidth;
-    const width = Math.max(differenceInDays(endDate, startDate) * dayWidth, dayWidth);
+    // Calculate position with HOUR precision (not just days)
+    const startDiff = (startDate.getTime() - projectDates.start.getTime()) / (1000 * 60 * 60 * 24);
+    const endDiff = (endDate.getTime() - startDate.getTime()) / (1000 * 60 * 60 * 24);
+    
+    const left = startDiff * dayWidth;
+    const width = Math.max(endDiff * dayWidth, dayWidth / 24); // Min 1 hour width
     
     return { left, width, startDate, endDate };
   };
@@ -611,8 +618,9 @@ export const CustomGanttPro = () => {
     // Store original task state for potential revert
     setOriginalDraggedTask({ ...task });
     
-    // Store original start/end dates for smooth drag calculation
-    originalStartDateRef.current = new Date(task.start_date || task.started_at);
+    // Store original start/end dates for smooth drag calculation (use TIMESTAMP if available)
+    originalStartDateRef.current = task.start_datetime ? new Date(task.start_datetime) :
+                                   new Date(task.start_date || task.started_at);
     
     if (edge) {
       setResizingTask(task);
@@ -663,18 +671,33 @@ export const CustomGanttPro = () => {
         
         // ULTRA SMOOTH: Update visual on every movement!
         // Calculate new position based on ORIGINAL start date + total delta
-        const originalStartDate = originalStartDateRef.current || new Date(draggedTask.start_date || draggedTask.started_at);
+        const originalStartDate = originalStartDateRef.current || 
+                                 (draggedTask.start_datetime ? new Date(draggedTask.start_datetime) : new Date(draggedTask.start_date || draggedTask.started_at));
         // Add EXACT hours from original position (no rounding)
         const newStartDate = new Date(originalStartDate.getTime() + deltaHours * 60 * 60 * 1000);
         const duration = draggedTask.estimated_hours ? Math.ceil(draggedTask.estimated_hours / 8) : 3;
         const newEndDate = addDays(newStartDate, duration);
         
+        // Update with FULL TIMESTAMP (not just date!)
         setTasks(prev => prev.map(t => 
           t.id === draggedTask.id 
-            ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
+            ? { 
+                ...t, 
+                start_datetime: newStartDate.toISOString(),
+                due_datetime: newEndDate.toISOString(),
+                // Keep old columns for compatibility
+                start_date: format(newStartDate, 'yyyy-MM-dd'), 
+                due_date: format(newEndDate, 'yyyy-MM-dd')
+              }
             : t
         ));
-        setDraggedTask({ ...draggedTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
+        setDraggedTask({ 
+          ...draggedTask, 
+          start_datetime: newStartDate.toISOString(),
+          due_datetime: newEndDate.toISOString(),
+          start_date: format(newStartDate, 'yyyy-MM-dd'), 
+          due_date: format(newEndDate, 'yyyy-MM-dd')
+        });
         // DON'T reset dragStartX - keep original reference point!
       }
     } else if (resizingTask && resizeEdge) {
@@ -698,9 +721,10 @@ export const CustomGanttPro = () => {
         }
         
         // ULTRA SMOOTH: Update visual on every movement!
-        const originalStartDate = originalStartDateRef.current || new Date(resizingTask.start_date || resizingTask.started_at);
+        const originalStartDate = originalStartDateRef.current || 
+                                 (resizingTask.start_datetime ? new Date(resizingTask.start_datetime) : new Date(resizingTask.start_date || resizingTask.started_at));
         const startDate = originalStartDate;
-        const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
+        const endDate = resizingTask.due_datetime ? new Date(resizingTask.due_datetime) : new Date(resizingTask.due_date || resizingTask.completed_at);
         
         let newStartDate = startDate;
         let newEndDate = endDate;
@@ -719,12 +743,25 @@ export const CustomGanttPro = () => {
           }
         }
         
+        // Update with FULL TIMESTAMP
         setTasks(prev => prev.map(t => 
           t.id === resizingTask.id 
-            ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
+            ? { 
+                ...t, 
+                start_datetime: newStartDate.toISOString(),
+                due_datetime: newEndDate.toISOString(),
+                start_date: format(newStartDate, 'yyyy-MM-dd'), 
+                due_date: format(newEndDate, 'yyyy-MM-dd')
+              }
             : t
         ));
-        setResizingTask({ ...resizingTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
+        setResizingTask({ 
+          ...resizingTask, 
+          start_datetime: newStartDate.toISOString(),
+          due_datetime: newEndDate.toISOString(),
+          start_date: format(newStartDate, 'yyyy-MM-dd'), 
+          due_date: format(newEndDate, 'yyyy-MM-dd')
+        });
         // DON'T reset dragStartX - keep original reference point!
       }
     }
@@ -791,10 +828,13 @@ export const CustomGanttPro = () => {
         }
       }
 
-      // Update this task
+      // Update this task with TIMESTAMP
       const { error } = await supabase
         .from('tasks')
         .update({ 
+          start_datetime: startDate.toISOString(),
+          due_datetime: endDate.toISOString(),
+          // Keep old columns for compatibility
           start_date: format(startDate, 'yyyy-MM-dd'),
           due_date: format(endDate, 'yyyy-MM-dd')
         })
@@ -829,6 +869,8 @@ export const CustomGanttPro = () => {
             await supabase
               .from('tasks')
               .update({
+                start_datetime: newStart.toISOString(),
+                due_datetime: newEnd.toISOString(),
                 start_date: format(newStart, 'yyyy-MM-dd'),
                 due_date: format(newEnd, 'yyyy-MM-dd')
               })
