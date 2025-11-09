@@ -70,7 +70,8 @@ export const CustomGanttPro = () => {
     } else if (zoomLevel <= 0.5 && viewMode === 'week') {
       setViewMode('month');
     }
-  }, [zoomLevel, viewMode]);
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [zoomLevel]); // Only depend on zoomLevel, not viewMode (to avoid infinite loop)
   const [highlightedTask, setHighlightedTask] = useState(null); // For visual highlight before modal
   const [originalDraggedTask, setOriginalDraggedTask] = useState(null); // Store original task state for revert
   
@@ -628,57 +629,67 @@ export const CustomGanttPro = () => {
     
     if (draggedTask) {
       const deltaX = e.clientX - dragStartX;
-      const deltaDays = Math.round(deltaX / dayWidth);
       
       // ULTRA RESPONSIVE: Trigger on ANY movement (1px threshold)
-      // Throttled to 60fps above, so no performance issues
-      if (Math.abs(deltaX) > 1 && deltaDays !== 0) {
+      // Mark as dragged immediately on any movement
+      if (Math.abs(deltaX) > 1) {
         setHasDragged(true);
-        const startDate = new Date(draggedTask.start_date || draggedTask.started_at);
-        const newStartDate = addDays(startDate, deltaDays);
-        const duration = draggedTask.estimated_hours ? Math.ceil(draggedTask.estimated_hours / 8) : 3;
-        const newEndDate = addDays(newStartDate, duration);
         
-        setTasks(prev => prev.map(t => 
-          t.id === draggedTask.id 
-            ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
-            : t
-        ));
-        setDraggedTask({ ...draggedTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
-        setDragStartX(e.clientX);
+        const deltaDays = Math.round(deltaX / dayWidth);
+        
+        // Only update position if moved at least 1 day
+        if (deltaDays !== 0) {
+          const startDate = new Date(draggedTask.start_date || draggedTask.started_at);
+          const newStartDate = addDays(startDate, deltaDays);
+          const duration = draggedTask.estimated_hours ? Math.ceil(draggedTask.estimated_hours / 8) : 3;
+          const newEndDate = addDays(newStartDate, duration);
+          
+          setTasks(prev => prev.map(t => 
+            t.id === draggedTask.id 
+              ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
+              : t
+          ));
+          setDraggedTask({ ...draggedTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
+          setDragStartX(e.clientX);
+        }
       }
     } else if (resizingTask && resizeEdge) {
       const deltaX = e.clientX - dragStartX;
-      const deltaDays = Math.round(deltaX / dayWidth);
       
-      // ULTRA RESPONSIVE: 1px threshold with throttle
-      if (Math.abs(deltaX) > 1 && deltaDays !== 0) {
+      // ULTRA RESPONSIVE: Mark as dragged on any movement
+      if (Math.abs(deltaX) > 1) {
         setHasDragged(true);
-        const startDate = new Date(resizingTask.start_date || resizingTask.started_at);
-        const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
         
-        let newStartDate = startDate;
-        let newEndDate = endDate;
+        const deltaDays = Math.round(deltaX / dayWidth);
         
-        if (resizeEdge === 'left') {
-          newStartDate = addDays(startDate, deltaDays);
-          if (newStartDate >= endDate) {
-            newStartDate = addDays(endDate, -1);
+        // Only update size if changed at least 1 day
+        if (deltaDays !== 0) {
+          const startDate = new Date(resizingTask.start_date || resizingTask.started_at);
+          const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
+          
+          let newStartDate = startDate;
+          let newEndDate = endDate;
+          
+          if (resizeEdge === 'left') {
+            newStartDate = addDays(startDate, deltaDays);
+            if (newStartDate >= endDate) {
+              newStartDate = addDays(endDate, -1);
+            }
+          } else {
+            newEndDate = addDays(endDate, deltaDays);
+            if (newEndDate <= startDate) {
+              newEndDate = addDays(startDate, 1);
+            }
           }
-        } else {
-          newEndDate = addDays(endDate, deltaDays);
-          if (newEndDate <= startDate) {
-            newEndDate = addDays(startDate, 1);
-          }
+          
+          setTasks(prev => prev.map(t => 
+            t.id === resizingTask.id 
+              ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
+              : t
+          ));
+          setResizingTask({ ...resizingTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
+          setDragStartX(e.clientX);
         }
-        
-        setTasks(prev => prev.map(t => 
-          t.id === resizingTask.id 
-            ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
-            : t
-        ));
-        setResizingTask({ ...resizingTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
-        setDragStartX(e.clientX);
       }
     }
   };
@@ -1929,7 +1940,7 @@ export const CustomGanttPro = () => {
                           <div
                             style={{ left: `${left}px`, width: `${width}px`, top: `${barTop}px`, height: `${barHeight}px` }}
                             className={`absolute rounded-md transition-all duration-200 ${
-                              draggedTask?.id === task.id ? 'cursor-grabbing' : 'cursor-grab'
+                              draggedTask?.id === task.id || resizingTask?.id === task.id ? 'cursor-grabbing' : 'cursor-grab'
                             } ${
                               calculateCriticalPath.has(task.id) ? 'bg-red-500 ring-2 ring-red-600' :
                               task.status === 'DONE' ? 'bg-green-500' :
@@ -1937,7 +1948,7 @@ export const CustomGanttPro = () => {
                               'bg-gray-400'
                             } ${
                               highlightedTask?.id === task.id || selectedTask?.id === task.id ? 'ring-4 ring-blue-400 ring-offset-2 scale-105' :
-                              draggedTask?.id === task.id ? 'opacity-50 scale-105' : 
+                              draggedTask?.id === task.id || resizingTask?.id === task.id ? 'opacity-70 ring-4 ring-yellow-400' : 
                               hoveredTask === task.id ? 'ring-2 ring-blue-300' :
                               'hover:opacity-80'
                             } shadow-md group`}
