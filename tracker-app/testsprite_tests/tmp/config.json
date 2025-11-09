@@ -2,15 +2,14 @@
   "status": "commited",
   "type": "frontend",
   "scope": "codebase",
-  "localEndpoint": "http://localhost:3000",
+  "localEndpoint": "http://localhost:3006",
   "executionArgs": {
-    "projectName": "codia-tracker-app",
-    "projectPath": "e:\\tạo document cho hoạch định thiết kế vps\\tạo document cho hoạch hoạch định thiết kế vps\\codia-tracker-app",
+    "projectName": "tracker-app",
+    "projectPath": "c:\\Users\\TRM CEO\\Desktop\\codia-app-tracker-\\Codia-app-tracker\\tracker-app",
     "testIds": [],
-    "additionalInstruction": "Focus on frontend E2E testing: navigation, dropdowns, Setup Wizard flow, task status updates, mermaid diagram rendering",
+    "additionalInstruction": "Focus on Gantt Chart Pro features: zoom levels (50%-300%), dependency arrows visibility, drag/drop tasks, resize tasks, tooltip display, modal details. Test at different zoom levels and verify arrows stay connected.",
     "envs": {
       "API_KEY": "sk-user-gFIrn_hlPXiIeAjA6SFpSQ5Xi9mh29ywbHx5EbWLpugCcn93kpn1CEJryHgbGB_sHYSaI7kHk6FazrgnXWpCns6tPFx4jhh6LmvittY8RApdjLj2sFw2DczDIFp3AtOqEZs"
     }
-  },
-  "proxy": "http://5d3db18d-d6d4-4b57-b18b-5ed36e0fd30f:TJmmg124e8xRH8TP1MEwkN6TEqKe9sdy@tun.testsprite.com:8080"
+  }
 }

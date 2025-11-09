@@ -1426,7 +1426,8 @@ export const CustomGanttPro = () => {
         <TaskDetailModal 
           task={selectedTask} 
           onClose={() => setSelectedTask(null)} 
-          onUpdate={loadData} 
+          onUpdate={loadData}
+          allTasks={tasks} 
         />
       )}
       

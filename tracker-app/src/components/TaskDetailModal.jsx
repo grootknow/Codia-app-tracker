@@ -4,10 +4,29 @@ import { supabase } from '../lib/supabase';
 import toast from 'react-hot-toast';
 import { validateStatusChange, validateTaskUpdate } from '../lib/validation';
 
-export const TaskDetailModal = ({ task, onClose, onUpdate }) => {
+export const TaskDetailModal = ({ task, onClose, onUpdate, allTasks = [] }) => {
   const [updating, setUpdating] = useState(false);
+  const [dependencies, setDependencies] = useState([]);
+  const [blockedBy, setBlockedBy] = useState([]);
 
   if (!task) return null;
+
+  // Calculate dependencies and blocked tasks
+  React.useEffect(() => {
+    if (!task || !allTasks.length) return;
+
+    // Get tasks this depends on (predecessors)
+    const deps = task.depends_on || [];
+    const depTasks = deps.map(id => allTasks.find(t => t.id === id)).filter(Boolean);
+    setDependencies(depTasks);
+
+    // Get tasks that depend on this (successors)
+    const blocked = allTasks.filter(t => {
+      const taskDeps = t.depends_on || [];
+      return taskDeps.includes(task.id);
+    });
+    setBlockedBy(blocked);
+  }, [task, allTasks]);
 
   // ✅ FIXED: Use toast instead of alert + added validation
   const handleStatusChange = async (newStatus) => {
@@ -261,38 +280,67 @@ export const TaskDetailModal = ({ task, onClose, onUpdate }) => {
             )}
           </div>
 
-          {/* Dependencies */}
-          {task.depends_on_names && task.depends_on_names.length > 0 && (
-            <div className="p-4 bg-warning-50 border-l-4 border-warning-500 rounded-lg">
+          {/* Dependencies - Predecessors */}
+          {dependencies.length > 0 && (
+            <div className="p-4 bg-yellow-50 border-l-4 border-yellow-500 rounded-lg">
               <h4 className="font-bold text-lg mb-3 flex items-center gap-2">
-                <ArrowRight className="w-5 h-5 text-warning-600" />
-                ⚠️ Dependencies ({task.depends_on_names.length})
+                <ArrowRight className="w-5 h-5 text-yellow-600" />
+                ⬅️ Depends on ({dependencies.length})
               </h4>
-              <div className="flex flex-wrap gap-2">
-                {task.depends_on_names.map((dep, idx) => (
-                  <span
-                    key={idx}
-                    className="bg-warning-100 text-warning-900 px-3 py-2 rounded-lg text-sm font-semibold shadow"
+              <div className="space-y-2">
+                {dependencies.map((dep) => (
+                  <div
+                    key={dep.id}
+                    className="bg-white p-3 rounded-lg shadow-sm border border-yellow-200 flex items-center justify-between"
                   >
-                    {dep}
-                  </span>
+                    <div className="flex-1">
+                      <div className="font-semibold text-gray-900">{dep.name}</div>
+                      <div className="text-xs text-gray-600 mt-1">
+                        Status: <span className={`font-bold ${
+                          dep.status === 'DONE' ? 'text-green-600' :
+                          dep.status === 'IN_PROGRESS' ? 'text-blue-600' :
+                          'text-gray-600'
+                        }`}>{dep.status}</span>
+                      </div>
+                    </div>
+                    <span className={`px-2 py-1 rounded text-xs font-bold ${
+                      dep.status === 'DONE' ? 'bg-green-100 text-green-700' :
+                      dep.status === 'IN_PROGRESS' ? 'bg-blue-100 text-blue-700' :
+                      'bg-gray-100 text-gray-700'
+                    }`}>
+                      {dep.status === 'DONE' ? '✅' : dep.status === 'IN_PROGRESS' ? '⏳' : '⏸️'}
+                    </span>
+                  </div>
                 ))}
               </div>
-              <p className="text-xs text-warning-700 mt-2">
-                💡 These tasks must be completed first
+              <p className="text-xs text-yellow-700 mt-3">
+                💡 These tasks must be completed before you can start this one
               </p>
             </div>
           )}
 
-          {/* Blocker Warning */}
-          {task.blocking_count > 0 && (
-            <div className="p-4 bg-error-50 border-l-4 border-error-500 rounded-lg shadow">
-              <h4 className="font-bold text-error-900 mb-2 flex items-center gap-2">
+          {/* Blockers - Successors */}
+          {blockedBy.length > 0 && (
+            <div className="p-4 bg-blue-50 border-l-4 border-blue-500 rounded-lg shadow">
+              <h4 className="font-bold text-blue-900 mb-3 flex items-center gap-2">
                 <Shield className="w-5 h-5" />
-                🚫 Blocking {task.blocking_count} Task(s)
+                ➡️ Blocks {blockedBy.length} Task(s)
               </h4>
-              <p className="text-sm text-error-text">
-                Other tasks are waiting for this to complete. Prioritize this task!
+              <div className="space-y-2">
+                {blockedBy.map((blocked) => (
+                  <div
+                    key={blocked.id}
+                    className="bg-white p-3 rounded-lg shadow-sm border border-blue-200"
+                  >
+                    <div className="font-semibold text-gray-900">{blocked.name}</div>
+                    <div className="text-xs text-gray-600 mt-1">
+                      Waiting for this task to complete
+                    </div>
+                  </div>
+                ))}
+              </div>
+              <p className="text-sm text-blue-700 mt-3">
+                ⚠️ Other tasks are waiting for this. Prioritize completing this task!
               </p>
             </div>
           )}
