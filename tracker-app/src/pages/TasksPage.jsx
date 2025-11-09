@@ -3,13 +3,14 @@ import { List, Columns, Calendar, BarChart3, Zap } from 'lucide-react';
 import { WorkflowDashboard } from '../components/WorkflowDashboard';
 import { KanbanView } from '../components/KanbanView';
 import { CustomGanttComplete } from '../components/CustomGanttComplete';
+import { CustomGanttPro } from '../components/CustomGanttPro';
 import { TimelineView } from '../components/TimelineView';
 import { SprintPlanning } from '../components/SprintPlanning';
 
 const viewOptions = [
   { id: 'list', name: 'List', icon: List, component: WorkflowDashboard },
   { id: 'kanban', name: 'Board', icon: Columns, component: KanbanView },
-  { id: 'gantt', name: 'Gantt', icon: BarChart3, component: CustomGanttComplete },
+  { id: 'gantt', name: 'Gantt', icon: BarChart3, component: CustomGanttPro }, // Using Pro version
   { id: 'timeline', name: 'Timeline', icon: Calendar, component: TimelineView },
   { id: 'sprint', name: 'Sprint', icon: Zap, component: SprintPlanning }
 ];
