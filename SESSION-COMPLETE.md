@@ -300,6 +300,23 @@ https://tracker-47vunkbtd-kakaholigan-6270s-projects.vercel.app
 
 ---
 
+## ❌ REMAINING CRITICAL ISSUE
+
+### 🔴 Drag Still By Day, Not By Hour!
+**Problem:** Despite all fixes, drag still snaps to DAYS, not HOURS!
+
+**Root Cause:** DATABASE SCHEMA!
+- `start_date` and `due_date` are `DATE` type (no time!)
+- Code calculates hours correctly
+- But `format(date, 'yyyy-MM-dd')` loses all time info
+- DB only stores YYYY-MM-DD → No hour precision!
+
+**Solution:** Need to change DB schema to TIMESTAMP or add hour columns
+
+**Status:** NOT FIXED - Requires DB migration in next session
+
+---
+
 ## 🐛 ADDITIONAL BUGS FIXED (Session 2 - Part 2)
 
 ### 🔴 INFINITE LOOP in useEffect

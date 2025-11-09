@@ -55,7 +55,11 @@ export const CustomGanttPro = () => {
   const [zoomLevel, setZoomLevel] = useState(() => parseFloat(localStorage.getItem('gantt_zoomLevel')) || 1);
   
   // Smart zoom: Auto-switch view mode based on zoom level
+  // DISABLED during drag to prevent dayWidth changes!
   useEffect(() => {
+    // Don't auto-switch while dragging - it messes up calculations!
+    if (draggedTask || resizingTask) return;
+    
     // Auto-adjust view mode based on zoom level for better visibility
     if (zoomLevel >= 1.5 && viewMode === 'month') {
       setViewMode('week');
@@ -71,9 +75,10 @@ export const CustomGanttPro = () => {
       setViewMode('month');
     }
   // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [zoomLevel]); // Only depend on zoomLevel, not viewMode (to avoid infinite loop)
+  }, [zoomLevel, draggedTask, resizingTask]); // Don't switch during drag!
   const [highlightedTask, setHighlightedTask] = useState(null); // For visual highlight before modal
   const [originalDraggedTask, setOriginalDraggedTask] = useState(null); // Store original task state for revert
+  const originalStartDateRef = useRef(null); // Store original start date for smooth drag calculation
   
   const timelineRef = useRef(null);
   const leftPanelRef = useRef(null);
@@ -606,6 +611,9 @@ export const CustomGanttPro = () => {
     // Store original task state for potential revert
     setOriginalDraggedTask({ ...task });
     
+    // Store original start/end dates for smooth drag calculation
+    originalStartDateRef.current = new Date(task.start_date || task.started_at);
+    
     if (edge) {
       setResizingTask(task);
       setResizeEdge(edge);
@@ -626,11 +634,8 @@ export const CustomGanttPro = () => {
     
     e.preventDefault();
     
-    // THROTTLE: Update max every 32ms (30fps) for smoother performance
-    // Lower FPS = less re-renders = smoother at high zoom
-    const now = Date.now();
-    if (now - lastDragUpdateRef.current < 32) return;
-    lastDragUpdateRef.current = now;
+    // NO THROTTLE for ultra-smooth drag!
+    // Update on EVERY mousemove for maximum responsiveness
     
     if (draggedTask) {
       const deltaX = e.clientX - dragStartX;
@@ -656,24 +661,21 @@ export const CustomGanttPro = () => {
           deltaHours = deltaDays * 24;
         }
         
-        // Update if moved at least 0.5 hours (30 minutes) for better responsiveness
-        if (Math.abs(deltaHours) >= 0.5) {
-          // Round to nearest 0.5 hour for cleaner increments
-          deltaHours = Math.round(deltaHours * 2) / 2;
-          const startDate = new Date(draggedTask.start_date || draggedTask.started_at);
-          // Add hours instead of days
-          const newStartDate = new Date(startDate.getTime() + deltaHours * 60 * 60 * 1000);
-          const duration = draggedTask.estimated_hours ? Math.ceil(draggedTask.estimated_hours / 8) : 3;
-          const newEndDate = addDays(newStartDate, duration);
-          
-          setTasks(prev => prev.map(t => 
-            t.id === draggedTask.id 
-              ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
-              : t
-          ));
-          setDraggedTask({ ...draggedTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
-          setDragStartX(e.clientX);
-        }
+        // ULTRA SMOOTH: Update visual on every movement!
+        // Calculate new position based on ORIGINAL start date + total delta
+        const originalStartDate = originalStartDateRef.current || new Date(draggedTask.start_date || draggedTask.started_at);
+        // Add EXACT hours from original position (no rounding)
+        const newStartDate = new Date(originalStartDate.getTime() + deltaHours * 60 * 60 * 1000);
+        const duration = draggedTask.estimated_hours ? Math.ceil(draggedTask.estimated_hours / 8) : 3;
+        const newEndDate = addDays(newStartDate, duration);
+        
+        setTasks(prev => prev.map(t => 
+          t.id === draggedTask.id 
+            ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
+            : t
+        ));
+        setDraggedTask({ ...draggedTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
+        // DON'T reset dragStartX - keep original reference point!
       }
     } else if (resizingTask && resizeEdge) {
       const deltaX = e.clientX - dragStartX;
@@ -695,38 +697,35 @@ export const CustomGanttPro = () => {
           deltaHours = deltaDays * 24;
         }
         
-        // Update if moved at least 0.5 hours (30 minutes)
-        if (Math.abs(deltaHours) >= 0.5) {
-          // Round to nearest 0.5 hour
-          deltaHours = Math.round(deltaHours * 2) / 2;
-          const startDate = new Date(resizingTask.start_date || resizingTask.started_at);
-          const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
-          
-          let newStartDate = startDate;
-          let newEndDate = endDate;
-          
-          if (resizeEdge === 'left') {
-            // Add hours to start date
-            newStartDate = new Date(startDate.getTime() + deltaHours * 60 * 60 * 1000);
-            if (newStartDate >= endDate) {
-              newStartDate = new Date(endDate.getTime() - 60 * 60 * 1000); // 1 hour before end
-            }
-          } else {
-            // Add hours to end date
-            newEndDate = new Date(endDate.getTime() + deltaHours * 60 * 60 * 1000);
-            if (newEndDate <= startDate) {
-              newEndDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour after start
-            }
+        // ULTRA SMOOTH: Update visual on every movement!
+        const originalStartDate = originalStartDateRef.current || new Date(resizingTask.start_date || resizingTask.started_at);
+        const startDate = originalStartDate;
+        const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
+        
+        let newStartDate = startDate;
+        let newEndDate = endDate;
+        
+        if (resizeEdge === 'left') {
+          // Add EXACT hours (no rounding)
+          newStartDate = new Date(startDate.getTime() + deltaHours * 60 * 60 * 1000);
+          if (newStartDate >= endDate) {
+            newStartDate = new Date(endDate.getTime() - 60 * 60 * 1000); // 1 hour before end
           }
-          
-          setTasks(prev => prev.map(t => 
-            t.id === resizingTask.id 
-              ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
-              : t
-          ));
-          setResizingTask({ ...resizingTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
-          setDragStartX(e.clientX);
+        } else {
+          // Add EXACT hours (no rounding)
+          newEndDate = new Date(endDate.getTime() + deltaHours * 60 * 60 * 1000);
+          if (newEndDate <= startDate) {
+            newEndDate = new Date(startDate.getTime() + 60 * 60 * 1000); // 1 hour after start
+          }
         }
+        
+        setTasks(prev => prev.map(t => 
+          t.id === resizingTask.id 
+            ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
+            : t
+        ));
+        setResizingTask({ ...resizingTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
+        // DON'T reset dragStartX - keep original reference point!
       }
     }
   };
@@ -759,6 +758,7 @@ export const CustomGanttPro = () => {
     setResizingTask(null);
     setResizeEdge(null);
     setOriginalDraggedTask(null);
+    originalStartDateRef.current = null; // Clear original date reference
     console.log('✅ MouseUp complete');
   };
 

@@ -1,5 +1,70 @@
 # 🚨 CRITICAL ISSUES - NEXT SESSION
 
+## 🔴 GANTT DRAG STILL NOT SMOOTH - HOUR PRECISION BROKEN!
+
+### Problem
+**User tested extensively - drag vẫn theo NGÀY, không theo GIỜ!**
+- Kéo task → Chỉ nhảy theo ngày
+- Không mượt, không theo giờ/phút như mong muốn
+- App Gantt phải smooth theo PHÚT, không phải ngày!
+
+### Root Cause
+**DATABASE SCHEMA ISSUE:**
+```sql
+-- Current schema:
+start_date DATE  -- Only stores YYYY-MM-DD, no time!
+due_date DATE    -- Only stores YYYY-MM-DD, no time!
+```
+
+**Code issue:**
+```javascript
+// We calculate hours correctly:
+const newStartDate = new Date(originalStartDate.getTime() + deltaHours * 60 * 60 * 1000);
+
+// But then format to DATE only:
+format(newStartDate, 'yyyy-MM-dd')  // LOSES ALL TIME INFO!
+```
+
+### Solution Options
+
+**Option 1: Change DB Schema (RECOMMENDED)**
+```sql
+-- Change to TIMESTAMP for hour precision:
+ALTER TABLE tasks 
+  ALTER COLUMN start_date TYPE TIMESTAMP,
+  ALTER COLUMN due_date TYPE TIMESTAMP;
+
+-- Then use full datetime format:
+format(newStartDate, "yyyy-MM-dd'T'HH:mm:ss")
+```
+
+**Option 2: Store hours in separate column**
+```sql
+ALTER TABLE tasks 
+  ADD COLUMN start_hour INTEGER DEFAULT 0,
+  ADD COLUMN due_hour INTEGER DEFAULT 0;
+```
+
+**Option 3: Use estimated_hours for visual only**
+- Keep DB as DATE
+- Calculate visual position using estimated_hours
+- Only save DATE on mouseup
+- Visual shows smooth drag, but DB stores days
+
+### Files to Change
+1. `tracker-app/sql/` - Migration to change column types
+2. `CustomGanttPro.jsx` - Update format strings
+3. `supabase` schema - Update column types
+
+### Test Checklist
+- [ ] Drag task in Day view → Should move by HOURS
+- [ ] Drag task in Hour view → Should move by MINUTES
+- [ ] Save to DB → Should preserve time
+- [ ] Reload page → Should show correct time
+- [ ] Dependencies → Should work with time precision
+
+---
+
 ## ⚠️ LESSON LEARNED: ALWAYS TEST LOCAL FIRST!
 
 **CRITICAL WORKFLOW:**
