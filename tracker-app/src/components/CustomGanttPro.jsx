@@ -1002,9 +1002,14 @@ export const CustomGanttPro = () => {
     
     const arrows = [];
     
+    // Calculate total gantt width with zoom
+    const totalDays = differenceInDays(projectDates.end, projectDates.start);
+    const scaledGanttWidth = totalDays * dayWidth;
+    
     // Build a map of task ID to Y position (accounting for bar vertical centering)
     const taskYPositions = new Map();
     let currentY = 40; // Start after first phase header
+    let totalHeight = 40;
     
     phases.forEach(phase => {
       const phaseTasks = sortedTasks.filter(t => t.phase_id === phase.id);
@@ -1019,8 +1024,10 @@ export const CustomGanttPro = () => {
           taskYPositions.set(task.id, taskCenterY);
         });
         currentY += phaseTasks.length * rowHeight;
+        totalHeight = currentY;
       }
       currentY += 40; // Phase header height
+      totalHeight += 40;
     });
     
     // Now render arrows using the position map
@@ -1047,9 +1054,9 @@ export const CustomGanttPro = () => {
               x2={toPos.left} 
               y2={toY}
               stroke="#3b82f6" 
-              strokeWidth="1"
+              strokeWidth="2"
               markerEnd="url(#arrowhead)"
-              opacity="0.7"
+              opacity="0.8"
             />
           </g>
         );
@@ -1059,18 +1066,18 @@ export const CustomGanttPro = () => {
     return (
       <svg 
         className="absolute top-0 left-0 pointer-events-none z-20"
-        style={{ width: ganttWidth, height: currentY }}
+        style={{ width: scaledGanttWidth, height: totalHeight }}
       >
         <defs>
           <marker
             id="arrowhead"
-            markerWidth="4"
-            markerHeight="4"
-            refX="3.5"
-            refY="2"
+            markerWidth="6"
+            markerHeight="6"
+            refX="5"
+            refY="3"
             orient="auto"
           >
-            <polygon points="0 0, 4 2, 0 4" fill="#3b82f6" />
+            <polygon points="0 0, 6 3, 0 6" fill="#3b82f6" />
           </marker>
         </defs>
         {arrows}
@@ -1087,7 +1094,8 @@ export const CustomGanttPro = () => {
     if (viewMode === 'hour') {
       // Hour view: Day + Hours (24 hours per day)
       const days = eachDayOfInterval({ start: projectDates.start, end: projectDates.end });
-      const hourWidth = dayWidth / 24; // Divide day width by 24 hours
+      // Hour width is already included in dayWidth calculation
+      const hourWidth = dayWidth / 24;
       
       return (
         <div style={{ width: ganttWidth, position: 'relative', height: 60 }}>
