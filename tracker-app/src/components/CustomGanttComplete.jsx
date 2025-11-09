@@ -464,7 +464,11 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                        } ${
                          hoveredTask && !highlightedIds.has(task.id) ? 'opacity-30' : 'opacity-100'
                        }`}
-                       onClick={() => setLocalHighlightedTask(task.id)}
+                       onClick={() => {
+                         setSelectedTask(task);
+                         setLocalHighlightedTask(task.id);
+                         handleTaskClick(task);
+                       }}
                        onMouseEnter={(e) => {
                          setImmediateHoveredTask(task.id);
                          setTooltip({ visible: true, content: task, x: e.pageX, y: e.pageY });
