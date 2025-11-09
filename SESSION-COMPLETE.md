@@ -7,6 +7,7 @@
 - ✅ Added `allTasks` prop to ALL modal calls (6 components)
 - ✅ Fixed arrows & tooltip logic
 - ✅ Replaced `CustomGanttComplete` with `CustomGanttPro`
+- ✅ **FIXED DRAG/RESIZE STUCK ISSUE** - Trigger at half day width instead of full day
 
 ### 2. UX QUICK WINS (Just Implemented!)
 
@@ -50,13 +51,14 @@
 
 ## 🚀 DEPLOYED
 
-**Production URL:** https://tracker-47vunkbtd-kakaholigan-6270s-projects.vercel.app
+**Production URL:** https://tracker-ibtopeps8-kakaholigan-6270s-projects.vercel.app
 
 **Changes Live:**
-- Thicker, color-coded arrows
-- Status badges on every task
-- Dependency count badges
-- Beautiful new tooltip design
+- Thicker, color-coded arrows (3-4px, RED for critical)
+- Status badges on every task (✓ READY, 🚫 BLOCKED, ⏳ IN_PROGRESS)
+- Dependency count badges (⬅️3, ➡️5)
+- Beautiful new tooltip design (larger, cleaner, visual)
+- **Smooth drag/resize** (trigger at half day width - NO MORE STUCK!)
 
 ---
 
@@ -76,6 +78,10 @@
 - ❌ Small, text-heavy, hard to scan
 - ✅ Large, visual badges, clean hierarchy, easy to read
 
+**Drag/Resize:**
+- ❌ Stuck, kẹt, không smooth - trigger only at full day
+- ✅ Smooth, responsive - trigger at half day width
+
 ---
 
 ## 🎯 IMPACT
@@ -91,6 +97,7 @@
 - ✅ Status clear without clicking
 - ✅ Critical tasks stand out (red)
 - ✅ Ready tasks obvious (green ✓)
+- ✅ Drag/resize smooth and responsive
 
 ---
 
