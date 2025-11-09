@@ -368,7 +368,7 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
   };
 
   const handleTaskClick = (task) => {
-    // Highlight bar immediately for instant visual feedback
+    // Highlight bar immediately and scroll to it
     setLocalHighlightedTask(task.id);
     
     const timelineEl = timelineRef.current;
@@ -381,10 +381,12 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
         behavior: 'smooth'
       });
     }
-    // Delay modal open to show scroll animation
-    setTimeout(() => {
-      setSelectedTask(task);
-    }, 600); // Wait for smooth scroll animation
+    // Do NOT open modal when clicking task name
+  };
+
+  const handleBarClick = (task) => {
+    // Open modal only when clicking the bar itself
+    setSelectedTask(task);
   };
 
   if (loading) {
@@ -577,7 +579,12 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                         <div key={`bar-${task.id}`} className="h-10 relative border-b border-border-default">
                           <div 
                              style={{ left, width, top: 5, height: 30, cursor: resizingTask ? 'ew-resize' : 'move' }} 
-                             onClick={() => setSelectedTask(task)}
+                             onClick={(e) => {
+                               // Only open modal if clicking the bar itself, not resize/dependency handles
+                               if (!e.defaultPrevented) {
+                                 handleBarClick(task);
+                               }
+                             }}
                              onMouseEnter={(e) => {
                                setImmediateHoveredTask(task.id);
                                setTooltip({ visible: true, content: task, x: e.pageX, y: e.pageY });
