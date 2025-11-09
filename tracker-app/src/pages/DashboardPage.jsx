@@ -300,61 +300,70 @@ export const DashboardPage = ({ onNavigate }) => {
         </div>
       </div>
 
-      {/* AI Activity Stream - Prominent */}
+      {/* AI Activity Stream - Full Section */}
       <div className="bg-gradient-to-br from-green-500/10 to-blue-500/5 rounded-xl border-2 border-green-500/30 p-6 mb-6">
-        <div className="flex items-center gap-3 mb-4">
-          <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
-            <Bot className="w-6 h-6 text-green-600" />
-          </div>
-          <div>
-            <h2 className="text-xl font-bold text-text-primary">🤖 AI Activity Stream</h2>
-            <p className="text-sm text-text-tertiary">Real-time AI agent execution logs</p>
+        <div className="flex items-center justify-between mb-4">
+          <div className="flex items-center gap-3">
+            <div className="w-12 h-12 bg-green-500/20 rounded-lg flex items-center justify-center">
+              <Bot className="w-6 h-6 text-green-600" />
+            </div>
+            <div>
+              <h2 className="text-xl font-bold text-text-primary">🤖 AI Activity Stream</h2>
+              <p className="text-sm text-text-tertiary">Real-time AI agent execution logs</p>
+            </div>
           </div>
         </div>
         
         {recentActivity.length > 0 ? (
-          <div className="space-y-3">
-            {recentActivity.slice(0, 3).map((log, idx) => (
-              <div key={log.id} className="flex items-start gap-3 p-4 bg-background-secondary rounded-lg border border-border-default">
-                <div className="flex-shrink-0 w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-green-600" />
-                </div>
-                <div className="flex-1 min-w-0">
-                  <div className="flex items-center gap-2 mb-1">
-                    <span className="font-bold text-text-primary">{log.agent_name}</span>
-                    <span className="text-xs text-text-tertiary">
-                      {new Date(log.timestamp).toLocaleTimeString()}
-                    </span>
-                    <div className={`px-2 py-0.5 rounded text-xs font-bold ${
-                      log.status === 'completed' ? 'bg-success-background text-success-text' :
-                      log.status === 'progress' ? 'bg-info-background text-info-text' :
-                      'bg-error-background text-error-text'
-                    }`}>
-                      {log.status === 'completed' ? '✅' : log.status === 'progress' ? '⏳' : '❌'} {log.status}
-                    </div>
+          <>
+            <div className="space-y-3 mb-4">
+              {recentActivity.map((log, idx) => (
+                <div key={log.id} className="flex items-start gap-3 p-4 bg-background-secondary rounded-lg border border-border-default hover:border-green-500/40 transition">
+                  <div className="flex-shrink-0 w-8 h-8 bg-green-500/20 rounded-full flex items-center justify-center">
+                    <Bot className="w-4 h-4 text-green-600" />
                   </div>
-                  <p className="text-sm text-text-primary font-medium mb-1">{log.action}</p>
-                  {log.current_step && (
-                    <p className="text-xs text-info-text">⚡ {log.current_step}</p>
-                  )}
-                  {log.progress_percentage !== null && log.progress_percentage !== undefined && (
-                    <div className="mt-2">
-                      <div className="flex items-center justify-between text-xs text-text-tertiary mb-1">
-                        <span>Progress</span>
-                        <span className="font-bold">{log.progress_percentage}%</span>
-                      </div>
-                      <div className="w-full bg-background-tertiary rounded-full h-2">
-                        <div 
-                          className="bg-info-default h-2 rounded-full transition-all"
-                          style={{ width: `${log.progress_percentage}%` }}
-                        />
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 mb-1">
+                      <span className="font-bold text-text-primary">{log.agent_name}</span>
+                      <span className="text-xs text-text-tertiary">
+                        {new Date(log.timestamp).toLocaleTimeString()}
+                      </span>
+                      <div className={`px-2 py-0.5 rounded text-xs font-bold ${
+                        log.status === 'completed' ? 'bg-success-background text-success-text' :
+                        log.status === 'progress' ? 'bg-info-background text-info-text' :
+                        'bg-error-background text-error-text'
+                      }`}>
+                        {log.status === 'completed' ? '✅' : log.status === 'progress' ? '⏳' : '❌'} {log.status}
                       </div>
                     </div>
-                  )}
+                    <p className="text-sm text-text-primary font-medium mb-1">{log.action}</p>
+                    {log.current_step && (
+                      <p className="text-xs text-info-text">⚡ {log.current_step}</p>
+                    )}
+                    {log.progress_percentage !== null && log.progress_percentage !== undefined && (
+                      <div className="mt-2">
+                        <div className="flex items-center justify-between text-xs text-text-tertiary mb-1">
+                          <span>Progress</span>
+                          <span className="font-bold">{log.progress_percentage}%</span>
+                        </div>
+                        <div className="w-full bg-background-tertiary rounded-full h-2">
+                          <div 
+                            className="bg-info-default h-2 rounded-full transition-all"
+                            style={{ width: `${log.progress_percentage}%` }}
+                          />
+                        </div>
+                      </div>
+                    )}
+                  </div>
                 </div>
-              </div>
-            ))}
-          </div>
+              ))}
+            </div>
+            
+            {/* Full Activity Stream Component */}
+            <div className="border-t border-border-default pt-4">
+              <AIActivityStream />
+            </div>
+          </>
         ) : (
           <div className="text-center py-8 text-text-tertiary">
             <div className="text-4xl mb-2">💤</div>

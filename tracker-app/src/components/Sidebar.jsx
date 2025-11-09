@@ -29,7 +29,6 @@ export const Sidebar = ({ activePage, setActivePage }) => {
     { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
     { id: 'tasks', label: 'Tasks', icon: CheckSquare },
     { id: 'analytics', label: 'Analytics', icon: BarChart2 },
-    { id: 'activity', label: 'Activity Logs', icon: Activity },
   ];
 
   return (
