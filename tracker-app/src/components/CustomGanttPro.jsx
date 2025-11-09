@@ -1376,8 +1376,8 @@ export const CustomGanttPro = () => {
                       </div>
                     );
                   })
-                ) : (
-                  // Low zoom: Show only every 4 hours (0h, 4h, 8h, 12h, 16h, 20h)
+                ) : dayWidth >= 120 ? (
+                  // Medium zoom: Show every 4 hours if dayWidth is wide enough
                   Array.from({ length: 6 }, (_, idx) => {
                     const hourIdx = idx * 4;
                     return (
@@ -1390,6 +1390,14 @@ export const CustomGanttPro = () => {
                       </div>
                     );
                   })
+                ) : (
+                  // Low zoom: Just show day marker, no hours
+                  <div
+                    style={{ width: `${dayWidth}px`, minWidth: `${dayWidth}px` }}
+                    className="border-r border-border-default text-center text-[10px] flex items-center justify-center opacity-50"
+                  >
+                    24h
+                  </div>
                 )}
               </div>
             ))}
