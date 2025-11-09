@@ -846,6 +846,48 @@ export const CustomGanttPro = () => {
     const totalDays = differenceInDays(projectDates.end, projectDates.start);
     const ganttWidth = totalDays * dayWidth;
 
+    if (viewMode === 'hour') {
+      // Hour view: Day + Hours (24 hours per day)
+      const days = eachDayOfInterval({ start: projectDates.start, end: projectDates.end });
+      const hourWidth = dayWidth / 24; // Divide day width by 24 hours
+      
+      return (
+        <div style={{ width: ganttWidth, position: 'relative', height: 60 }}>
+          {/* Day header */}
+          <div className="flex border-b border-border-default bg-background-secondary h-8">
+            {days.map((day, idx) => (
+              <div 
+                key={idx}
+                style={{ width: `${dayWidth}px`, minWidth: `${dayWidth}px` }}
+                className={`border-r border-border-default px-2 text-center font-semibold text-xs flex items-center justify-center ${
+                  isToday(day) ? 'bg-red-100 text-red-600' : ''
+                }`}
+              >
+                {format(day, 'MMM d')}
+              </div>
+            ))}
+          </div>
+          
+          {/* Hour header */}
+          <div className="flex border-b border-border-default bg-background-tertiary h-8">
+            {days.map((day, dayIdx) => (
+              <div key={dayIdx} className="flex" style={{ width: `${dayWidth}px` }}>
+                {Array.from({ length: 24 }, (_, hourIdx) => (
+                  <div
+                    key={hourIdx}
+                    style={{ width: `${hourWidth}px`, minWidth: `${hourWidth}px` }}
+                    className="border-r border-border-default text-center text-[10px] flex items-center justify-center"
+                  >
+                    {hourIdx % 4 === 0 ? `${hourIdx}h` : ''}
+                  </div>
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      );
+    }
+
     if (viewMode === 'month') {
       // Month view: Show months only
       const months = eachMonthOfInterval({ start: projectDates.start, end: projectDates.end });
@@ -1478,7 +1520,22 @@ export const CustomGanttPro = () => {
             
             {/* Gantt Bars */}
             <div className="relative" style={{ width: ganttWidth }}>
-              {/* Grid Lines (vertical lines for each week/day) */}
+              {/* Grid Lines (vertical lines for each hour/day/week) */}
+              {viewMode === 'hour' && eachDayOfInterval({ start: projectDates.start, end: projectDates.end }).map((day, dayIdx) => {
+                // Show grid line every 4 hours
+                return Array.from({ length: 6 }, (_, hourIdx) => {
+                  const hour = hourIdx * 4;
+                  const left = differenceInDays(day, projectDates.start) * dayWidth + (dayWidth / 24) * hour;
+                  return (
+                    <div 
+                      key={`grid-${dayIdx}-${hour}`}
+                      className="absolute top-0 bottom-0 w-px bg-gray-200 pointer-events-none"
+                      style={{ left: `${left}px` }}
+                    />
+                  );
+                });
+              })}
+              
               {viewMode === 'week' && eachWeekOfInterval({ start: projectDates.start, end: projectDates.end }, { weekStartsOn: 1 }).map((week, idx) => {
                 const weekStart = week;
                 const left = differenceInDays(weekStart, projectDates.start) * dayWidth;
