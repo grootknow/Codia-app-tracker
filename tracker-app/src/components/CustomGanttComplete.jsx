@@ -374,7 +374,6 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
   }
 
   const ganttWidth = differenceInDays(projectEnd, projectStart) * dayWidth;
-  const taskPositions = new Map();
 
   // Month headers - calculate directly without useMemo to avoid dependency issues
   const monthHeaders = eachMonthOfInterval({ start: projectStart, end: projectEnd }).map(monthStart => {
@@ -386,6 +385,23 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
 
   // Today position - calculate directly
   const todayPosition = differenceInDays(new Date(), projectStart) * dayWidth;
+
+  // Pre-calculate task positions for arrows
+  const taskPositions = new Map();
+  let posRowIndex = 0;
+  phases.forEach(phase => {
+    posRowIndex++; // Phase header
+    sortedTasks.filter(t => t.phase_id === phase.id).forEach(task => {
+      const { left, width } = getTaskPosition(task);
+      const taskTop = posRowIndex * 40;
+      taskPositions.set(task.id, {
+        x: left + width,
+        y: taskTop + 20,
+        startX: left
+      });
+      posRowIndex++;
+    });
+  });
 
   return (
     <div className="h-full flex flex-col bg-background-secondary rounded-lg border border-border-default" style={{ cursor: resizingTask ? 'ew-resize' : 'default' }}>
@@ -536,12 +552,6 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                     {(() => { rowIndex++; return null; })()}
                     {sortedTasks.filter(t => t.phase_id === phase.id).map(task => {
                       const { left, width } = getTaskPosition(task);
-                      const taskTop = rowIndex * 40;
-                      taskPositions.set(task.id, { 
-                        x: left + width, 
-                        y: taskTop + 20, // center of the 40px row
-                        startX: left,
-                      });
                       rowIndex++;
                       return (
                         <div key={`bar-${task.id}`} className="h-10 relative border-b border-border-default">
@@ -698,7 +708,7 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
 };
 
 const DependencyArrows = ({ tasks, taskPositions, hoveredTask, highlightedIds, showCriticalPath, criticalPathIds, scrollLeft, scrollTop }) => {
-  if (!taskPositions.size) return null;
+  if (!taskPositions || !taskPositions.size) return null;
 
   const arrows = [];
   tasks.forEach(task => {
@@ -712,17 +722,18 @@ const DependencyArrows = ({ tasks, taskPositions, hoveredTask, highlightedIds, s
         const fromTaskPos = taskPositions.get(depId);
         if (!fromTaskPos) return;
 
-        const fromX = fromTaskPos.x;
-        const fromY = fromTaskPos.y;
-        const toX = toTaskPos.startX;
-        const toY = toTaskPos.y;
+        // Arrow from end of fromTask to start of toTask
+        const fromX = fromTaskPos.x; // Right edge of from task
+        const fromY = fromTaskPos.y; // Center Y of from task
+        const toX = toTaskPos.startX; // Left edge of to task  
+        const toY = toTaskPos.y; // Center Y of to task
 
         const isHighlighted = hoveredTask && highlightedIds.has(depId) && highlightedIds.has(task.id);
         const isCritical = showCriticalPath && criticalPathIds.has(depId) && criticalPathIds.has(task.id);
         
-        // Create curved path with better control points
-        const midX = (fromX + toX) / 2;
-        const path = `M ${fromX} ${fromY} C ${midX} ${fromY}, ${midX} ${toY}, ${toX} ${toY}`;
+        // Create smooth curved path - horizontal flow
+        const controlOffset = Math.abs(toX - fromX) / 3;
+        const path = `M ${fromX} ${fromY} C ${fromX + controlOffset} ${fromY}, ${toX - controlOffset} ${toY}, ${toX} ${toY}`;
         
         arrows.push({ 
           id: `${depId}-${task.id}`,
@@ -736,8 +747,13 @@ const DependencyArrows = ({ tasks, taskPositions, hoveredTask, highlightedIds, s
     }
   });
 
+  // Calculate total height needed for SVG (all rows + phase headers)
+  // Each task = 40px, each phase header = 40px
+  const totalRows = tasks.length + (new Set(tasks.map(t => t.phase_id)).size);
+  const svgHeight = totalRows * 40 + 100; // Extra padding
+  
   return (
-    <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 20 }}>
+    <svg className="absolute top-0 left-0 w-full pointer-events-none" style={{ zIndex: 20, height: `${svgHeight}px` }}>
       <defs>
         <marker id="arrowhead" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto">
           <polygon points="0 0, 12 5, 0 10" fill="#0ea5e9" />
