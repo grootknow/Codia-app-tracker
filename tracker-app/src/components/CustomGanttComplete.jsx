@@ -138,18 +138,30 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
 
   const leftPanelRef = useRef(null);
   const timelineRef = useRef(null);
+  const scrollTimeoutRef = useRef(null);
 
   const handleScroll = (e) => {
-    setScrollTop(e.currentTarget.scrollTop);
-    setScrollLeft(e.currentTarget.scrollLeft);
+    // Throttle scroll updates to reduce re-renders
+    if (scrollTimeoutRef.current) {
+      clearTimeout(scrollTimeoutRef.current);
+    }
+    
+    scrollTimeoutRef.current = setTimeout(() => {
+      setScrollTop(e.currentTarget.scrollTop);
+      setScrollLeft(e.currentTarget.scrollLeft);
+    }, 16); // ~60fps
   };
 
   useEffect(() => {
-    if (leftPanelRef.current && leftPanelRef.current.scrollTop !== scrollTop) {
-      leftPanelRef.current.scrollTop = scrollTop;
+    // Sync scroll without triggering re-renders
+    const leftPanel = leftPanelRef.current;
+    const timeline = timelineRef.current;
+    
+    if (leftPanel && Math.abs(leftPanel.scrollTop - scrollTop) > 1) {
+      leftPanel.scrollTop = scrollTop;
     }
-    if (timelineRef.current && timelineRef.current.scrollTop !== scrollTop) {
-      timelineRef.current.scrollTop = scrollTop;
+    if (timeline && Math.abs(timeline.scrollTop - scrollTop) > 1) {
+      timeline.scrollTop = scrollTop;
     }
   }, [scrollTop]);
 
@@ -431,7 +443,7 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
         </div>
       </div>
       <div className="flex-1 flex overflow-hidden relative">
-        <div ref={leftPanelRef} onScroll={handleScroll} className="w-[400px] flex-shrink-0 overflow-y-auto border-r border-border-default" style={{ scrollbarWidth: 'none' }}>
+        <div ref={leftPanelRef} onScroll={handleScroll} className="w-[400px] flex-shrink-0 overflow-y-auto border-r border-border-default" style={{ scrollbarWidth: 'none', scrollBehavior: 'auto', willChange: 'scroll-position' }}>
           {/* Left Header */}
           <div className="h-12 flex items-center px-4 sticky top-0 z-20 bg-background-secondary border-b border-border-default">
             <h4 className="font-bold text-text-primary">Tasks</h4>
@@ -469,7 +481,7 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
             ))}
           </div>
         </div>
-        <div ref={timelineRef} onScroll={handleScroll} className="flex-1 overflow-auto">
+        <div ref={timelineRef} onScroll={handleScroll} className="flex-1 overflow-auto" style={{ scrollBehavior: 'auto', willChange: 'scroll-position' }}>
           <div style={{ width: ganttWidth, position: 'relative' }}>
             {/* Month/Day Headers */}
             <div className="h-12 flex sticky top-0 z-30 bg-background-secondary border-b border-border-default">
@@ -688,7 +700,8 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                   </React.Fragment>
                 ));
               })()}
-              <DependencyArrows 
+              {/* TODO: Re-enable after fixing taskPositions timing issue */}
+              {/* <DependencyArrows 
                 tasks={sortedTasks} 
                 taskPositions={taskPositions}
                 hoveredTask={hoveredTask}
@@ -697,7 +710,7 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                 criticalPathIds={criticalPathIds}
                 scrollLeft={scrollLeft}
                 scrollTop={scrollTop}
-              />
+              /> */}
               </div>
             </div>
           </div>
