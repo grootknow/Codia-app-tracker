@@ -544,15 +544,18 @@ export const CustomGanttPro = () => {
       
       const taskDuration = task.estimated_hours ? Math.ceil(task.estimated_hours / 8) : 3;
       
+      // Support both field names
+      const deps = task.dependencies || task.blocking_dependencies;
+      
       // If no dependencies, duration is just task duration
-      if (!task.dependencies || task.dependencies.length === 0) {
+      if (!deps || deps.length === 0) {
         durations.set(task.id, taskDuration);
         return taskDuration;
       }
       
       // Find max duration path through dependencies
       let maxDepDuration = 0;
-      task.dependencies.forEach(depId => {
+      deps.forEach(depId => {
         const depTask = taskMap.get(depId);
         if (depTask) {
           const depDuration = getDuration(depTask);
@@ -580,8 +583,9 @@ export const CustomGanttPro = () => {
         criticalTasks.add(task.id);
         
         // Add critical dependencies
-        if (task.dependencies) {
-          task.dependencies.forEach(depId => {
+        const deps = task.dependencies || task.blocking_dependencies;
+        if (deps) {
+          deps.forEach(depId => {
             const depTask = taskMap.get(depId);
             if (depTask && durations.get(depId) === taskDuration - (task.estimated_hours ? Math.ceil(task.estimated_hours / 8) : 3)) {
               traceCriticalPath(depTask);
@@ -614,8 +618,11 @@ export const CustomGanttPro = () => {
       const getEarliestStart = (task) => {
         if (scheduled.has(task.id)) return scheduled.get(task.id);
         
+        // Support both field names
+        const deps = task.dependencies || task.blocking_dependencies;
+        
         // If no dependencies, start today
-        if (!task.dependencies || task.dependencies.length === 0) {
+        if (!deps || deps.length === 0) {
           const startDate = new Date();
           scheduled.set(task.id, startDate);
           return startDate;
@@ -623,7 +630,7 @@ export const CustomGanttPro = () => {
         
         // Find latest end date of all dependencies
         let latestEnd = new Date();
-        task.dependencies.forEach(depId => {
+        deps.forEach(depId => {
           const depTask = taskMap.get(depId);
           if (depTask) {
             const depStart = getEarliestStart(depTask);
@@ -675,8 +682,10 @@ export const CustomGanttPro = () => {
 
   // Get task dependencies
   const getTaskDependencies = (task) => {
-    if (!task.dependencies || task.dependencies.length === 0) return [];
-    return task.dependencies
+    // Support both 'dependencies' and 'blocking_dependencies' fields
+    const deps = task.dependencies || task.blocking_dependencies;
+    if (!deps || deps.length === 0) return [];
+    return deps
       .map(depId => tasks.find(t => t.id === depId))
       .filter(Boolean);
   };
