@@ -77,7 +77,7 @@ export const WorkflowDashboard = () => {
     }
   };
 
-  const TaskCard = ({ task, type }) => (
+  const TaskCard = ({ task, type, allTasks }) => (
     <div
       onClick={() => {
         setSelectedTask(task);
@@ -118,7 +118,7 @@ export const WorkflowDashboard = () => {
         )}
         {(() => {
           // Calculate how many tasks depend on this one (successors)
-          const blockedTasks = tasks.filter(t => {
+          const blockedTasks = allTasks.filter(t => {
             const deps = t.depends_on || [];
             return deps.includes(task.id);
           });
@@ -319,7 +319,7 @@ export const WorkflowDashboard = () => {
       </div>
       <div className="flex-1 overflow-y-auto">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-3">
-          {sortedTasks.map(task => <TaskCard key={task.id} task={task} type={activeView} />)}
+          {sortedTasks.map(task => <TaskCard key={task.id} task={task} type={activeView} allTasks={[...humanTasks, ...aiTasks]} />)}
         </div>
         {sortedTasks.length === 0 && currentTasks.length > 0 && <div className="text-center py-12 text-gray-500">No tasks match your filters</div>}
         {currentTasks.length === 0 && <div className="text-center py-12 text-gray-500">No {activeView} tasks found</div>}
