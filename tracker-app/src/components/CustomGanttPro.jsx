@@ -580,6 +580,7 @@ export const CustomGanttPro = () => {
   const handleBarMouseDown = (e, task, edge = null) => {
     e.preventDefault();
     e.stopPropagation();
+    console.log('🖱️ MouseDown:', edge ? `Resize ${edge}` : 'Drag', task.name);
     setHasDragged(false); // Reset drag flag
     setTooltip({ visible: false, task: null, x: 0, y: 0 }); // Hide tooltip during drag
     setHoveredTask(null); // Clear hover state
@@ -588,9 +589,11 @@ export const CustomGanttPro = () => {
       setResizingTask(task);
       setResizeEdge(edge);
       document.body.style.cursor = 'col-resize'; // Global cursor
+      console.log('✅ Resize mode activated:', edge);
     } else {
       setDraggedTask(task);
       document.body.style.cursor = 'grabbing'; // Global cursor
+      console.log('✅ Drag mode activated');
     }
     setDragStartX(e.clientX);
   };
@@ -658,15 +661,18 @@ export const CustomGanttPro = () => {
   };
 
   const handleMouseUp = async () => {
+    console.log('🖱️ MouseUp - hasDragged:', hasDragged);
     // Reset cursor
     document.body.style.cursor = '';
     
     // Only save if actually dragged (not just clicked)
     if (hasDragged) {
       if (draggedTask) {
+        console.log('💾 Saving drag:', draggedTask.name);
         await updateTaskDates(draggedTask.id, new Date(draggedTask.start_date), new Date(draggedTask.due_date));
       }
       if (resizingTask) {
+        console.log('💾 Saving resize:', resizingTask.name);
         await updateTaskDates(resizingTask.id, new Date(resizingTask.start_date), new Date(resizingTask.due_date));
       }
     }
@@ -674,6 +680,7 @@ export const CustomGanttPro = () => {
     setDraggedTask(null);
     setResizingTask(null);
     setResizeEdge(null);
+    console.log('✅ MouseUp complete');
   };
 
   const updateTaskDates = async (taskId, startDate, endDate) => {
@@ -1403,26 +1410,25 @@ export const CustomGanttPro = () => {
         />
       )}
       
-      {/* Header Controls */}
+      {/* Header Controls - Mobile Responsive */}
       <div className="flex-shrink-0 p-3 border-b border-border-default space-y-2">
         {/* Row 1: Title + Search */}
-        <div className="flex items-center justify-between gap-4">
-          <div className="flex items-center gap-4">
-            <h3 className="font-bold text-lg text-text-primary">Gantt Pro</h3>
-            <span className="text-sm text-text-tertiary">
+        <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2 sm:gap-4">
+          <div className="flex items-center gap-2 sm:gap-4">
+            <h3 className="font-bold text-base sm:text-lg text-text-primary">Gantt</h3>
+            <span className="text-xs sm:text-sm text-text-tertiary">
               {sortedTasks.length} tasks
-              {(filterStatus !== 'ALL' || filterPriority !== 'ALL' || searchQuery) && ' (filtered)'}
             </span>
           </div>
           
-          {/* Search Bar */}
-          <div className="relative">
+          {/* Search Bar - Hidden on mobile */}
+          <div className="relative hidden sm:block">
             <input
               type="text"
               placeholder="Search tasks..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-8 pr-3 py-1.5 text-sm border border-border-default rounded-md bg-background-primary w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+              className="pl-8 pr-3 py-1.5 text-sm border border-border-default rounded-md bg-background-primary w-48 lg:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
             />
             <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
             {searchQuery && (
@@ -1436,32 +1442,25 @@ export const CustomGanttPro = () => {
           </div>
         </div>
         
-        {/* Row 2: Controls */}
+        {/* Row 2: Controls - Mobile Optimized */}
         <div className="flex items-center gap-2 flex-wrap">
-          {/* View Mode */}
-          <div className="flex items-center gap-1 border border-border-default rounded-md overflow-hidden">
-            <button
-              onClick={() => setViewMode('hour')}
-              className={`px-3 py-1 text-sm ${viewMode === 'hour' ? 'bg-blue-500 text-white' : 'bg-background-primary hover:bg-background-tertiary'}`}
-              title="Hour view - Most detailed"
-            >
-              Hour
-            </button>
+          {/* View Mode - Compact on mobile */}
+          <div className="flex items-center gap-0.5 sm:gap-1 border border-border-default rounded-md overflow-hidden">
             <button
               onClick={() => setViewMode('day')}
-              className={`px-3 py-1 text-sm ${viewMode === 'day' ? 'bg-blue-500 text-white' : 'bg-background-primary hover:bg-background-tertiary'}`}
+              className={`px-2 sm:px-3 py-1 text-xs sm:text-sm ${viewMode === 'day' ? 'bg-blue-500 text-white' : 'bg-background-primary hover:bg-background-tertiary'}`}
             >
               Day
             </button>
             <button
               onClick={() => setViewMode('week')}
-              className={`px-3 py-1 text-sm ${viewMode === 'week' ? 'bg-blue-500 text-white' : 'bg-background-primary hover:bg-background-tertiary'}`}
+              className={`px-2 sm:px-3 py-1 text-xs sm:text-sm ${viewMode === 'week' ? 'bg-blue-500 text-white' : 'bg-background-primary hover:bg-background-tertiary'}`}
             >
               Week
             </button>
             <button
               onClick={() => setViewMode('month')}
-              className={`px-3 py-1 text-sm ${viewMode === 'month' ? 'bg-blue-500 text-white' : 'bg-background-primary hover:bg-background-tertiary'}`}
+              className={`px-2 sm:px-3 py-1 text-xs sm:text-sm ${viewMode === 'month' ? 'bg-blue-500 text-white' : 'bg-background-primary hover:bg-background-tertiary'}`}
             >
               Month
             </button>
@@ -1469,14 +1468,14 @@ export const CustomGanttPro = () => {
           
           <div className="border-l border-border-default h-6 mx-2"></div>
           
-          {/* Filters */}
+          {/* Filters - Compact on mobile */}
           <select 
             value={filterStatus} 
             onChange={e => setFilterStatus(e.target.value)} 
-            className="bg-background-primary border border-border-default rounded-md px-2 py-1 text-sm"
+            className="bg-background-primary border border-border-default rounded-md px-1.5 sm:px-2 py-1 text-xs sm:text-sm"
             title="Filter by Status"
           >
-            <option value="ALL">All Status</option>
+            <option value="ALL">Status</option>
             <option value="PENDING">Pending</option>
             <option value="IN_PROGRESS">In Progress</option>
             <option value="DONE">Done</option>
@@ -1485,123 +1484,42 @@ export const CustomGanttPro = () => {
           <select 
             value={filterPriority} 
             onChange={e => setFilterPriority(e.target.value)} 
-            className="bg-background-primary border border-border-default rounded-md px-2 py-1 text-sm"
+            className="bg-background-primary border border-border-default rounded-md px-1.5 sm:px-2 py-1 text-xs sm:text-sm"
             title="Filter by Priority"
           >
-            <option value="ALL">All Priority</option>
+            <option value="ALL">Priority</option>
             <option value="HIGH">High</option>
             <option value="MEDIUM">Medium</option>
             <option value="LOW">Low</option>
           </select>
           
-          {/* Sort */}
-          <select 
-            value={sortBy} 
-            onChange={e => setSortBy(e.target.value)} 
-            className="bg-background-primary border border-border-default rounded-md px-2 py-1 text-sm"
-            title="Sort by"
-          >
-            <option value="priority">Sort: Priority</option>
-            <option value="start">Sort: Start Date</option>
-            <option value="end">Sort: End Date</option>
-            <option value="duration">Sort: Duration</option>
-          </select>
-          
-          <div className="border-l border-border-default h-6 mx-2"></div>
-          
-          {/* Today Button */}
+          {/* Today Button - Compact on mobile */}
           <button 
             onClick={scrollToToday}
-            className="px-3 py-1 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium flex items-center gap-1"
+            className="px-2 sm:px-3 py-1 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-xs sm:text-sm font-medium flex items-center gap-1"
             title="Jump to Today"
           >
-            <Calendar className="w-4 h-4" />
-            Today
+            <Calendar className="w-3 h-3 sm:w-4 sm:h-4" />
+            <span className="hidden sm:inline">Today</span>
           </button>
           
-          {/* Auto-Schedule Button */}
-          <button 
-            onClick={() => {
-              if (window.confirm('Auto-schedule all tasks based on dependencies? This will update all task dates.')) {
-                autoSchedule();
-              }
-            }}
-            className="px-3 py-1 rounded-md bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium"
-            title="Auto-schedule tasks based on dependencies"
-          >
-            🤖 Auto-Schedule
-          </button>
-          
-          <div className="border-l border-border-default h-6 mx-2"></div>
-          
-          {/* Dependencies */}
-          <label className="flex items-center gap-2 cursor-pointer text-sm">
+          {/* Dependencies Toggle - Essential */}
+          <label className="flex items-center gap-1.5 cursor-pointer text-xs sm:text-sm">
             <input 
               type="checkbox" 
               checked={showDependencies} 
               onChange={() => setShowDependencies(!showDependencies)} 
+              className="w-3 h-3 sm:w-4 sm:h-4"
             />
-            Dependencies
+            <span className="hidden sm:inline">Dependencies</span>
+            <span className="sm:hidden">Deps</span>
           </label>
           
-          {/* Baseline */}
-          <label className="flex items-center gap-2 cursor-pointer text-sm" title="Compare planned vs actual dates">
-            <input 
-              type="checkbox" 
-              checked={showBaseline} 
-              onChange={(e) => {
-                const enabled = e.target.checked;
-                setShowBaseline(enabled);
-                if (enabled) {
-                  // Check if any task has baseline data
-                  const hasBaseline = tasks.some(t => t.baseline_start_date && t.baseline_end_date);
-                  if (!hasBaseline) {
-                    toast.error('⚠️ No baseline data found! Run SQL migration to add baseline columns.', { duration: 5000 });
-                  }
-                }
-              }} 
-            />
-            Baseline
-            {showBaseline && !tasks.some(t => t.baseline_start_date && t.baseline_end_date) && (
-              <span className="text-xs text-red-500">⚠️ No data</span>
-            )}
-          </label>
+          <div className="border-l border-border-default h-6 mx-1 sm:mx-2 hidden sm:block"></div>
           
-          {/* Critical Path */}
-          <label className="flex items-center gap-2 cursor-pointer text-sm">
-            <input 
-              type="checkbox" 
-              checked={showCriticalPath} 
-              onChange={() => setShowCriticalPath(!showCriticalPath)} 
-            />
-            <span className="text-red-600 font-medium">Critical Path</span>
-          </label>
-          
-          <div className="border-l border-border-default h-6 mx-2"></div>
-          
-          {/* Export */}
-          <button 
-            onClick={exportToPNG}
-            className="px-3 py-1 rounded-md bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium"
-            title="Export to PNG"
-          >
-            📸 Export
-          </button>
-          
-          {/* Print */}
-          <button 
-            onClick={handlePrint}
-            className="px-3 py-1 rounded-md bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium"
-            title="Print Gantt Chart"
-          >
-            🖨️ Print
-          </button>
-          
-          <div className="border-l border-border-default h-6 mx-2"></div>
-          
-          {/* Zoom Slider */}
-          <div className="flex items-center gap-2">
-            <span className="text-xs text-text-tertiary">Zoom:</span>
+          {/* Zoom Slider - Simplified */}
+          <div className="flex items-center gap-1 sm:gap-2">
+            <span className="text-xs text-text-tertiary hidden sm:inline">Zoom:</span>
             <input
               type="range"
               min="0.3"
@@ -1609,20 +1527,10 @@ export const CustomGanttPro = () => {
               step="0.1"
               value={zoomLevel}
               onChange={(e) => setZoomLevel(parseFloat(e.target.value))}
-              className="w-24 h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer"
-              title={`Zoom: ${Math.round(zoomLevel * 100)}% (Auto-adjusts time scale)`}
+              className="w-16 sm:w-24 h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer"
+              title={`Zoom: ${Math.round(zoomLevel * 100)}%`}
             />
-            <span className="text-xs text-text-tertiary w-10">{Math.round(zoomLevel * 100)}%</span>
-            <span className="text-xs text-text-tertiary ml-2 px-2 py-0.5 bg-blue-100 text-blue-700 rounded">
-              {viewMode === 'hour' ? '📅 Hour' : viewMode === 'day' ? '📅 Day' : viewMode === 'week' ? '📅 Week' : '📅 Month'}
-            </span>
-            <button
-              onClick={() => setZoomLevel(1)}
-              className="text-xs px-2 py-0.5 rounded bg-gray-200 hover:bg-gray-300"
-              title="Reset Zoom"
-            >
-              Reset
-            </button>
+            <span className="text-xs text-text-tertiary w-8 sm:w-10">{Math.round(zoomLevel * 100)}%</span>
           </div>
         </div>
       </div>
@@ -1935,22 +1843,26 @@ export const CustomGanttPro = () => {
                               ></div>
                             )}
                             
-                            {/* Resize Handles - Always visible with cursor change */}
+                            {/* Resize Handles - Wider for easier grab */}
                             <div 
-                              className="absolute left-0 top-0 bottom-0 w-4 cursor-col-resize hover:bg-white/50 bg-white/30 transition-all z-10"
-                              onMouseDown={(e) => handleBarMouseDown(e, task, 'left')}
-                              title="Drag to change start date"
-                              style={{ pointerEvents: draggedTask || resizingTask ? 'none' : 'auto' }}
+                              className="absolute left-0 top-0 bottom-0 w-3 cursor-col-resize hover:bg-white/30 transition-all z-20"
+                              onMouseDown={(e) => {
+                                e.stopPropagation(); // Prevent bar drag
+                                handleBarMouseDown(e, task, 'left');
+                              }}
+                              title="◀ Drag to change start date"
                             >
-                              <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded"></div>
+                              <div className="absolute left-0.5 top-1/2 -translate-y-1/2 w-1 h-6 bg-white/80 rounded-full shadow"></div>
                             </div>
                             <div 
-                              className="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize hover:bg-white/50 bg-white/30 transition-all z-10"
-                              onMouseDown={(e) => handleBarMouseDown(e, task, 'right')}
-                              title="Drag to change end date"
-                              style={{ pointerEvents: draggedTask || resizingTask ? 'none' : 'auto' }}
+                              className="absolute right-0 top-0 bottom-0 w-3 cursor-col-resize hover:bg-white/30 transition-all z-20"
+                              onMouseDown={(e) => {
+                                e.stopPropagation(); // Prevent bar drag
+                                handleBarMouseDown(e, task, 'right');
+                              }}
+                              title="Drag to change end date ▶"
                             >
-                              <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded"></div>
+                              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 w-1 h-6 bg-white/80 rounded-full shadow"></div>
                             </div>
                             
                             {/* Progress Bar */}
