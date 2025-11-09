@@ -191,31 +191,68 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
     return { left, width, startDate, endDate };
   };
 
+  // ✅ PERFORMANCE FIX: Memoize expensive calculations
+  const projectDates = useMemo(() => {
+    if (tasks.length === 0) {
+      return {
+        start: new Date(),
+        end: addDays(new Date(), 30)
+      };
+    }
+
+    const tasksWithDates = tasks.filter(t => t.start_date || t.started_at);
+    const start = tasksWithDates.length > 0 
+      ? new Date(Math.min(...tasksWithDates.map(t => new Date(t.start_date || t.started_at))))
+      : new Date();
+
+    const tasksWithEndDates = tasks.filter(t => t.due_date || t.completed_at || t.start_date);
+    const end = tasksWithEndDates.length > 0
+      ? new Date(Math.max(...tasksWithEndDates.map(t => {
+          if (t.due_date) return new Date(t.due_date);
+          if (t.completed_at) return new Date(t.completed_at);
+          const taskStart = new Date(t.start_date);
+          const days = t.estimated_hours ? Math.max(1, Math.ceil(t.estimated_hours / 8)) : 3;
+          return addDays(taskStart, days);
+        })))
+      : addDays(new Date(), 30);
+
+    return { start, end };
+  }, [tasks]);
+
+  const projectStart = projectDates.start;
+  const projectEnd = projectDates.end;
+
   if (loading) {
     return <div className="flex items-center justify-center h-full"><p className="text-text-tertiary">Loading Gantt...</p></div>;
   }
-
-  const projectStart = tasks.length > 0 ? new Date(Math.min(...tasks.filter(t => t.start_date || t.started_at).map(t => new Date(t.start_date || t.started_at)))) : new Date();
-  const projectEnd = tasks.length > 0 ? new Date(Math.max(...tasks.filter(t => t.due_date || t.completed_at || t.start_date).map(t => new Date(t.due_date || t.completed_at || addDays(new Date(t.start_date), t.estimated_hours ? Math.max(1, Math.ceil(t.estimated_hours / 8)) : 3))))) : addDays(new Date(), 30);
 
   const dayWidth = 30 * zoomLevel;
   const ganttWidth = differenceInDays(projectEnd, projectStart) * dayWidth;
   const taskPositions = new Map();
 
-  const monthHeaders = eachMonthOfInterval({ start: projectStart, end: projectEnd }).map(monthStart => {
-    const monthEnd = endOfMonth(monthStart);
-    const start = differenceInDays(monthStart, projectStart) * dayWidth;
-    const width = differenceInDays(monthEnd, monthStart) * dayWidth;
-    return { name: format(monthStart, 'MMMM yyyy'), left: start, width };
-  });
+  // ✅ PERFORMANCE FIX: Memoize month headers calculation
+  const monthHeaders = useMemo(() => {
+    return eachMonthOfInterval({ start: projectStart, end: projectEnd }).map(monthStart => {
+      const monthEnd = endOfMonth(monthStart);
+      const start = differenceInDays(monthStart, projectStart) * dayWidth;
+      const width = differenceInDays(monthEnd, monthStart) * dayWidth;
+      return { name: format(monthStart, 'MMMM yyyy'), left: start, width };
+    });
+  }, [projectStart, projectEnd, dayWidth]);
 
-  const todayPosition = differenceInDays(new Date(), projectStart) * dayWidth;
+  // ✅ PERFORMANCE FIX: Memoize today position
+  const todayPosition = useMemo(() => {
+    return differenceInDays(new Date(), projectStart) * dayWidth;
+  }, [projectStart, dayWidth]);
 
-  const sortedTasks = [...tasks].sort((a, b) => {
-    if (sortBy === 'name') return a.name.localeCompare(b.name);
-    if (sortBy === 'start') return new Date(a.started_at) - new Date(b.started_at);
-    return a.order_index - b.order_index;
-  });
+  // ✅ PERFORMANCE FIX: Memoize sorted tasks
+  const sortedTasks = useMemo(() => {
+    return [...tasks].sort((a, b) => {
+      if (sortBy === 'name') return a.name.localeCompare(b.name);
+      if (sortBy === 'start') return new Date(a.started_at) - new Date(b.started_at);
+      return a.order_index - b.order_index;
+    });
+  }, [tasks, sortBy]);
 
   return (
     <div className="h-full flex flex-col bg-background-secondary rounded-lg border border-border-default">
