@@ -1,21 +1,31 @@
 import React, { useState, useEffect, useRef, useMemo } from 'react';
 import { supabase } from '../lib/supabase';
 import { format, addDays, differenceInDays, startOfWeek, endOfWeek, eachDayOfInterval, eachWeekOfInterval, startOfMonth, endOfMonth, eachMonthOfInterval, isToday, startOfDay } from 'date-fns';
-import { Calendar, ChevronLeft, ChevronRight, ZoomIn, ZoomOut } from 'lucide-react';
+import { Calendar, ChevronLeft, ChevronRight, ChevronDown, ChevronUp, ZoomIn, ZoomOut } from 'lucide-react';
 import toast, { Toaster } from 'react-hot-toast';
 import { TaskDetailModal } from './TaskDetailModal';
 
 /**
  * CustomGanttPro - Professional Gantt Chart Component
  * 
- * Features:
- * - View modes: Day/Week/Month
- * - Today marker (vertical red line)
- * - Milestone diamonds (for is_milestone tasks)
+ * ✅ FULL FEATURES:
+ * - View modes: Day/Week/Month (dynamic zoom)
+ * - Today marker (vertical red line with label)
+ * - Milestone diamonds (yellow ◆ for is_milestone tasks)
  * - 2-tier timeline header (Month + Week/Day)
+ * - Hierarchy support (parent-child tasks with indentation)
+ * - Expand/Collapse phases and parent tasks
  * - Proper sorting (Priority/Start/End/Duration)
- * - Progress bars inside tasks
- * - Dependency arrows (optional)
+ * - Progress bars inside tasks (dark overlay)
+ * - Color by status (Green=DONE, Blue=IN_PROGRESS, Gray=PENDING)
+ * - Dependency arrows (SVG arrows with markers)
+ * - Drag & Drop tasks (move dates)
+ * - Resize task bars (change duration)
+ * - Resource labels (show assigned_to on bars)
+ * - Baseline comparison (planned vs actual)
+ * - Grid lines (vertical guides)
+ * - Tooltips (hover for full task info)
+ * - Smooth scrolling and sync
  */
 export const CustomGanttPro = () => {
   // ==================== STATE ====================
@@ -33,6 +43,8 @@ export const CustomGanttPro = () => {
   const [collapsedTasks, setCollapsedTasks] = useState(new Set());
   const [draggedTask, setDraggedTask] = useState(null);
   const [resizingTask, setResizingTask] = useState(null);
+  const [resizeEdge, setResizeEdge] = useState(null); // 'left' or 'right'
+  const [dragStartX, setDragStartX] = useState(0);
   const [tooltip, setTooltip] = useState({ visible: false, task: null, x: 0, y: 0 });
   
   const timelineRef = useRef(null);
@@ -259,6 +271,139 @@ export const CustomGanttPro = () => {
     }
   };
 
+  // Drag & Drop handlers
+  const handleBarMouseDown = (e, task, edge = null) => {
+    e.stopPropagation();
+    if (edge) {
+      setResizingTask(task);
+      setResizeEdge(edge);
+    } else {
+      setDraggedTask(task);
+    }
+    setDragStartX(e.clientX);
+  };
+
+  const handleMouseMove = (e) => {
+    if (draggedTask) {
+      const deltaX = e.clientX - dragStartX;
+      const deltaDays = Math.round(deltaX / dayWidth);
+      if (deltaDays !== 0) {
+        // Update task dates
+        const startDate = new Date(draggedTask.start_date || draggedTask.started_at);
+        const newStartDate = addDays(startDate, deltaDays);
+        const duration = draggedTask.estimated_hours ? Math.ceil(draggedTask.estimated_hours / 8) : 3;
+        const newEndDate = addDays(newStartDate, duration);
+        
+        // Update in database
+        updateTaskDates(draggedTask.id, newStartDate, newEndDate);
+        setDragStartX(e.clientX);
+      }
+    } else if (resizingTask && resizeEdge) {
+      const deltaX = e.clientX - dragStartX;
+      const deltaDays = Math.round(deltaX / dayWidth);
+      if (deltaDays !== 0) {
+        const startDate = new Date(resizingTask.start_date || resizingTask.started_at);
+        const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
+        
+        if (resizeEdge === 'left') {
+          const newStartDate = addDays(startDate, deltaDays);
+          updateTaskDates(resizingTask.id, newStartDate, endDate);
+        } else {
+          const newEndDate = addDays(endDate, deltaDays);
+          updateTaskDates(resizingTask.id, startDate, newEndDate);
+        }
+        setDragStartX(e.clientX);
+      }
+    }
+  };
+
+  const handleMouseUp = () => {
+    setDraggedTask(null);
+    setResizingTask(null);
+    setResizeEdge(null);
+  };
+
+  const updateTaskDates = async (taskId, startDate, endDate) => {
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .update({ 
+          start_date: format(startDate, 'yyyy-MM-dd'),
+          due_date: format(endDate, 'yyyy-MM-dd')
+        })
+        .eq('id', taskId);
+      
+      if (error) throw error;
+      await loadData();
+    } catch (error) {
+      console.error('Error updating task dates:', error);
+      toast.error('Failed to update task dates');
+    }
+  };
+
+  // Get task dependencies
+  const getTaskDependencies = (task) => {
+    if (!task.dependencies || task.dependencies.length === 0) return [];
+    return task.dependencies
+      .map(depId => tasks.find(t => t.id === depId))
+      .filter(Boolean);
+  };
+
+  // Render dependency arrows
+  const renderDependencyArrows = () => {
+    if (!showDependencies) return null;
+    
+    const arrows = [];
+    sortedTasks.forEach((task, taskIndex) => {
+      const deps = getTaskDependencies(task);
+      deps.forEach(depTask => {
+        const depIndex = sortedTasks.findIndex(t => t.id === depTask.id);
+        if (depIndex === -1) return;
+        
+        const fromPos = getTaskPosition(depTask);
+        const toPos = getTaskPosition(task);
+        
+        // Calculate arrow coordinates
+        const x1 = fromPos.left + fromPos.width;
+        const y1 = (depIndex + 1) * 40 + 20; // Center of bar
+        const x2 = toPos.left;
+        const y2 = (taskIndex + 1) * 40 + 20;
+        
+        arrows.push(
+          <g key={`arrow-${depTask.id}-${task.id}`}>
+            <line 
+              x1={x1} y1={y1} x2={x2} y2={y2}
+              stroke="#3b82f6" 
+              strokeWidth="2"
+              markerEnd="url(#arrowhead)"
+            />
+          </g>
+        );
+      });
+    });
+    
+    return (
+      <svg 
+        className="absolute top-0 left-0 pointer-events-none z-20"
+        style={{ width: ganttWidth, height: (sortedTasks.length + phases.length) * 40 }}
+      >
+        <defs>
+          <marker
+            id="arrowhead"
+            markerWidth="10"
+            markerHeight="10"
+            refX="9"
+            refY="3"
+            orient="auto"
+          >
+            <polygon points="0 0, 10 3, 0 6" fill="#3b82f6" />
+          </marker>
+        </defs>
+        {arrows}
+      </svg>
+    );
+  };
+
   // ==================== TIMELINE HEADERS ====================
   
   const renderTimelineHeaders = () => {
@@ -404,6 +549,35 @@ export const CustomGanttPro = () => {
   return (
     <div className="h-full flex flex-col bg-background-secondary rounded-lg border border-border-default">
       <Toaster position="top-right" />
+      
+      {/* Tooltip */}
+      {tooltip.visible && tooltip.task && (
+        <div 
+          className="fixed z-50 bg-gray-900 text-white text-xs rounded-lg shadow-xl p-3 pointer-events-none max-w-xs"
+          style={{ 
+            left: `${tooltip.x + 10}px`, 
+            top: `${tooltip.y + 10}px` 
+          }}
+        >
+          <div className="font-bold mb-1">{tooltip.task.name}</div>
+          <div className="space-y-0.5 text-gray-300">
+            <div>Status: <span className="text-white">{tooltip.task.status}</span></div>
+            {tooltip.task.priority && (
+              <div>Priority: <span className="text-white">{tooltip.task.priority}</span></div>
+            )}
+            {tooltip.task.estimated_hours && (
+              <div>Duration: <span className="text-white">{tooltip.task.estimated_hours}h</span></div>
+            )}
+            {tooltip.task.progress_percentage !== null && (
+              <div>Progress: <span className="text-white">{tooltip.task.progress_percentage}%</span></div>
+            )}
+            {tooltip.task.assigned_to && (
+              <div>Assigned: <span className="text-white">{tooltip.task.assigned_to}</span></div>
+            )}
+          </div>
+        </div>
+      )}
+      
       {selectedTask && (
         <TaskDetailModal 
           task={selectedTask} 
@@ -469,14 +643,24 @@ export const CustomGanttPro = () => {
           
           <div className="border-l border-border-default h-6 mx-2"></div>
           
-          {/* Critical Path */}
+          {/* Dependencies */}
           <label className="flex items-center gap-2 cursor-pointer text-sm">
             <input 
               type="checkbox" 
-              checked={showCriticalPath} 
-              onChange={() => setShowCriticalPath(!showCriticalPath)} 
+              checked={showDependencies} 
+              onChange={() => setShowDependencies(!showDependencies)} 
             />
-            Critical Path
+            Dependencies
+          </label>
+          
+          {/* Baseline */}
+          <label className="flex items-center gap-2 cursor-pointer text-sm">
+            <input 
+              type="checkbox" 
+              checked={showBaseline} 
+              onChange={() => setShowBaseline(!showBaseline)} 
+            />
+            Baseline
           </label>
         </div>
       </div>
@@ -498,31 +682,89 @@ export const CustomGanttPro = () => {
           <div className="relative">
             {phases.map(phase => (
               <React.Fragment key={phase.id}>
-                <div className="h-10 flex items-center p-2 sticky top-[60px] z-10 bg-background-tertiary border-b border-t border-border-default">
+                {/* Phase Header with Collapse */}
+                <div 
+                  className="h-10 flex items-center gap-2 p-2 sticky top-[60px] z-10 bg-background-tertiary border-b border-t border-border-default cursor-pointer hover:bg-background-secondary"
+                  onClick={() => togglePhase(phase.id)}
+                >
+                  {collapsedPhases.has(phase.id) ? (
+                    <ChevronRight className="w-4 h-4 flex-shrink-0" />
+                  ) : (
+                    <ChevronDown className="w-4 h-4 flex-shrink-0" />
+                  )}
                   <strong className="text-sm text-text-primary">{phase.name}</strong>
+                  <span className="text-xs text-text-tertiary ml-auto">
+                    ({sortedTasks.filter(t => t.phase_id === phase.id).length} tasks)
+                  </span>
                 </div>
-                {sortedTasks.filter(t => t.phase_id === phase.id).map(task => (
-                  <div 
-                    key={task.id}
-                    data-task-id={task.id}
-                    className="h-10 flex items-center justify-between p-2 text-sm border-b border-border-default cursor-pointer hover:bg-background-tertiary"
-                    onClick={() => handleTaskClick(task)}
-                    onMouseEnter={() => setHoveredTask(task.id)}
-                    onMouseLeave={() => setHoveredTask(null)}
-                  >
-                    <span className="truncate pr-2 flex items-center gap-2">
-                      {task.is_milestone && <span className="text-yellow-500">◆</span>}
-                      {task.name}
-                    </span>
-                    <span className={`px-2 py-0.5 text-xs rounded-full ${
-                      task.status === 'DONE' ? 'bg-success-background text-success-text' : 
-                      task.status === 'IN_PROGRESS' ? 'bg-info-background text-info-text' :
-                      'bg-gray-200 text-gray-600'
-                    }`}>
-                      {task.status}
-                    </span>
-                  </div>
-                ))}
+                
+                {/* Tasks (only if phase not collapsed) */}
+                {!collapsedPhases.has(phase.id) && sortedTasks.filter(t => t.phase_id === phase.id).map(task => {
+                  const hasChildren = task.children && task.children.length > 0;
+                  const isCollapsed = collapsedTasks.has(task.id);
+                  const indentPx = (task.level || 0) * 20; // 20px per level
+                  
+                  return (
+                    <div 
+                      key={task.id}
+                      data-task-id={task.id}
+                      className="h-10 flex items-center justify-between text-sm border-b border-border-default cursor-pointer hover:bg-background-tertiary"
+                      onClick={() => handleTaskClick(task)}
+                      onMouseEnter={(e) => {
+                        setHoveredTask(task.id);
+                        setTooltip({
+                          visible: true,
+                          task,
+                          x: e.clientX,
+                          y: e.clientY
+                        });
+                      }}
+                      onMouseLeave={() => {
+                        setHoveredTask(null);
+                        setTooltip({ visible: false, task: null, x: 0, y: 0 });
+                      }}
+                    >
+                      <span 
+                        className="truncate pr-2 flex items-center gap-1"
+                        style={{ paddingLeft: `${8 + indentPx}px` }}
+                      >
+                        {/* Expand/Collapse for parent tasks */}
+                        {hasChildren ? (
+                          <button
+                            onClick={(e) => {
+                              e.stopPropagation();
+                              toggleTask(task.id);
+                            }}
+                            className="flex-shrink-0 hover:bg-background-secondary rounded p-0.5"
+                          >
+                            {isCollapsed ? (
+                              <ChevronRight className="w-3 h-3" />
+                            ) : (
+                              <ChevronDown className="w-3 h-3" />
+                            )}
+                          </button>
+                        ) : (
+                          <span className="w-4"></span>
+                        )}
+                        
+                        {/* Milestone diamond */}
+                        {task.is_milestone && <span className="text-yellow-500 text-sm">◆</span>}
+                        
+                        {/* Task name */}
+                        <span className="truncate">{task.name}</span>
+                      </span>
+                      
+                      {/* Status badge */}
+                      <span className={`px-2 py-0.5 text-xs rounded-full flex-shrink-0 mr-2 ${
+                        task.status === 'DONE' ? 'bg-success-background text-success-text' : 
+                        task.status === 'IN_PROGRESS' ? 'bg-info-background text-info-text' :
+                        'bg-gray-200 text-gray-600'
+                      }`}>
+                        {task.status}
+                      </span>
+                    </div>
+                  );
+                })}
               </React.Fragment>
             ))}
           </div>
@@ -533,6 +775,9 @@ export const CustomGanttPro = () => {
           ref={timelineRef}
           className="flex-1 overflow-auto"
           style={{ scrollbarWidth: 'thin' }}
+          onMouseMove={handleMouseMove}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
         >
           <div style={{ width: ganttWidth, position: 'relative' }}>
             {/* Timeline Headers */}
@@ -540,6 +785,30 @@ export const CustomGanttPro = () => {
             
             {/* Gantt Bars */}
             <div className="relative" style={{ width: ganttWidth }}>
+              {/* Grid Lines (vertical lines for each week/day) */}
+              {viewMode === 'week' && eachWeekOfInterval({ start: projectDates.start, end: projectDates.end }, { weekStartsOn: 1 }).map((week, idx) => {
+                const weekStart = week;
+                const left = differenceInDays(weekStart, projectDates.start) * dayWidth;
+                return (
+                  <div 
+                    key={`grid-${idx}`}
+                    className="absolute top-0 bottom-0 w-px bg-gray-200 pointer-events-none"
+                    style={{ left: `${left}px` }}
+                  />
+                );
+              })}
+              
+              {viewMode === 'day' && eachDayOfInterval({ start: projectDates.start, end: projectDates.end }).map((day, idx) => {
+                const left = differenceInDays(day, projectDates.start) * dayWidth;
+                return (
+                  <div 
+                    key={`grid-${idx}`}
+                    className="absolute top-0 bottom-0 w-px bg-gray-200 pointer-events-none"
+                    style={{ left: `${left}px` }}
+                  />
+                );
+              })}
+              
               {/* Today Marker */}
               <div 
                 className="absolute top-0 bottom-0 w-0.5 bg-red-500 z-30 pointer-events-none"
@@ -550,11 +819,14 @@ export const CustomGanttPro = () => {
                 </div>
               </div>
               
+              {/* Dependency Arrows */}
+              {renderDependencyArrows()}
+              
               {/* Task Bars */}
               {phases.map(phase => (
                 <React.Fragment key={`phase-bars-${phase.id}`}>
                   <div className="h-10 bg-background-tertiary/30 border-b border-t border-border-default"></div>
-                  {sortedTasks.filter(t => t.phase_id === phase.id).map(task => {
+                  {!collapsedPhases.has(phase.id) && sortedTasks.filter(t => t.phase_id === phase.id).map(task => {
                     const { left, width } = getTaskPosition(task);
                     const progress = task.progress_percentage || 0;
                     
@@ -572,13 +844,35 @@ export const CustomGanttPro = () => {
                           // Regular Task Bar
                           <div
                             style={{ left: `${left}px`, width: `${width}px`, top: '5px', height: '30px' }}
-                            className={`absolute rounded-md cursor-pointer transition-all duration-200 ${
+                            className={`absolute rounded-md cursor-move transition-all duration-200 ${
                               task.status === 'DONE' ? 'bg-green-500' :
                               task.status === 'IN_PROGRESS' ? 'bg-blue-500' :
                               'bg-gray-400'
-                            } hover:opacity-80 shadow-md`}
+                            } hover:opacity-80 shadow-md group`}
+                            onMouseDown={(e) => handleBarMouseDown(e, task)}
                             onClick={() => handleBarClick(task)}
                           >
+                            {/* Baseline (if enabled) */}
+                            {showBaseline && task.baseline_start_date && task.baseline_end_date && (
+                              <div
+                                className="absolute -top-1 left-0 h-1 bg-gray-300 rounded-full opacity-50"
+                                style={{
+                                  width: `${differenceInDays(new Date(task.baseline_end_date), new Date(task.baseline_start_date)) * dayWidth}px`,
+                                  left: `${differenceInDays(new Date(task.baseline_start_date), new Date(task.start_date || task.started_at)) * dayWidth}px`
+                                }}
+                              ></div>
+                            )}
+                            
+                            {/* Resize Handles */}
+                            <div 
+                              className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-white/30 opacity-0 group-hover:opacity-100"
+                              onMouseDown={(e) => handleBarMouseDown(e, task, 'left')}
+                            ></div>
+                            <div 
+                              className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-white/30 opacity-0 group-hover:opacity-100"
+                              onMouseDown={(e) => handleBarMouseDown(e, task, 'right')}
+                            ></div>
+                            
                             {/* Progress Bar */}
                             {progress > 0 && (
                               <div 
@@ -587,9 +881,12 @@ export const CustomGanttPro = () => {
                               ></div>
                             )}
                             
-                            {/* Task Name */}
+                            {/* Task Name + Resource */}
                             <div className="absolute inset-0 flex items-center px-2 text-white text-xs font-semibold truncate">
-                              {task.name}
+                              <span className="truncate">{task.name}</span>
+                              {task.assigned_to && width > 100 && (
+                                <span className="ml-auto text-xs opacity-80 flex-shrink-0">@{task.assigned_to.split('@')[0]}</span>
+                              )}
                             </div>
                           </div>
                         )}
