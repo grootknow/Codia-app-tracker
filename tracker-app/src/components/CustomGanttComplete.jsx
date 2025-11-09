@@ -375,7 +375,11 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
     if (timelineEl) {
       const { left, width } = getTaskPosition(task);
       const timelineWidth = timelineEl.offsetWidth;
-      const targetScrollLeft = left - (timelineWidth / 2) + (width / 2);
+      // Center the bar in viewport: scroll so bar center aligns with viewport center
+      const barCenter = left + (width / 2);
+      const viewportCenter = timelineWidth / 2;
+      const targetScrollLeft = Math.max(0, barCenter - viewportCenter);
+      
       timelineEl.scrollTo({
         left: targetScrollLeft,
         behavior: 'smooth'
