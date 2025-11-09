@@ -46,6 +46,7 @@ export const CustomGanttPro = () => {
   const [resizeEdge, setResizeEdge] = useState(null); // 'left' or 'right'
   const [dragStartX, setDragStartX] = useState(0);
   const [tooltip, setTooltip] = useState({ visible: false, task: null, x: 0, y: 0 });
+  const [contextMenu, setContextMenu] = useState({ visible: false, task: null, x: 0, y: 0 });
   
   const timelineRef = useRef(null);
   const leftPanelRef = useRef(null);
@@ -54,6 +55,35 @@ export const CustomGanttPro = () => {
   useEffect(() => {
     loadData();
   }, []);
+
+  // Keyboard shortcuts
+  useEffect(() => {
+    const handleKeyDown = (e) => {
+      // Esc - Close modal/context menu
+      if (e.key === 'Escape') {
+        setSelectedTask(null);
+        setContextMenu({ visible: false, task: null, x: 0, y: 0 });
+      }
+      // Delete - Delete selected task (with confirmation)
+      if (e.key === 'Delete' && selectedTask) {
+        if (window.confirm(`Delete task "${selectedTask.name}"?`)) {
+          deleteTask(selectedTask.id);
+        }
+      }
+    };
+    
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, [selectedTask]);
+
+  // Close context menu on click outside
+  useEffect(() => {
+    const handleClick = () => setContextMenu({ visible: false, task: null, x: 0, y: 0 });
+    if (contextMenu.visible) {
+      window.addEventListener('click', handleClick);
+      return () => window.removeEventListener('click', handleClick);
+    }
+  }, [contextMenu.visible]);
 
   const loadData = async () => {
     try {
@@ -258,8 +288,20 @@ export const CustomGanttPro = () => {
     }
   };
 
-  const handleBarClick = (task) => {
+  const handleBarClick = (task, e) => {
+    if (e) e.stopPropagation();
     setSelectedTask(task);
+  };
+
+  const handleBarRightClick = (task, e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    setContextMenu({
+      visible: true,
+      task,
+      x: e.clientX,
+      y: e.clientY
+    });
   };
 
   const scrollToToday = () => {
@@ -335,9 +377,47 @@ export const CustomGanttPro = () => {
       
       if (error) throw error;
       await loadData();
+      toast.success('Task dates updated');
     } catch (error) {
       console.error('Error updating task dates:', error);
       toast.error('Failed to update task dates');
+    }
+  };
+
+  const deleteTask = async (taskId) => {
+    try {
+      const { error } = await supabase
+        .from('tasks')
+        .delete()
+        .eq('id', taskId);
+      
+      if (error) throw error;
+      await loadData();
+      setSelectedTask(null);
+      toast.success('Task deleted');
+    } catch (error) {
+      console.error('Error deleting task:', error);
+      toast.error('Failed to delete task');
+    }
+  };
+
+  const duplicateTask = async (task) => {
+    try {
+      const { id, created_at, updated_at, ...taskData } = task;
+      const { error } = await supabase
+        .from('tasks')
+        .insert({ 
+          ...taskData,
+          name: `${task.name} (Copy)`,
+          status: 'PENDING'
+        });
+      
+      if (error) throw error;
+      await loadData();
+      toast.success('Task duplicated');
+    } catch (error) {
+      console.error('Error duplicating task:', error);
+      toast.error('Failed to duplicate task');
     }
   };
 
@@ -349,43 +429,69 @@ export const CustomGanttPro = () => {
       .filter(Boolean);
   };
 
-  // Render dependency arrows
+  // Render dependency arrows (with proper Y positioning accounting for phases)
   const renderDependencyArrows = () => {
     if (!showDependencies) return null;
     
     const arrows = [];
-    sortedTasks.forEach((task, taskIndex) => {
-      const deps = getTaskDependencies(task);
-      deps.forEach(depTask => {
-        const depIndex = sortedTasks.findIndex(t => t.id === depTask.id);
-        if (depIndex === -1) return;
-        
-        const fromPos = getTaskPosition(depTask);
-        const toPos = getTaskPosition(task);
-        
-        // Calculate arrow coordinates
-        const x1 = fromPos.left + fromPos.width;
-        const y1 = (depIndex + 1) * 40 + 20; // Center of bar
-        const x2 = toPos.left;
-        const y2 = (taskIndex + 1) * 40 + 20;
-        
-        arrows.push(
-          <g key={`arrow-${depTask.id}-${task.id}`}>
-            <line 
-              x1={x1} y1={y1} x2={x2} y2={y2}
-              stroke="#3b82f6" 
-              strokeWidth="2"
-              markerEnd="url(#arrowhead)"
-            />
-          </g>
-        );
-      });
+    let currentY = 40; // Start after first phase header
+    
+    phases.forEach(phase => {
+      const phaseTasks = sortedTasks.filter(t => t.phase_id === phase.id);
+      
+      if (!collapsedPhases.has(phase.id)) {
+        phaseTasks.forEach((task, idx) => {
+          const deps = getTaskDependencies(task);
+          deps.forEach(depTask => {
+            // Find depTask Y position
+            let depY = 40;
+            let found = false;
+            
+            phases.forEach(p => {
+              if (found) return;
+              const pTasks = sortedTasks.filter(t => t.phase_id === p.id);
+              if (!collapsedPhases.has(p.id)) {
+                const depIdx = pTasks.findIndex(t => t.id === depTask.id);
+                if (depIdx !== -1) {
+                  depY += depIdx * 40 + 20;
+                  found = true;
+                } else {
+                  depY += pTasks.length * 40;
+                }
+              }
+              depY += 40; // Phase header
+            });
+            
+            if (!found) return;
+            
+            const fromPos = getTaskPosition(depTask);
+            const toPos = getTaskPosition(task);
+            const taskY = currentY + idx * 40 + 20;
+            
+            arrows.push(
+              <g key={`arrow-${depTask.id}-${task.id}`}>
+                <line 
+                  x1={fromPos.left + fromPos.width} 
+                  y1={depY} 
+                  x2={toPos.left} 
+                  y2={taskY}
+                  stroke="#3b82f6" 
+                  strokeWidth="2"
+                  markerEnd="url(#arrowhead)"
+                />
+              </g>
+            );
+          });
+        });
+        currentY += phaseTasks.length * 40;
+      }
+      currentY += 40; // Phase header
     });
     
     return (
       <svg 
         className="absolute top-0 left-0 pointer-events-none z-20"
-        style={{ width: ganttWidth, height: (sortedTasks.length + phases.length) * 40 }}
+        style={{ width: ganttWidth, height: currentY }}
       >
         <defs>
           <marker
@@ -575,6 +681,49 @@ export const CustomGanttPro = () => {
               <div>Assigned: <span className="text-white">{tooltip.task.assigned_to}</span></div>
             )}
           </div>
+        </div>
+      )}
+      
+      {/* Context Menu */}
+      {contextMenu.visible && contextMenu.task && (
+        <div 
+          className="fixed z-50 bg-white dark:bg-gray-800 rounded-lg shadow-2xl border border-gray-200 dark:border-gray-700 py-1 min-w-[180px]"
+          style={{ 
+            left: `${contextMenu.x}px`, 
+            top: `${contextMenu.y}px` 
+          }}
+          onClick={(e) => e.stopPropagation()}
+        >
+          <button
+            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+            onClick={() => {
+              setSelectedTask(contextMenu.task);
+              setContextMenu({ visible: false, task: null, x: 0, y: 0 });
+            }}
+          >
+            <span>📝</span> Edit Task
+          </button>
+          <button
+            className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 dark:hover:bg-gray-700 flex items-center gap-2"
+            onClick={() => {
+              duplicateTask(contextMenu.task);
+              setContextMenu({ visible: false, task: null, x: 0, y: 0 });
+            }}
+          >
+            <span>📋</span> Duplicate
+          </button>
+          <div className="border-t border-gray-200 dark:border-gray-700 my-1"></div>
+          <button
+            className="w-full px-4 py-2 text-left text-sm hover:bg-red-100 dark:hover:bg-red-900/20 text-red-600 dark:text-red-400 flex items-center gap-2"
+            onClick={() => {
+              if (window.confirm(`Delete task "${contextMenu.task.name}"?`)) {
+                deleteTask(contextMenu.task.id);
+              }
+              setContextMenu({ visible: false, task: null, x: 0, y: 0 });
+            }}
+          >
+            <span>🗑️</span> Delete
+          </button>
         </div>
       )}
       
@@ -837,7 +986,8 @@ export const CustomGanttPro = () => {
                           <div
                             style={{ left: `${left}px`, top: '12px' }}
                             className="absolute w-6 h-6 bg-yellow-400 border-2 border-yellow-600 transform rotate-45 cursor-pointer hover:scale-110 transition-transform z-10"
-                            onClick={() => handleBarClick(task)}
+                            onClick={(e) => handleBarClick(task, e)}
+                            onContextMenu={(e) => handleBarRightClick(task, e)}
                             title={task.name}
                           ></div>
                         ) : (
@@ -848,9 +998,10 @@ export const CustomGanttPro = () => {
                               task.status === 'DONE' ? 'bg-green-500' :
                               task.status === 'IN_PROGRESS' ? 'bg-blue-500' :
                               'bg-gray-400'
-                            } hover:opacity-80 shadow-md group`}
+                            } ${draggedTask?.id === task.id ? 'opacity-50 scale-105' : 'hover:opacity-80'} shadow-md group`}
                             onMouseDown={(e) => handleBarMouseDown(e, task)}
-                            onClick={() => handleBarClick(task)}
+                            onClick={(e) => handleBarClick(task, e)}
+                            onContextMenu={(e) => handleBarRightClick(task, e)}
                           >
                             {/* Baseline (if enabled) */}
                             {showBaseline && task.baseline_start_date && task.baseline_end_date && (
