@@ -290,12 +290,34 @@ https://tracker-47vunkbtd-kakaholigan-6270s-projects.vercel.app
 
 **🎉 ALL CRITICAL ISSUES RESOLVED!** 🚀
 
-**Production URL:** https://tracker-i3e0tv51v-kakaholigan-6270s-projects.vercel.app
+**Production URL:** https://tracker-ktub1ghgo-kakaholigan-6270s-projects.vercel.app
 
 **Test Now:**
 1. Zoom to 300%
 2. Drag any task → SMOOTH!
 3. Try drag task with dependencies → Clear warning, no reload!
-4. Resize at 300% → SMOOTH!
+4. Resize at 300% → SMOOTH with YELLOW RING visual feedback!
+
+---
+
+## 🐛 ADDITIONAL BUGS FIXED (Session 2 - Part 2)
+
+### 🔴 INFINITE LOOP in useEffect
+**Problem:** Component re-rendered infinitely, console spammed with "🔄 Gantt State Restored"
+**Root Cause:** `useEffect([zoomLevel, viewMode])` → setViewMode() → trigger useEffect → LOOP!
+**Solution:** Only depend on `[zoomLevel]`, not `viewMode`
+
+### 🔴 Resize No Visual Feedback
+**Problem:** Khi resize, chỉ có cursor thay đổi, bar không có animation/highlight
+**Solution:** 
+- Added `resizingTask?.id === task.id` check to className
+- Show `opacity-70 ring-4 ring-yellow-400` when resizing
+- User sees YELLOW RING around bar being resized
+
+### 🔴 hasDragged Flag Bug
+**Problem:** Resize nhỏ (< 1 day) → `deltaDays === 0` → `hasDragged` stays FALSE → Modal opens!
+**Solution:** 
+- Set `hasDragged = true` on ANY movement > 1px
+- Separate from position update logic (which needs `deltaDays !== 0`)
 
 ---
