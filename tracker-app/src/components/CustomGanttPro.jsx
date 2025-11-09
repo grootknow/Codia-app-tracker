@@ -499,12 +499,14 @@ export const CustomGanttPro = () => {
   };
 
   const handleMouseUp = async () => {
-    // Save to database when drag/resize ends
-    if (draggedTask) {
-      await updateTaskDates(draggedTask.id, new Date(draggedTask.start_date), new Date(draggedTask.due_date));
-    }
-    if (resizingTask) {
-      await updateTaskDates(resizingTask.id, new Date(resizingTask.start_date), new Date(resizingTask.due_date));
+    // Only save if actually dragged (not just clicked)
+    if (hasDragged) {
+      if (draggedTask) {
+        await updateTaskDates(draggedTask.id, new Date(draggedTask.start_date), new Date(draggedTask.due_date));
+      }
+      if (resizingTask) {
+        await updateTaskDates(resizingTask.id, new Date(resizingTask.start_date), new Date(resizingTask.due_date));
+      }
     }
     
     setDraggedTask(null);
