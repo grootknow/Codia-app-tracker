@@ -49,6 +49,8 @@ export const CustomGanttPro = () => {
   const [contextMenu, setContextMenu] = useState({ visible: false, task: null, x: 0, y: 0 });
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [filterPriority, setFilterPriority] = useState('ALL');
+  const [searchQuery, setSearchQuery] = useState('');
+  const [zoomLevel, setZoomLevel] = useState(1); // 0.5 to 2
   
   const timelineRef = useRef(null);
   const leftPanelRef = useRef(null);
@@ -194,23 +196,39 @@ export const CustomGanttPro = () => {
     };
   }, [tasks]);
 
-  // Calculate day width based on view mode
+  // Calculate day width based on view mode and zoom
   const dayWidth = useMemo(() => {
+    let baseWidth;
     switch (viewMode) {
-      case 'day': return 60; // 60px per day
-      case 'week': return 20; // 20px per day (140px per week)
-      case 'month': return 4; // 4px per day (~120px per month)
-      default: return 20;
+      case 'day': baseWidth = 60; break;
+      case 'week': baseWidth = 20; break;
+      case 'month': baseWidth = 4; break;
+      default: baseWidth = 20;
     }
-  }, [viewMode]);
+    return baseWidth * zoomLevel;
+  }, [viewMode, zoomLevel]);
 
   // Sort and flatten tasks with hierarchy
   const sortedTasks = useMemo(() => {
     // Apply filters first
     let filtered = [...tasks];
+    
+    // Search filter
+    if (searchQuery.trim()) {
+      const query = searchQuery.toLowerCase();
+      filtered = filtered.filter(t => 
+        t.name?.toLowerCase().includes(query) ||
+        t.description?.toLowerCase().includes(query) ||
+        t.assigned_to?.toLowerCase().includes(query)
+      );
+    }
+    
+    // Status filter
     if (filterStatus !== 'ALL') {
       filtered = filtered.filter(t => t.status === filterStatus);
     }
+    
+    // Priority filter
     if (filterPriority !== 'ALL') {
       filtered = filtered.filter(t => t.priority === filterPriority);
     }
@@ -247,7 +265,7 @@ export const CustomGanttPro = () => {
     
     // Flatten with indentation
     return flattenHierarchy(roots);
-  }, [tasks, sortBy, collapsedTasks, filterStatus, filterPriority]);
+  }, [tasks, sortBy, collapsedTasks, filterStatus, filterPriority, searchQuery]);
 
   // Get task position
   const getTaskPosition = (task) => {
@@ -775,15 +793,39 @@ export const CustomGanttPro = () => {
       )}
       
       {/* Header Controls */}
-      <div className="flex-shrink-0 flex items-center justify-between p-3 border-b border-border-default">
-        <div className="flex items-center gap-4">
-          <h3 className="font-bold text-lg text-text-primary">Gantt Pro</h3>
-          <span className="text-sm text-text-tertiary">
-            {sortedTasks.length} tasks
-            {(filterStatus !== 'ALL' || filterPriority !== 'ALL') && ' (filtered)'}
-          </span>
+      <div className="flex-shrink-0 p-3 border-b border-border-default space-y-2">
+        {/* Row 1: Title + Search */}
+        <div className="flex items-center justify-between gap-4">
+          <div className="flex items-center gap-4">
+            <h3 className="font-bold text-lg text-text-primary">Gantt Pro</h3>
+            <span className="text-sm text-text-tertiary">
+              {sortedTasks.length} tasks
+              {(filterStatus !== 'ALL' || filterPriority !== 'ALL' || searchQuery) && ' (filtered)'}
+            </span>
+          </div>
+          
+          {/* Search Bar */}
+          <div className="relative">
+            <input
+              type="text"
+              placeholder="Search tasks..."
+              value={searchQuery}
+              onChange={(e) => setSearchQuery(e.target.value)}
+              className="pl-8 pr-3 py-1.5 text-sm border border-border-default rounded-md bg-background-primary w-64 focus:outline-none focus:ring-2 focus:ring-blue-500"
+            />
+            <span className="absolute left-2.5 top-1/2 -translate-y-1/2 text-gray-400">🔍</span>
+            {searchQuery && (
+              <button
+                onClick={() => setSearchQuery('')}
+                className="absolute right-2 top-1/2 -translate-y-1/2 text-gray-400 hover:text-gray-600"
+              >
+                ✕
+              </button>
+            )}
+          </div>
         </div>
         
+        {/* Row 2: Controls */}
         <div className="flex items-center gap-2 flex-wrap">
           {/* View Mode */}
           <div className="flex items-center gap-1 border border-border-default rounded-md overflow-hidden">
@@ -891,6 +933,31 @@ export const CustomGanttPro = () => {
           >
             📸 Export
           </button>
+          
+          <div className="border-l border-border-default h-6 mx-2"></div>
+          
+          {/* Zoom Slider */}
+          <div className="flex items-center gap-2">
+            <span className="text-xs text-text-tertiary">Zoom:</span>
+            <input
+              type="range"
+              min="0.5"
+              max="2"
+              step="0.1"
+              value={zoomLevel}
+              onChange={(e) => setZoomLevel(parseFloat(e.target.value))}
+              className="w-24 h-1.5 bg-gray-300 rounded-lg appearance-none cursor-pointer"
+              title={`Zoom: ${Math.round(zoomLevel * 100)}%`}
+            />
+            <span className="text-xs text-text-tertiary w-10">{Math.round(zoomLevel * 100)}%</span>
+            <button
+              onClick={() => setZoomLevel(1)}
+              className="text-xs px-2 py-0.5 rounded bg-gray-200 hover:bg-gray-300"
+              title="Reset Zoom"
+            >
+              Reset
+            </button>
+          </div>
         </div>
       </div>
       
@@ -903,8 +970,24 @@ export const CustomGanttPro = () => {
           style={{ scrollbarWidth: 'thin' }}
         >
           {/* Header */}
-          <div className="h-[60px] flex items-center px-4 sticky top-0 z-20 bg-background-secondary border-b border-border-default">
+          <div className="h-[60px] flex items-center justify-between px-4 sticky top-0 z-20 bg-background-secondary border-b border-border-default">
             <h4 className="font-bold text-text-primary">Tasks</h4>
+            <div className="flex items-center gap-1">
+              <button
+                onClick={() => setCollapsedPhases(new Set())}
+                className="text-xs px-2 py-1 rounded hover:bg-background-tertiary"
+                title="Expand All Phases"
+              >
+                ⬇️ Expand All
+              </button>
+              <button
+                onClick={() => setCollapsedPhases(new Set(phases.map(p => p.id)))}
+                className="text-xs px-2 py-1 rounded hover:bg-background-tertiary"
+                title="Collapse All Phases"
+              >
+                ⬆️ Collapse All
+              </button>
+            </div>
           </div>
           
           {/* Task List */}
@@ -937,7 +1020,9 @@ export const CustomGanttPro = () => {
                     <div 
                       key={task.id}
                       data-task-id={task.id}
-                      className="h-10 flex items-center justify-between text-sm border-b border-border-default cursor-pointer hover:bg-background-tertiary"
+                      className={`h-10 flex items-center justify-between text-sm border-b border-border-default cursor-pointer hover:bg-background-tertiary ${
+                        searchQuery && task.name?.toLowerCase().includes(searchQuery.toLowerCase()) ? 'bg-yellow-50 dark:bg-yellow-900/20' : ''
+                      }`}
                       onClick={() => handleTaskClick(task)}
                       onMouseEnter={(e) => {
                         setHoveredTask(task.id);
