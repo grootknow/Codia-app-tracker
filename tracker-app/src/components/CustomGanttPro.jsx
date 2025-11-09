@@ -60,22 +60,27 @@ export const CustomGanttPro = () => {
   const modalTimerRef = useRef(null);
 
   // ==================== STATE PERSISTENCE ====================
-  // Debug: Log initial state on mount
+  // Debug: Log initial state on mount (ONCE only)
   useEffect(() => {
-    console.log('🔄 Gantt State Restored:', {
-      viewMode,
-      zoomLevel,
-      showCriticalPath,
-      showDependencies,
-      showBaseline,
-      taskColumnCollapsed
-    });
-  }, []);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('🔄 Gantt State Restored:', {
+        viewMode,
+        zoomLevel,
+        showCriticalPath,
+        showDependencies,
+        showBaseline,
+        taskColumnCollapsed
+      });
+    }
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // Empty deps - run ONCE on mount only
 
   // Save state to localStorage whenever it changes
   useEffect(() => {
     localStorage.setItem('gantt_viewMode', viewMode);
-    console.log('💾 Saved viewMode:', viewMode);
+    if (process.env.NODE_ENV === 'development') {
+      console.log('💾 Saved viewMode:', viewMode);
+    }
   }, [viewMode]);
 
   useEffect(() => {
@@ -984,8 +989,9 @@ export const CustomGanttPro = () => {
                   x2={toPos.left} 
                   y2={taskY}
                   stroke="#3b82f6" 
-                  strokeWidth="2"
+                  strokeWidth="1"
                   markerEnd="url(#arrowhead)"
+                  opacity="0.7"
                 />
               </g>
             );
@@ -1004,13 +1010,13 @@ export const CustomGanttPro = () => {
         <defs>
           <marker
             id="arrowhead"
-            markerWidth="6"
-            markerHeight="6"
-            refX="5"
-            refY="3"
+            markerWidth="4"
+            markerHeight="4"
+            refX="3.5"
+            refY="2"
             orient="auto"
           >
-            <polygon points="0 0, 6 3, 0 6" fill="#3b82f6" />
+            <polygon points="0 0, 4 2, 0 4" fill="#3b82f6" />
           </marker>
         </defs>
         {arrows}
