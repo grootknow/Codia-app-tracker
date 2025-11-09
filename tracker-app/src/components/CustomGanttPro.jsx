@@ -684,10 +684,15 @@ export const CustomGanttPro = () => {
         // Calculate new position based on ORIGINAL start date + total delta
         const originalStartDate = originalStartDateRef.current || 
                                  (draggedTask.start_datetime ? new Date(draggedTask.start_datetime) : new Date(draggedTask.start_date || draggedTask.started_at));
+        const originalEndDate = originalEndDateRef.current ||
+                               (draggedTask.due_datetime ? new Date(draggedTask.due_datetime) : new Date(draggedTask.due_date || draggedTask.completed_at));
+        
+        // Calculate ACTUAL duration from current dates (preserves resize changes!)
+        const actualDuration = originalEndDate.getTime() - originalStartDate.getTime();
+        
         // Add EXACT hours from original position (no rounding)
         const newStartDate = new Date(originalStartDate.getTime() + deltaHours * 60 * 60 * 1000);
-        const duration = draggedTask.estimated_hours ? Math.ceil(draggedTask.estimated_hours / 8) : 3;
-        const newEndDate = addDays(newStartDate, duration);
+        const newEndDate = new Date(newStartDate.getTime() + actualDuration);
         
         // Update with FULL TIMESTAMP (not just date!)
         setTasks(prev => prev.map(t => 
