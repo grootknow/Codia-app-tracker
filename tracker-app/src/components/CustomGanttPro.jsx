@@ -60,22 +60,27 @@ export const CustomGanttPro = () => {
     // Don't auto-switch while dragging - it messes up calculations!
     if (draggedTask || resizingTask) return;
     
-    // Auto-adjust view mode based on zoom level for better visibility
-    if (zoomLevel >= 1.5 && viewMode === 'month') {
-      setViewMode('week');
+    // Determine target view mode based on zoom level
+    let targetMode = viewMode;
+    if (zoomLevel >= 1.8 && viewMode === 'day') {
+      targetMode = 'hour';
     } else if (zoomLevel >= 1.5 && viewMode === 'week') {
-      setViewMode('day');
-    } else if (zoomLevel >= 1.8 && viewMode === 'day') {
-      setViewMode('hour');
-    } else if (zoomLevel <= 0.7 && viewMode === 'hour') {
-      setViewMode('day');
-    } else if (zoomLevel <= 0.7 && viewMode === 'day') {
-      setViewMode('week');
+      targetMode = 'day';
+    } else if (zoomLevel >= 1.5 && viewMode === 'month') {
+      targetMode = 'week';
     } else if (zoomLevel <= 0.5 && viewMode === 'week') {
-      setViewMode('month');
+      targetMode = 'month';
+    } else if (zoomLevel <= 0.7 && viewMode === 'day') {
+      targetMode = 'week';
+    } else if (zoomLevel <= 0.7 && viewMode === 'hour') {
+      targetMode = 'day';
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [zoomLevel, draggedTask, resizingTask]); // Don't switch during drag!
+    
+    // Only update if mode actually needs to change
+    if (targetMode !== viewMode) {
+      setViewMode(targetMode);
+    }
+  }, [zoomLevel, draggedTask, resizingTask, viewMode]); // Include viewMode to detect changes
   const [highlightedTask, setHighlightedTask] = useState(null); // For visual highlight before modal
   const [originalDraggedTask, setOriginalDraggedTask] = useState(null); // Store original task state for revert
   const originalStartDateRef = useRef(null); // Store original start date for smooth drag calculation
@@ -1279,10 +1284,8 @@ export const CustomGanttPro = () => {
       });
     });
     
-    console.log(`🔍 Arrows Debug: ${arrows.length} arrows rendered, ${taskYPositions.size} tasks positioned`);
-    
+    // Debug logging removed to prevent console spam
     if (arrows.length === 0) {
-      console.warn('⚠️ No arrows to render - check if tasks have depends_on field');
       return null;
     }
     
@@ -1907,6 +1910,24 @@ export const CustomGanttPro = () => {
               title={`Zoom: ${Math.round(zoomLevel * 100)}%`}
             />
             <span className="text-xs text-text-tertiary w-8 sm:w-10">{Math.round(zoomLevel * 100)}%</span>
+            
+            {/* Zoom Presets - Quick access buttons */}
+            <div className="flex gap-0.5 ml-1 hidden md:flex">
+              {[0.5, 1, 2, 3].map(preset => (
+                <button
+                  key={preset}
+                  onClick={() => setZoomLevel(preset)}
+                  className={`px-1.5 py-0.5 text-xs rounded transition-colors ${
+                    Math.abs(zoomLevel - preset) < 0.1 
+                      ? 'bg-primary text-white' 
+                      : 'bg-background-secondary text-text-secondary hover:bg-background-tertiary'
+                  }`}
+                  title={`Zoom to ${preset * 100}%`}
+                >
+                  {preset * 100}%
+                </button>
+              ))}
+            </div>
           </div>
         </div>
       </div>
