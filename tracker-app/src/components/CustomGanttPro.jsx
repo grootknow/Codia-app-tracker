@@ -924,12 +924,32 @@ export const CustomGanttPro = () => {
             t.id === taskId ? { ...t, ...currentTaskUpdated } : t
           ));
         } else {
+          // No successors - just update local state to reflect DB changes
+          setTasks(prev => prev.map(t => 
+            t.id === taskId ? {
+              ...t,
+              start_datetime: startDate.toISOString(),
+              due_datetime: endDate.toISOString(),
+              start_date: format(startDate, 'yyyy-MM-dd'),
+              due_date: format(endDate, 'yyyy-MM-dd')
+            } : t
+          ));
           toast.success('✅ Task dates updated', {
             duration: 2000,
             position: 'bottom-right'
           });
         }
       } else {
+        // No successors at all - update local state
+        setTasks(prev => prev.map(t => 
+          t.id === taskId ? {
+            ...t,
+            start_datetime: startDate.toISOString(),
+            due_datetime: endDate.toISOString(),
+            start_date: format(startDate, 'yyyy-MM-dd'),
+            due_date: format(endDate, 'yyyy-MM-dd')
+          } : t
+        ));
         toast.success('✅ Task dates updated', {
           duration: 2000,
           position: 'bottom-right'
@@ -1261,10 +1281,10 @@ export const CustomGanttPro = () => {
       return null;
     }
     
-    // Scale arrowhead size based on zoom level - keep small!
-    const arrowheadScale = Math.max(0.3, Math.min(zoomLevel * 0.5, 0.8));
-    const normalArrowSize = 6 * arrowheadScale;
-    const criticalArrowSize = 7 * arrowheadScale;
+    // Scale arrowhead size based on zoom level - keep VERY small!
+    const arrowheadScale = Math.max(0.2, Math.min(zoomLevel * 0.3, 0.5));
+    const normalArrowSize = 4 * arrowheadScale; // Max 2px
+    const criticalArrowSize = 5 * arrowheadScale; // Max 2.5px
     
     return (
       <svg 
