@@ -372,16 +372,37 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
     setLocalHighlightedTask(task.id);
     
     const timelineEl = timelineRef.current;
-    if (timelineEl) {
+    const leftPanelEl = leftPanelRef.current;
+    
+    if (timelineEl && leftPanelEl) {
       const { left, width } = getTaskPosition(task);
       const timelineWidth = timelineEl.offsetWidth;
-      // Center the bar in viewport: scroll so bar center aligns with viewport center
+      
+      // Calculate horizontal scroll (X-axis) - center bar in viewport
       const barCenter = left + (width / 2);
       const viewportCenter = timelineWidth / 2;
       const targetScrollLeft = Math.max(0, barCenter - viewportCenter);
       
+      // Calculate vertical scroll (Y-axis) - find task row position
+      const taskIndex = sortedTasks.findIndex(t => t.id === task.id);
+      const phasesBefore = phases.filter(p => {
+        const phaseTaskIndex = sortedTasks.findIndex(t => t.phase_id === p.id);
+        return phaseTaskIndex < taskIndex;
+      }).length;
+      
+      // Each task row is 40px (h-10), each phase header is 40px
+      const taskRowHeight = 40;
+      const targetScrollTop = (taskIndex + phasesBefore) * taskRowHeight;
+      
+      // Scroll both panels simultaneously
       timelineEl.scrollTo({
         left: targetScrollLeft,
+        top: targetScrollTop,
+        behavior: 'smooth'
+      });
+      
+      leftPanelEl.scrollTo({
+        top: targetScrollTop,
         behavior: 'smooth'
       });
     }
