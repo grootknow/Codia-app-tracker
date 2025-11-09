@@ -72,10 +72,12 @@ export const CustomGanttPro = () => {
     }
   }, [zoomLevel, viewMode]);
   const [highlightedTask, setHighlightedTask] = useState(null); // For visual highlight before modal
+  const [originalDraggedTask, setOriginalDraggedTask] = useState(null); // Store original task state for revert
   
   const timelineRef = useRef(null);
   const leftPanelRef = useRef(null);
   const modalTimerRef = useRef(null);
+  const lastDragUpdateRef = useRef(0); // Throttle drag updates
 
   // ==================== STATE PERSISTENCE ====================
   // Debug: Log initial state on mount (ONCE only)
@@ -584,6 +586,25 @@ export const CustomGanttPro = () => {
     setTooltip({ visible: false, task: null, x: 0, y: 0 }); // Hide tooltip during drag
     setHoveredTask(null); // Clear hover state
     
+    // PREVENT DRAG: Check if task has unfinished dependencies (only for drag, not resize)
+    if (!edge) {
+      const deps = getTaskDependencies(task);
+      const hasUnfinishedDeps = deps.some(d => d.status !== 'DONE');
+      
+      if (hasUnfinishedDeps) {
+        const depNames = deps.filter(d => d.status !== 'DONE').map(d => d.name).slice(0, 3).join(', ');
+        const moreCount = Math.max(0, deps.filter(d => d.status !== 'DONE').length - 3);
+        toast.warning(
+          `⚠️ Complete dependencies first!\n${depNames}${moreCount > 0 ? ` + ${moreCount} more` : ''}`,
+          { duration: 3000 }
+        );
+        return; // Don't start drag
+      }
+    }
+    
+    // Store original task state for potential revert
+    setOriginalDraggedTask({ ...task });
+    
     if (edge) {
       setResizingTask(task);
       setResizeEdge(edge);
@@ -600,13 +621,18 @@ export const CustomGanttPro = () => {
     
     e.preventDefault();
     
+    // THROTTLE: Update max every 16ms (60fps) to avoid performance issues
+    const now = Date.now();
+    if (now - lastDragUpdateRef.current < 16) return;
+    lastDragUpdateRef.current = now;
+    
     if (draggedTask) {
       const deltaX = e.clientX - dragStartX;
       const deltaDays = Math.round(deltaX / dayWidth);
       
-      // FIXED: Use fixed 20px threshold instead of dayWidth-based
-      // Works at ALL zoom levels (50%-300%)
-      if (Math.abs(deltaX) > 20) {
+      // ULTRA RESPONSIVE: Trigger on ANY movement (1px threshold)
+      // Throttled to 60fps above, so no performance issues
+      if (Math.abs(deltaX) > 1 && deltaDays !== 0) {
         setHasDragged(true);
         const startDate = new Date(draggedTask.start_date || draggedTask.started_at);
         const newStartDate = addDays(startDate, deltaDays);
@@ -625,8 +651,8 @@ export const CustomGanttPro = () => {
       const deltaX = e.clientX - dragStartX;
       const deltaDays = Math.round(deltaX / dayWidth);
       
-      // FIXED: Use fixed 20px threshold
-      if (Math.abs(deltaX) > 20) {
+      // ULTRA RESPONSIVE: 1px threshold with throttle
+      if (Math.abs(deltaX) > 1 && deltaDays !== 0) {
         setHasDragged(true);
         const startDate = new Date(resizingTask.start_date || resizingTask.started_at);
         const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
@@ -666,17 +692,20 @@ export const CustomGanttPro = () => {
     if (hasDragged) {
       if (draggedTask) {
         console.log('💾 Saving drag:', draggedTask.name);
-        await updateTaskDates(draggedTask.id, new Date(draggedTask.start_date), new Date(draggedTask.due_date));
+        const success = await updateTaskDates(draggedTask.id, new Date(draggedTask.start_date), new Date(draggedTask.due_date));
+        // If validation failed, revert will happen in updateTaskDates
       }
       if (resizingTask) {
         console.log('💾 Saving resize:', resizingTask.name);
-        await updateTaskDates(resizingTask.id, new Date(resizingTask.start_date), new Date(resizingTask.due_date));
+        const success = await updateTaskDates(resizingTask.id, new Date(resizingTask.start_date), new Date(resizingTask.due_date));
+        // If validation failed, revert will happen in updateTaskDates
       }
     }
     
     setDraggedTask(null);
     setResizingTask(null);
     setResizeEdge(null);
+    setOriginalDraggedTask(null);
     console.log('✅ MouseUp complete');
   };
 
@@ -686,6 +715,8 @@ export const CustomGanttPro = () => {
       if (!task) return;
 
       // VALIDATION: Check if task has dependencies (predecessors)
+      // Note: Drag is already prevented in handleBarMouseDown for tasks with unfinished deps
+      // This validation is for resize (which is allowed) and edge cases
       const deps = getTaskDependencies(task);
       if (deps.length > 0) {
         // Find latest end date of all predecessors
@@ -696,9 +727,14 @@ export const CustomGanttPro = () => {
           toast.error(`⚠️ Cannot start before dependencies finish!\nEarliest start: ${format(latestPredecessorEnd, 'MMM d, yyyy')}`, {
             duration: 4000
           });
-          // Revert optimistic update
-          await loadData();
-          return;
+          
+          // LOCAL REVERT: No reload, just revert to original state
+          if (originalDraggedTask) {
+            setTasks(prev => prev.map(t => 
+              t.id === originalDraggedTask.id ? originalDraggedTask : t
+            ));
+          }
+          return false; // Indicate failure
         }
       }
 
@@ -768,9 +804,16 @@ export const CustomGanttPro = () => {
     } catch (error) {
       console.error('Error updating task dates:', error);
       toast.error('Failed to update task dates');
-      // Reload on error to revert
-      await loadData();
+      
+      // LOCAL REVERT: No reload, just revert to original state
+      if (originalDraggedTask) {
+        setTasks(prev => prev.map(t => 
+          t.id === originalDraggedTask.id ? originalDraggedTask : t
+        ));
+      }
+      return false; // Indicate failure
     }
+    return true; // Indicate success
   };
 
   const deleteTask = async (taskId) => {
