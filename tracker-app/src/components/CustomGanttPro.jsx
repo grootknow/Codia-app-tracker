@@ -466,8 +466,16 @@ export const CustomGanttPro = () => {
         
         if (resizeEdge === 'left') {
           newStartDate = addDays(startDate, deltaDays);
+          // Validate: start cannot be after end
+          if (newStartDate >= endDate) {
+            newStartDate = addDays(endDate, -1); // Keep at least 1 day duration
+          }
         } else {
           newEndDate = addDays(endDate, deltaDays);
+          // Validate: end cannot be before start
+          if (newEndDate <= startDate) {
+            newEndDate = addDays(startDate, 1); // Keep at least 1 day duration
+          }
         }
         
         // Optimistic update - update local state immediately
