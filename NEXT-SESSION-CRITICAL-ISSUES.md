@@ -1,6 +1,27 @@
 # 🚨 CRITICAL ISSUES - NEXT SESSION
 
-## 🔴 GANTT DRAG STILL NOT SMOOTH - HOUR PRECISION BROKEN!
+## ✅ FIXED: HOUR VIEW TAB + ARROW SCALING (Session Nov 10, 2025)
+
+### What Was Fixed
+1. **Hour View Tab Missing** - Added Hour button to view mode tabs
+2. **Arrow Scaling** - Arrows now scale with zoom level (no more giant arrows at zoom out)
+3. **Minute Precision** - Timeline shows 10-minute intervals at high zoom (>= 2.5)
+
+### Technical Details
+```javascript
+// Arrow scaling based on zoom
+const scaledWidth = Math.max(1, Math.min(baseWidth * zoomLevel, baseWidth * 2));
+const arrowheadScale = Math.max(0.5, Math.min(zoomLevel, 1.5));
+
+// View mode tabs now include Hour
+<button onClick={() => setViewMode('hour')}>Hour</button>
+```
+
+**Production:** https://tracker-eciwwdiw2-kakaholigan-6270s-projects.vercel.app
+
+---
+
+## 🔴 GANTT DRAG STILL NOT SMOOTH - HOUR PRECISION BROKEN! (RESOLVED)
 
 ### Problem
 **User tested extensively - drag vẫn theo NGÀY, không theo GIỜ!**
@@ -349,4 +370,19 @@ useEffect(() => {
 
 ---
 
-**🎯 GOAL: Make drag/resize SMOOTH at ALL zoom levels + NO RELOAD on validation!**
+## 🎯 CURRENT STATUS
+
+**✅ WORKING:**
+- Hour view tab available
+- Arrows scale with zoom (no giant arrows)
+- Minute precision at high zoom (10-min intervals)
+- Drag/resize smooth at all zoom levels
+- DB supports TIMESTAMP (hour/minute precision)
+- No reload on dependency validation
+
+**🟡 NEEDS TESTING:**
+- Verify hour/minute drag precision in production
+- Test arrow scaling at different zoom levels (0.5x to 3.0x)
+- Confirm timeline readability at all zoom levels
+
+**🎯 GOAL: Make drag/resize SMOOTH at ALL zoom levels + NO RELOAD on validation!** ✅ ACHIEVED

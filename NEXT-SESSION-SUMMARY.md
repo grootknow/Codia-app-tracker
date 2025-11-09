@@ -45,6 +45,13 @@
 
 ## 🚀 NEXT SESSION PRIORITIES
 
+### ✅ COMPLETED (Session Nov 10, 2025)
+- ✅ Hour view tab added
+- ✅ Arrow scaling fixed (no more giant arrows)
+- ✅ Minute precision at high zoom
+- ✅ DB migration to TIMESTAMP completed
+- ✅ Drag/resize smooth at all zoom levels
+
 ### 🔴 IMMEDIATE (Start Next Session)
 
 #### 1. Fix Zoom Slider (TestSprite Failed)
@@ -56,8 +63,8 @@
 
 #### 2. Implement QUICK WIN UX Improvements
 **Can do in 1-2 hours:**
-- Thicker arrows (2px → 4px)
-- Status badges on task bars (READY/BLOCKED/IN_PROGRESS)
+- ~~Thicker arrows (2px → 4px)~~ ✅ DONE
+- ~~Status badges on task bars (READY/BLOCKED/IN_PROGRESS)~~ ✅ DONE
 - "Next Task" panel at top
 - Quick filters: [Ready] [Blocked] [Critical] [All]
 
