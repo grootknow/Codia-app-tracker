@@ -656,12 +656,20 @@ export const CustomGanttPro = () => {
       if (Math.abs(deltaX) > 1) {
         setHasDragged(true);
         
-        // Calculate delta in FRACTIONAL hours for smooth movement
+        // Calculate delta in FRACTIONAL hours/minutes for ultra-smooth movement
         let deltaHours = 0;
         if (viewMode === 'hour') {
-          // In hour view: dayWidth = width of 1 day, so 1 hour = dayWidth / 24
+          // In hour view: Support MINUTE precision at high zoom!
           const hourWidth = dayWidth / 24;
-          deltaHours = deltaX / hourWidth; // Keep as float for precision
+          const minuteWidth = hourWidth / 60; // 1 minute width
+          
+          // At high zoom (>= 2.5), use MINUTE precision
+          if (zoomLevel >= 2.5) {
+            const deltaMinutes = deltaX / minuteWidth;
+            deltaHours = deltaMinutes / 60; // Convert minutes to hours
+          } else {
+            deltaHours = deltaX / hourWidth; // Hour precision
+          }
         } else if (viewMode === 'day') {
           // In day view: 1 day = dayWidth, convert to hours (1 day = 24 hours)
           const deltaDays = deltaX / dayWidth;
@@ -710,11 +718,20 @@ export const CustomGanttPro = () => {
       if (Math.abs(deltaX) > 1) {
         setHasDragged(true);
         
-        // Calculate delta in FRACTIONAL hours for smooth movement
+        // Calculate delta in FRACTIONAL hours/minutes for ultra-smooth movement
         let deltaHours = 0;
         if (viewMode === 'hour') {
+          // In hour view: Support MINUTE precision at high zoom!
           const hourWidth = dayWidth / 24;
-          deltaHours = deltaX / hourWidth; // Keep as float
+          const minuteWidth = hourWidth / 60; // 1 minute width
+          
+          // At high zoom (>= 2.5), use MINUTE precision
+          if (zoomLevel >= 2.5) {
+            const deltaMinutes = deltaX / minuteWidth;
+            deltaHours = deltaMinutes / 60; // Convert minutes to hours
+          } else {
+            deltaHours = deltaX / hourWidth; // Hour precision
+          }
         } else if (viewMode === 'day') {
           const deltaDays = deltaX / dayWidth;
           deltaHours = deltaDays * 24; // Keep as float
@@ -1263,12 +1280,13 @@ export const CustomGanttPro = () => {
 
     if (viewMode === 'hour') {
       // Hour view: Day + Hours (24 hours per day)
+      // At high zoom (>= 2.5), show MINUTES!
       const days = eachDayOfInterval({ start: projectDates.start, end: projectDates.end });
-      // Hour width is already included in dayWidth calculation
       const hourWidth = dayWidth / 24;
+      const showMinutes = zoomLevel >= 2.5;
       
       return (
-        <div style={{ width: ganttWidth, position: 'relative', height: 60 }}>
+        <div style={{ width: ganttWidth, position: 'relative', height: showMinutes ? 90 : 60 }}>
           {/* Day header */}
           <div className="flex border-b border-border-default bg-background-secondary h-8">
             {days.map((day, idx) => (
@@ -1300,6 +1318,32 @@ export const CustomGanttPro = () => {
               </div>
             ))}
           </div>
+          
+          {/* Minute header (only at high zoom >= 2.5) */}
+          {showMinutes && (
+            <div className="flex border-b border-border-default bg-background-tertiary/50 h-8">
+              {days.map((day, dayIdx) => (
+                <div key={dayIdx} className="flex" style={{ width: `${dayWidth}px` }}>
+                  {Array.from({ length: 24 }, (_, hourIdx) => {
+                    const minuteWidth = hourWidth / 60;
+                    // Show every 15 minutes
+                    return Array.from({ length: 4 }, (_, minIdx) => {
+                      const minute = minIdx * 15;
+                      return (
+                        <div
+                          key={`${hourIdx}-${minIdx}`}
+                          style={{ width: `${minuteWidth * 15}px`, minWidth: `${minuteWidth * 15}px` }}
+                          className="border-r border-border-default/50 text-center text-[9px] flex items-center justify-center text-text-tertiary"
+                        >
+                          {minute === 0 ? '' : `${minute}m`}
+                        </div>
+                      );
+                    });
+                  })}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       );
     }
