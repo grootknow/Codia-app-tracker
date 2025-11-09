@@ -445,8 +445,13 @@ export const CustomGanttPro = () => {
         const duration = draggedTask.estimated_hours ? Math.ceil(draggedTask.estimated_hours / 8) : 3;
         const newEndDate = addDays(newStartDate, duration);
         
-        // Update in database
-        updateTaskDates(draggedTask.id, newStartDate, newEndDate);
+        // Optimistic update - update local state immediately
+        setTasks(prev => prev.map(t => 
+          t.id === draggedTask.id 
+            ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
+            : t
+        ));
+        setDraggedTask({ ...draggedTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
         setDragStartX(e.clientX);
       }
     } else if (resizingTask && resizeEdge) {
@@ -456,19 +461,36 @@ export const CustomGanttPro = () => {
         const startDate = new Date(resizingTask.start_date || resizingTask.started_at);
         const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
         
+        let newStartDate = startDate;
+        let newEndDate = endDate;
+        
         if (resizeEdge === 'left') {
-          const newStartDate = addDays(startDate, deltaDays);
-          updateTaskDates(resizingTask.id, newStartDate, endDate);
+          newStartDate = addDays(startDate, deltaDays);
         } else {
-          const newEndDate = addDays(endDate, deltaDays);
-          updateTaskDates(resizingTask.id, startDate, newEndDate);
+          newEndDate = addDays(endDate, deltaDays);
         }
+        
+        // Optimistic update - update local state immediately
+        setTasks(prev => prev.map(t => 
+          t.id === resizingTask.id 
+            ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
+            : t
+        ));
+        setResizingTask({ ...resizingTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
         setDragStartX(e.clientX);
       }
     }
   };
 
-  const handleMouseUp = () => {
+  const handleMouseUp = async () => {
+    // Save to database when drag/resize ends
+    if (draggedTask) {
+      await updateTaskDates(draggedTask.id, new Date(draggedTask.start_date), new Date(draggedTask.due_date));
+    }
+    if (resizingTask) {
+      await updateTaskDates(resizingTask.id, new Date(resizingTask.start_date), new Date(resizingTask.due_date));
+    }
+    
     setDraggedTask(null);
     setResizingTask(null);
     setResizeEdge(null);
@@ -485,11 +507,12 @@ export const CustomGanttPro = () => {
         .eq('id', taskId);
       
       if (error) throw error;
-      await loadData();
-      toast.success('Task dates updated');
+      // No reload - already updated optimistically
     } catch (error) {
       console.error('Error updating task dates:', error);
       toast.error('Failed to update task dates');
+      // Reload on error to revert
+      await loadData();
     }
   };
 
@@ -882,17 +905,18 @@ export const CustomGanttPro = () => {
           })}
         </div>
         
-        {/* Day header */}
+        {/* Day header with hours */}
         <div className="flex border-b border-border-default bg-background-tertiary h-8">
           {days.map((day, idx) => (
             <div 
               key={idx}
               style={{ width: `${dayWidth}px`, minWidth: `${dayWidth}px` }}
-              className={`border-r border-border-default text-center text-xs flex items-center justify-center ${
+              className={`border-r border-border-default text-center text-xs flex flex-col items-center justify-center ${
                 isToday(day) ? 'bg-red-100 font-bold text-red-600' : ''
               }`}
             >
-              {format(day, 'd')}
+              <div className="font-semibold">{format(day, 'd')}</div>
+              <div className="text-[10px] opacity-60">8h</div>
             </div>
           ))}
         </div>
@@ -1374,15 +1398,18 @@ export const CustomGanttPro = () => {
         {/* Right Panel - Timeline */}
         <div 
           ref={timelineRef}
-          className="flex-1 overflow-auto"
+          className="flex-1 overflow-auto relative"
           style={{ scrollbarWidth: 'thin' }}
           onMouseMove={handleMouseMove}
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
         >
-          <div style={{ width: ganttWidth, position: 'relative' }}>
-            {/* Timeline Headers */}
+          {/* Sticky Timeline Headers */}
+          <div className="sticky top-0 z-30 bg-background-primary">
             {renderTimelineHeaders()}
+          </div>
+          
+          <div style={{ width: ganttWidth, position: 'relative' }}>
             
             {/* Gantt Bars */}
             <div className="relative" style={{ width: ganttWidth }}>
@@ -1506,20 +1533,20 @@ export const CustomGanttPro = () => {
                               ></div>
                             )}
                             
-                            {/* Resize Handles - More visible */}
+                            {/* Resize Handles - Always visible with cursor change */}
                             <div 
-                              className="absolute left-0 top-0 bottom-0 w-3 cursor-ew-resize hover:bg-white/50 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute left-0 top-0 bottom-0 w-4 cursor-col-resize hover:bg-white/50 bg-white/30 transition-all"
                               onMouseDown={(e) => handleBarMouseDown(e, task, 'left')}
                               title="Drag to change start date"
                             >
-                              <div className="absolute left-0.5 top-1/2 -translate-y-1/2 w-1 h-4 bg-white/60 rounded"></div>
+                              <div className="absolute left-1 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded"></div>
                             </div>
                             <div 
-                              className="absolute right-0 top-0 bottom-0 w-3 cursor-ew-resize hover:bg-white/50 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"
+                              className="absolute right-0 top-0 bottom-0 w-4 cursor-col-resize hover:bg-white/50 bg-white/30 transition-all"
                               onMouseDown={(e) => handleBarMouseDown(e, task, 'right')}
                               title="Drag to change end date"
                             >
-                              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 w-1 h-4 bg-white/60 rounded"></div>
+                              <div className="absolute right-1 top-1/2 -translate-y-1/2 w-1 h-5 bg-white rounded"></div>
                             </div>
                             
                             {/* Progress Bar */}
