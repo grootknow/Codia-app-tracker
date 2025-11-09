@@ -1913,7 +1913,7 @@ export const CustomGanttPro = () => {
             
             {/* Zoom Presets - Quick access buttons */}
             <div className="flex gap-0.5 ml-1 hidden md:flex">
-              {[0.5, 1, 2, 3].map(preset => (
+              {[0.5, 1, 2, 3, 10, 15, 20].map(preset => (
                 <button
                   key={preset}
                   onClick={() => setZoomLevel(preset)}
@@ -1924,7 +1924,7 @@ export const CustomGanttPro = () => {
                   }`}
                   title={`Zoom to ${preset * 100}%`}
                 >
-                  {preset * 100}%
+                  {preset >= 10 ? `${preset}x` : `${preset * 100}%`}
                 </button>
               ))}
             </div>
