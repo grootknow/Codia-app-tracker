@@ -754,8 +754,8 @@ export const CustomGanttPro = () => {
       
       const taskDuration = task.estimated_hours ? Math.ceil(task.estimated_hours / 8) : 3;
       
-      // Support multiple field names
-      const deps = task.blocking_dependencies || task.depends_on || task.blocked_by;
+      // Support multiple field names - prioritize depends_on (actual DB field)
+      const deps = task.depends_on || task.blocked_by || task.blocking_dependencies;
       
       // If no dependencies, duration is just task duration
       if (!deps || deps.length === 0) {
@@ -792,8 +792,8 @@ export const CustomGanttPro = () => {
       if (taskDuration === maxDuration || criticalTasks.size > 0) {
         criticalTasks.add(task.id);
         
-        // Add critical dependencies
-        const deps = task.blocking_dependencies || task.depends_on || task.blocked_by;
+        // Add critical dependencies - prioritize depends_on (actual DB field)
+        const deps = task.depends_on || task.blocked_by || task.blocking_dependencies;
         if (deps) {
           deps.forEach(depId => {
             const depTask = taskMap.get(depId);
@@ -828,8 +828,8 @@ export const CustomGanttPro = () => {
       const getEarliestStart = (task) => {
         if (scheduled.has(task.id)) return scheduled.get(task.id);
         
-        // Support multiple field names
-        const deps = task.blocking_dependencies || task.depends_on || task.blocked_by;
+        // Support multiple field names - prioritize depends_on (actual DB field)
+        const deps = task.depends_on || task.blocked_by || task.blocking_dependencies;
         
         // If no dependencies, start today
         if (!deps || deps.length === 0) {
@@ -891,13 +891,33 @@ export const CustomGanttPro = () => {
   };
 
   // Get task dependencies
+  // DB has: depends_on (array), blocked_by (unused)
+  // Code was checking blocking_dependencies (doesn't exist!) first
   const getTaskDependencies = (task) => {
-    // Support multiple field names: blocking_dependencies (new), depends_on (DB), blocked_by (DB)
-    const deps = task.blocking_dependencies || task.depends_on || task.blocked_by;
-    if (!deps || deps.length === 0) return [];
+    // Priority order: depends_on (primary in DB) > blocked_by (fallback) > blocking_dependencies (doesn't exist)
+    let deps = null;
+    let fieldUsed = null;
+    
+    if (task.depends_on) {
+      deps = task.depends_on;
+      fieldUsed = 'depends_on';
+    } else if (task.blocked_by) {
+      deps = task.blocked_by;
+      fieldUsed = 'blocked_by';
+    } else if (task.blocking_dependencies) {
+      deps = task.blocking_dependencies;
+      fieldUsed = 'blocking_dependencies';
+    }
+    
+    if (!deps || (Array.isArray(deps) && deps.length === 0)) return [];
     
     // Handle both array and single ID
     const depArray = Array.isArray(deps) ? deps : [deps];
+    
+    // Debug log (only in development)
+    if (depArray.length > 0 && process.env.NODE_ENV === 'development') {
+      console.log(`Task ${task.id} (${task.name}): Using ${fieldUsed} = ${JSON.stringify(depArray)}`);
+    }
     
     return depArray
       .map(depId => tasks.find(t => t.id === depId))
