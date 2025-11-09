@@ -383,16 +383,19 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
       const viewportCenter = timelineWidth / 2;
       const targetScrollLeft = Math.max(0, barCenter - viewportCenter);
       
-      // Calculate vertical scroll (Y-axis) - find task row position
-      const taskIndex = sortedTasks.findIndex(t => t.id === task.id);
-      const phasesBefore = phases.filter(p => {
-        const phaseTaskIndex = sortedTasks.findIndex(t => t.phase_id === p.id);
-        return phaseTaskIndex < taskIndex;
-      }).length;
+      // Find task row element in left panel by data-task-id attribute
+      const taskElement = leftPanelEl.querySelector(`[data-task-id="${task.id}"]`);
       
-      // Each task row is 40px (h-10), each phase header is 40px
-      const taskRowHeight = 40;
-      const targetScrollTop = (taskIndex + phasesBefore) * taskRowHeight;
+      // Calculate vertical scroll using actual DOM position
+      let targetScrollTop = 0;
+      if (taskElement) {
+        const taskRect = taskElement.getBoundingClientRect();
+        const panelRect = leftPanelEl.getBoundingClientRect();
+        const currentScrollTop = leftPanelEl.scrollTop;
+        // Center task in viewport
+        targetScrollTop = currentScrollTop + (taskRect.top - panelRect.top) - (panelRect.height / 2) + (taskRect.height / 2);
+        targetScrollTop = Math.max(0, targetScrollTop);
+      }
       
       // Scroll both panels simultaneously
       timelineEl.scrollTo({
@@ -489,7 +492,8 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                   <strong className="text-sm text-text-primary">{phase.name}</strong>
                 </div>
                 {sortedTasks.filter(t => t.phase_id === phase.id).map(task => (
-                  <div key={task.id} 
+                  <div key={task.id}
+                       data-task-id={task.id}
                        className={`h-10 flex items-center justify-between p-2 text-sm border-b border-border-default cursor-pointer transition-all duration-200 ${
                          localHighlightedTask === task.id 
                            ? 'bg-brand-secondary text-text-onPrimary' 

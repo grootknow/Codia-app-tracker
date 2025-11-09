@@ -89,7 +89,7 @@ export const TaskDetailModal = ({ task, onClose, onUpdate }) => {
       />
       {/* ✅ FIXED: Mobile responsive - w-full on mobile, w-[600px] on md+ screens */}
       <div
-        className="fixed right-0 top-0 h-full w-full md:w-[600px] bg-white/90 backdrop-blur-sm shadow-2xl z-50 overflow-y-auto animate-slideInRight"
+        className="fixed right-0 top-0 h-full w-full md:w-[600px] bg-white/70 backdrop-blur-md shadow-2xl z-50 overflow-y-auto animate-slideInRight"
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
