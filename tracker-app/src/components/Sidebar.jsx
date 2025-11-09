@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { LayoutDashboard, CheckSquare, BarChart2, Activity, ChevronLeft, ChevronRight } from 'lucide-react';
 
-const NavItem = ({ icon: Icon, label, isActive, onClick, collapsed }) => (
+const NavItem = ({ icon: Icon, label, sublabel, isActive, onClick, collapsed }) => (
   <button
     onClick={onClick}
     className={`flex items-center w-full px-4 py-3 text-sm font-medium rounded-lg transition-all ${
@@ -9,10 +9,17 @@ const NavItem = ({ icon: Icon, label, isActive, onClick, collapsed }) => (
         ? 'bg-brand-primary text-white shadow-lg'
         : 'text-text-secondary hover:bg-background-tertiary hover:text-text-primary'
     } ${collapsed ? 'justify-center' : ''}`}
-    title={collapsed ? label : ''}
+    title={collapsed ? `${label} - ${sublabel}` : ''}
   >
     <Icon className={`w-5 h-5 ${collapsed ? '' : 'mr-3'} flex-shrink-0`} />
-    {!collapsed && <span className="truncate">{label}</span>}
+    {!collapsed && (
+      <div className="flex flex-col items-start flex-1 min-w-0">
+        <span className="truncate font-semibold text-sm">{label}</span>
+        <span className={`text-xs truncate ${isActive ? 'text-white/70' : 'text-text-tertiary'}`}>
+          {sublabel}
+        </span>
+      </div>
+    )}
   </button>
 );
 
@@ -26,9 +33,9 @@ export const Sidebar = ({ activePage, setActivePage }) => {
   }, [collapsed]);
 
   const navItems = [
-    { id: 'dashboard', label: 'Dashboard', icon: LayoutDashboard },
-    { id: 'tasks', label: 'Tasks', icon: CheckSquare },
-    { id: 'analytics', label: 'Analytics', icon: BarChart2 },
+    { id: 'dashboard', label: 'Start Here', sublabel: 'What to do today', icon: LayoutDashboard },
+    { id: 'tasks', label: 'Work View', sublabel: 'Execute tasks', icon: CheckSquare },
+    { id: 'analytics', label: 'Progress', sublabel: 'Track status', icon: BarChart2 },
   ];
 
   return (
@@ -64,6 +71,7 @@ export const Sidebar = ({ activePage, setActivePage }) => {
             key={item.id}
             icon={item.icon}
             label={item.label}
+            sublabel={item.sublabel}
             isActive={activePage === item.id}
             onClick={() => setActivePage(item.id)}
             collapsed={collapsed}
