@@ -478,6 +478,78 @@ export const CustomGanttPro = () => {
     }
   };
 
+  // Auto-schedule: Calculate optimal dates based on dependencies
+  const autoSchedule = async () => {
+    try {
+      toast.loading('Auto-scheduling tasks...');
+      
+      const updates = [];
+      const taskMap = new Map(tasks.map(t => [t.id, t]));
+      const scheduled = new Map();
+      
+      // Helper: Get earliest start date for a task
+      const getEarliestStart = (task) => {
+        if (scheduled.has(task.id)) return scheduled.get(task.id);
+        
+        // If no dependencies, start today
+        if (!task.dependencies || task.dependencies.length === 0) {
+          const startDate = new Date();
+          scheduled.set(task.id, startDate);
+          return startDate;
+        }
+        
+        // Find latest end date of all dependencies
+        let latestEnd = new Date();
+        task.dependencies.forEach(depId => {
+          const depTask = taskMap.get(depId);
+          if (depTask) {
+            const depStart = getEarliestStart(depTask);
+            const depDuration = depTask.estimated_hours ? Math.ceil(depTask.estimated_hours / 8) : 3;
+            const depEnd = addDays(depStart, depDuration);
+            if (depEnd > latestEnd) latestEnd = depEnd;
+          }
+        });
+        
+        // Start 1 day after latest dependency ends
+        const startDate = addDays(latestEnd, 1);
+        scheduled.set(task.id, startDate);
+        return startDate;
+      };
+      
+      // Schedule all tasks
+      tasks.forEach(task => {
+        const startDate = getEarliestStart(task);
+        const duration = task.estimated_hours ? Math.ceil(task.estimated_hours / 8) : 3;
+        const endDate = addDays(startDate, duration);
+        
+        updates.push({
+          id: task.id,
+          start_date: format(startDate, 'yyyy-MM-dd'),
+          due_date: format(endDate, 'yyyy-MM-dd')
+        });
+      });
+      
+      // Batch update
+      for (const update of updates) {
+        await supabase
+          .from('tasks')
+          .update({ 
+            start_date: update.start_date,
+            due_date: update.due_date
+          })
+          .eq('id', update.id);
+      }
+      
+      await loadData();
+      toast.dismiss();
+      toast.success(`Auto-scheduled ${updates.length} tasks!`);
+    } catch (error) {
+      console.error('Auto-schedule error:', error);
+      toast.dismiss();
+      toast.error('Failed to auto-schedule');
+    }
+  };
+
   // Get task dependencies
   const getTaskDependencies = (task) => {
     if (!task.dependencies || task.dependencies.length === 0) return [];
@@ -899,6 +971,19 @@ export const CustomGanttPro = () => {
           >
             <Calendar className="w-4 h-4" />
             Today
+          </button>
+          
+          {/* Auto-Schedule Button */}
+          <button 
+            onClick={() => {
+              if (window.confirm('Auto-schedule all tasks based on dependencies? This will update all task dates.')) {
+                autoSchedule();
+              }
+            }}
+            className="px-3 py-1 rounded-md bg-purple-500 hover:bg-purple-600 text-white text-sm font-medium"
+            title="Auto-schedule tasks based on dependencies"
+          >
+            🤖 Auto-Schedule
           </button>
           
           <div className="border-l border-border-default h-6 mx-2"></div>
