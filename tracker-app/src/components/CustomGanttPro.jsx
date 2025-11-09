@@ -32,7 +32,7 @@ export const CustomGanttPro = () => {
   const [tasks, setTasks] = useState([]);
   const [phases, setPhases] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('week'); // 'day' | 'week' | 'month'
+  const [viewMode, setViewMode] = useState('day'); // 'day' | 'week' | 'month'
   const [selectedTask, setSelectedTask] = useState(null);
   const [hoveredTask, setHoveredTask] = useState(null);
   const [sortBy, setSortBy] = useState('priority'); // 'priority' | 'start' | 'end' | 'duration'
@@ -359,27 +359,15 @@ export const CustomGanttPro = () => {
       leftPanelEl.scrollTo({ top: targetScrollTop, behavior: 'smooth' });
     }
     
-    // Open modal after delay to show highlight
-    modalTimerRef.current = setTimeout(() => {
-      setSelectedTask(task);
-    }, 400);
+    // DO NOT open modal for task list clicks - only highlight and scroll
   };
 
   const handleBarClick = (task, e) => {
     if (e) e.stopPropagation();
     
-    // Clear any pending modal timer
-    if (modalTimerRef.current) {
-      clearTimeout(modalTimerRef.current);
-    }
-    
-    // Immediately highlight
+    // Immediately open modal when clicking on Gantt bar
     setHighlightedTask(task);
-    
-    // Open modal after delay
-    modalTimerRef.current = setTimeout(() => {
-      setSelectedTask(task);
-    }, 400);
+    setSelectedTask(task);
   };
 
   const handleBarRightClick = (task, e) => {
