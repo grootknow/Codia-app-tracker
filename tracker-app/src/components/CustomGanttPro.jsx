@@ -1046,6 +1046,9 @@ export const CustomGanttPro = () => {
         const fromPos = getTaskPosition(depTask);
         if (!fromPos) return; // Position calculation failed
         
+        // Determine if this is a critical dependency
+        const isCritical = task.priority === 'HIGH' || depTask.priority === 'HIGH';
+        
         arrows.push(
           <g key={`arrow-${depTask.id}-${task.id}`}>
             <line 
@@ -1053,10 +1056,11 @@ export const CustomGanttPro = () => {
               y1={fromY} 
               x2={toPos.left} 
               y2={toY}
-              stroke="#3b82f6" 
-              strokeWidth="2"
-              markerEnd="url(#arrowhead)"
-              opacity="0.8"
+              stroke={isCritical ? "#dc2626" : "#3b82f6"} 
+              strokeWidth={isCritical ? "4" : "3"}
+              markerEnd={isCritical ? "url(#arrowhead-critical)" : "url(#arrowhead)"}
+              opacity="0.9"
+              className="transition-all hover:opacity-100"
             />
           </g>
         );
@@ -1084,13 +1088,23 @@ export const CustomGanttPro = () => {
         <defs>
           <marker
             id="arrowhead"
-            markerWidth="6"
-            markerHeight="6"
-            refX="5"
-            refY="3"
+            markerWidth="8"
+            markerHeight="8"
+            refX="7"
+            refY="4"
             orient="auto"
           >
-            <polygon points="0 0, 6 3, 0 6" fill="#3b82f6" />
+            <polygon points="0 0, 8 4, 0 8" fill="#3b82f6" />
+          </marker>
+          <marker
+            id="arrowhead-critical"
+            markerWidth="10"
+            markerHeight="10"
+            refX="9"
+            refY="5"
+            orient="auto"
+          >
+            <polygon points="0 0, 10 5, 0 10" fill="#dc2626" />
           </marker>
         </defs>
         {arrows}
@@ -1335,72 +1349,110 @@ export const CustomGanttPro = () => {
       
       <Toaster position="top-right" />
       
-      {/* Tooltip */}
+      {/* Tooltip - Improved Visual Design */}
       {tooltip.visible && tooltip.task && (
         <div 
-          className="fixed z-50 bg-gray-900 text-white text-xs rounded-lg shadow-xl p-3 pointer-events-none max-w-xs"
+          className="fixed z-50 bg-gray-900 text-white text-sm rounded-xl shadow-2xl p-4 pointer-events-none max-w-sm border-2 border-gray-700"
           style={{ 
-            left: `${tooltip.x + 10}px`, 
-            top: `${tooltip.y + 10}px` 
+            left: `${tooltip.x + 15}px`, 
+            top: `${tooltip.y + 15}px` 
           }}
         >
-          <div className="font-bold mb-1">{tooltip.task.name}</div>
-          <div className="space-y-0.5 text-gray-300">
-            <div>Status: <span className="text-white">{tooltip.task.status}</span></div>
+          {/* Task Name */}
+          <div className="font-bold text-base mb-2 text-blue-400">{tooltip.task.name}</div>
+          
+          {/* Status Row with Visual Indicator */}
+          <div className="flex items-center gap-2 mb-2">
+            {tooltip.task.status === 'DONE' && (
+              <span className="px-2 py-1 bg-green-600 rounded-md text-xs font-bold">✅ DONE</span>
+            )}
+            {tooltip.task.status === 'IN_PROGRESS' && (
+              <span className="px-2 py-1 bg-blue-600 rounded-md text-xs font-bold animate-pulse">⏳ IN PROGRESS</span>
+            )}
+            {tooltip.task.status === 'PENDING' && getTaskDependencies(tooltip.task).length === 0 && (
+              <span className="px-2 py-1 bg-green-500 rounded-md text-xs font-bold">✅ READY</span>
+            )}
+            {tooltip.task.status === 'PENDING' && getTaskDependencies(tooltip.task).length > 0 && (
+              <span className="px-2 py-1 bg-red-500 rounded-md text-xs font-bold">🚫 BLOCKED</span>
+            )}
+            
             {tooltip.task.priority && (
-              <div>Priority: <span className="text-white">{tooltip.task.priority}</span></div>
+              <span className={`px-2 py-1 rounded-md text-xs font-bold ${
+                tooltip.task.priority === 'HIGH' ? 'bg-red-600' :
+                tooltip.task.priority === 'MEDIUM' ? 'bg-orange-500' :
+                'bg-gray-600'
+              }`}>
+                {tooltip.task.priority === 'HIGH' ? '🔥' : tooltip.task.priority === 'MEDIUM' ? '⚡' : '📌'} {tooltip.task.priority}
+              </span>
             )}
+          </div>
+          
+          {/* Quick Info */}
+          <div className="space-y-1 text-xs text-gray-300 mb-2">
             {tooltip.task.estimated_hours && (
-              <div>Duration: <span className="text-white">{tooltip.task.estimated_hours}h</span></div>
-            )}
-            {tooltip.task.progress_percentage !== null && (
-              <div>Progress: <span className="text-white">{tooltip.task.progress_percentage}%</span></div>
+              <div className="flex items-center gap-1">⏱️ <span className="text-white font-semibold">{tooltip.task.estimated_hours}h</span></div>
             )}
             {tooltip.task.assigned_to && (
-              <div>Assigned: <span className="text-white">{tooltip.task.assigned_to}</span></div>
+              <div className="flex items-center gap-1">👤 <span className="text-white font-semibold">{tooltip.task.assigned_to}</span></div>
             )}
-            {/* Dependencies Info */}
-            {(() => {
-              const predecessors = getTaskDependencies(tooltip.task); // Returns task objects
-              const successors = tasks.filter(t => {
-                const deps = getTaskDependencies(t); // Returns task objects
-                return deps.some(dep => dep.id === tooltip.task.id);
-              });
-              
-              // Debug log
-              if (tooltip.task.depends_on && tooltip.task.depends_on.length > 0) {
-                console.log(`📊 Tooltip for "${tooltip.task.name}":`, {
-                  depends_on: tooltip.task.depends_on,
-                  predecessors: predecessors.length,
-                  successors: successors.length
-                });
-              }
-              
-              return (
-                <>
-                  {predecessors.length > 0 && (
-                    <div className="pt-1 border-t border-gray-700">
-                      <div className="text-yellow-400 font-semibold">⬅️ Depends on:</div>
-                      {predecessors.map(depTask => (
-                        <div key={depTask.id} className="ml-2 text-xs">
-                          • {depTask.name} ({depTask.status})
+          </div>
+          
+          {/* Dependencies Info */}
+          {(() => {
+            const predecessors = getTaskDependencies(tooltip.task);
+            const successors = tasks.filter(t => {
+              const deps = getTaskDependencies(t);
+              return deps.some(dep => dep.id === tooltip.task.id);
+            });
+            
+            return (
+              <>
+                {predecessors.length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-gray-700">
+                    <div className="text-yellow-400 font-bold mb-1 flex items-center gap-1">
+                      ⬅️ Depends on ({predecessors.length}):
+                    </div>
+                    <div className="space-y-1">
+                      {predecessors.slice(0, 3).map(depTask => (
+                        <div key={depTask.id} className="ml-2 text-xs flex items-center gap-1">
+                          {depTask.status === 'DONE' ? '✅' : depTask.status === 'IN_PROGRESS' ? '⏳' : '⏸️'}
+                          <span className="text-white">{depTask.name}</span>
                         </div>
                       ))}
+                      {predecessors.length > 3 && (
+                        <div className="ml-2 text-xs text-gray-400">+ {predecessors.length - 3} more...</div>
+                      )}
                     </div>
-                  )}
-                  {successors.length > 0 && (
-                    <div className="pt-1 border-t border-gray-700">
-                      <div className="text-blue-400 font-semibold">➡️ Blocks:</div>
-                      {successors.map(task => (
-                        <div key={task.id} className="ml-2 text-xs">
-                          • {task.name} ({task.status})
+                  </div>
+                )}
+                {successors.length > 0 && (
+                  <div className="mt-2 pt-2 border-t border-gray-700">
+                    <div className="text-red-400 font-bold mb-1 flex items-center gap-1">
+                      ➡️ Blocks ({successors.length}):
+                    </div>
+                    <div className="space-y-1">
+                      {successors.slice(0, 3).map(task => (
+                        <div key={task.id} className="ml-2 text-xs flex items-center gap-1">
+                          ⏸️ <span className="text-white">{task.name}</span>
                         </div>
                       ))}
+                      {successors.length > 3 && (
+                        <div className="ml-2 text-xs text-gray-400">+ {successors.length - 3} more...</div>
+                      )}
                     </div>
-                  )}
-                </>
-              );
-            })()}
+                  </div>
+                )}
+                {predecessors.length === 0 && successors.length === 0 && (
+                  <div className="mt-2 pt-2 border-t border-gray-700 text-xs text-gray-400">
+                    No dependencies
+                  </div>
+                )}
+              </>
+            );
+          })()}
+          
+          <div className="mt-2 pt-2 border-t border-gray-700 text-xs text-gray-400">
+            Click for details →
           </div>
         </div>
       )}
@@ -1920,24 +1972,47 @@ export const CustomGanttPro = () => {
                               ></div>
                             )}
                             
-                            {/* Task Name + Dependencies + Resource */}
-                            <div className="absolute inset-0 flex items-center px-3 text-white font-semibold truncate pointer-events-none">
-                              {/* Dependency Indicators */}
-                              {getTaskDependencies(task).length > 0 && (
-                                <span className="mr-1 text-xs opacity-90" title={`Depends on ${getTaskDependencies(task).length} task(s)`}>
-                                  ⬅️
-                                </span>
+                            {/* Task Name + Status Badge + Dependencies */}
+                            <div className="absolute inset-0 flex items-center px-2 text-white font-semibold truncate pointer-events-none gap-1">
+                              {/* Status Badge */}
+                              {task.status === 'DONE' && (
+                                <span className="px-1.5 py-0.5 bg-green-600 rounded text-[10px] font-bold">✓</span>
                               )}
-                              <span className="truncate text-sm">{task.name}</span>
-                              {/* Show if this task blocks others */}
-                              {tasks.filter(t => {
-                                const deps = getTaskDependencies(t); // Returns task objects
-                                return deps.some(dep => dep.id === task.id);
-                              }).length > 0 && (
-                                <span className="ml-1 text-xs opacity-90" title="Blocks other tasks">
-                                  ➡️
-                                </span>
+                              {task.status === 'IN_PROGRESS' && (
+                                <span className="px-1.5 py-0.5 bg-blue-600 rounded text-[10px] font-bold animate-pulse">⏳</span>
                               )}
+                              {task.status === 'PENDING' && getTaskDependencies(task).length === 0 && (
+                                <span className="px-1.5 py-0.5 bg-green-500 rounded text-[10px] font-bold">✓</span>
+                              )}
+                              {task.status === 'PENDING' && getTaskDependencies(task).length > 0 && (
+                                <span className="px-1.5 py-0.5 bg-red-500 rounded text-[10px] font-bold">🚫</span>
+                              )}
+                              
+                              {/* Dependency Count Badges */}
+                              {(() => {
+                                const depCount = getTaskDependencies(task).length;
+                                const blockCount = tasks.filter(t => {
+                                  const deps = getTaskDependencies(t);
+                                  return deps.some(dep => dep.id === task.id);
+                                }).length;
+                                
+                                return (
+                                  <>
+                                    {depCount > 0 && (
+                                      <span className="px-1.5 py-0.5 bg-yellow-500/90 rounded text-[10px] font-bold" title={`Depends on ${depCount} task(s)`}>
+                                        ⬅️{depCount}
+                                      </span>
+                                    )}
+                                    {blockCount > 0 && (
+                                      <span className="px-1.5 py-0.5 bg-red-500/90 rounded text-[10px] font-bold" title={`Blocks ${blockCount} task(s)`}>
+                                        ➡️{blockCount}
+                                      </span>
+                                    )}
+                                  </>
+                                );
+                              })()}
+                              
+                              <span className="truncate text-xs">{task.name}</span>
                               {task.assigned_to && width > 120 && (
                                 <span className="ml-auto text-xs opacity-90 flex-shrink-0">@{task.assigned_to.split('@')[0]}</span>
                               )}
