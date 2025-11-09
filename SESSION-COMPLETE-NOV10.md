@@ -44,7 +44,11 @@
 
 ## 🚀 PRODUCTION
 
-**Latest URL:** https://tracker-nrxq2cfi9-kakaholigan-6270s-projects.vercel.app
+**Latest URL:** https://tracker-ggi18cy6z-kakaholigan-6270s-projects.vercel.app
+
+**Zoom Range:** 30% - 1000% (10X max!)
+- Minute row shows at zoom >= 200%
+- Easy to access minute precision now!
 
 ---
 

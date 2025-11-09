@@ -1899,7 +1899,7 @@ export const CustomGanttPro = () => {
             <input 
               type="range"
               min="0.3"
-              max="5"
+              max="10"
               step="0.1"
               value={zoomLevel}
               onChange={(e) => setZoomLevel(parseFloat(e.target.value))}
