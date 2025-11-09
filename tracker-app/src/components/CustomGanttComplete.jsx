@@ -182,15 +182,6 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
     }
   };
 
-  const getTaskPosition = (task) => {
-    const startDate = task.start_date ? new Date(task.start_date) : (task.started_at ? new Date(task.started_at) : addDays(new Date(), (task.order_index || 0) * 2));
-    const durationDays = task.estimated_hours ? Math.max(1, Math.ceil(task.estimated_hours / 8)) : 3;
-    const endDate = task.due_date ? new Date(task.due_date) : (task.completed_at ? new Date(task.completed_at) : addDays(startDate, durationDays));
-    const left = differenceInDays(startDate, projectStart) * dayWidth;
-    const width = Math.max(differenceInDays(endDate, startDate) * dayWidth, dayWidth);
-    return { left, width, startDate, endDate };
-  };
-
   // ✅ PERFORMANCE FIX: Memoize expensive calculations
   const projectDates = useMemo(() => {
     if (tasks.length === 0) {
@@ -253,6 +244,16 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
       return a.order_index - b.order_index;
     });
   }, [tasks, sortBy]);
+
+  // Define getTaskPosition after all dependencies are ready
+  const getTaskPosition = (task) => {
+    const startDate = task.start_date ? new Date(task.start_date) : (task.started_at ? new Date(task.started_at) : addDays(new Date(), (task.order_index || 0) * 2));
+    const durationDays = task.estimated_hours ? Math.max(1, Math.ceil(task.estimated_hours / 8)) : 3;
+    const endDate = task.due_date ? new Date(task.due_date) : (task.completed_at ? new Date(task.completed_at) : addDays(startDate, durationDays));
+    const left = differenceInDays(startDate, projectStart) * dayWidth;
+    const width = Math.max(differenceInDays(endDate, startDate) * dayWidth, dayWidth);
+    return { left, width, startDate, endDate };
+  };
 
   return (
     <div className="h-full flex flex-col bg-background-secondary rounded-lg border border-border-default">
