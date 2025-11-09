@@ -1336,10 +1336,10 @@ export const CustomGanttPro = () => {
 
     if (viewMode === 'hour') {
       // Hour view: Day + Hours (24 hours per day)
-      // At high zoom (>= 2.5), show MINUTES!
+      // At high zoom (>= 2.0), show MINUTES!
       const days = eachDayOfInterval({ start: projectDates.start, end: projectDates.end });
       const hourWidth = dayWidth / 24;
-      const showMinutes = zoomLevel >= 2.5;
+      const showMinutes = zoomLevel >= 2.0;
       
       return (
         <div style={{ width: ganttWidth, position: 'relative', height: showMinutes ? 90 : 60 }}>
