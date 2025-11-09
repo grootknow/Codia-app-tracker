@@ -368,6 +368,9 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
   };
 
   const handleTaskClick = (task) => {
+    // Highlight bar immediately for instant visual feedback
+    setLocalHighlightedTask(task.id);
+    
     const timelineEl = timelineRef.current;
     if (timelineEl) {
       const { left, width } = getTaskPosition(task);
@@ -461,14 +464,13 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                 {sortedTasks.filter(t => t.phase_id === phase.id).map(task => (
                   <div key={task.id} 
                        className={`h-10 flex items-center justify-between p-2 text-sm border-b border-border-default cursor-pointer transition-all duration-200 ${
-                         selectedTask?.id === task.id 
+                         localHighlightedTask === task.id 
                            ? 'bg-brand-secondary text-text-onPrimary' 
                            : 'hover:bg-background-tertiary'
                        } ${
                          hoveredTask && !highlightedIds.has(task.id) ? 'opacity-30' : 'opacity-100'
                        }`}
                        onClick={() => {
-                         setLocalHighlightedTask(task.id);
                          handleTaskClick(task);
                        }}
                        onMouseEnter={(e) => {
@@ -639,7 +641,7 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                                draggedTask?.id === task.id ? 'opacity-50 scale-105' :
                                showCriticalPath && criticalPathIds.has(task.id) 
                                  ? 'bg-gradient-to-r from-red-600 to-red-500 ring-2 ring-red-300 shadow-red-500/50'
-                                 : selectedTask?.id === task.id 
+                                 : localHighlightedTask === task.id 
                                    ? 'bg-gradient-to-r from-orange-500 to-orange-400 ring-2 ring-orange-300'
                                    : 'bg-gradient-to-r from-blue-600 to-blue-500'
                              } ${
