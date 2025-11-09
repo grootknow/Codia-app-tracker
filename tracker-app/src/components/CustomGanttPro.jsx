@@ -47,6 +47,8 @@ export const CustomGanttPro = () => {
   const [dragStartX, setDragStartX] = useState(0);
   const [tooltip, setTooltip] = useState({ visible: false, task: null, x: 0, y: 0 });
   const [contextMenu, setContextMenu] = useState({ visible: false, task: null, x: 0, y: 0 });
+  const [filterStatus, setFilterStatus] = useState('ALL');
+  const [filterPriority, setFilterPriority] = useState('ALL');
   
   const timelineRef = useRef(null);
   const leftPanelRef = useRef(null);
@@ -204,8 +206,17 @@ export const CustomGanttPro = () => {
 
   // Sort and flatten tasks with hierarchy
   const sortedTasks = useMemo(() => {
-    // First, sort root-level tasks
-    const sorted = [...tasks].sort((a, b) => {
+    // Apply filters first
+    let filtered = [...tasks];
+    if (filterStatus !== 'ALL') {
+      filtered = filtered.filter(t => t.status === filterStatus);
+    }
+    if (filterPriority !== 'ALL') {
+      filtered = filtered.filter(t => t.priority === filterPriority);
+    }
+    
+    // Then sort
+    const sorted = filtered.sort((a, b) => {
       switch (sortBy) {
         case 'priority': {
           const priorityOrder = { HIGH: 0, MEDIUM: 1, LOW: 2 };
@@ -236,7 +247,7 @@ export const CustomGanttPro = () => {
     
     // Flatten with indentation
     return flattenHierarchy(roots);
-  }, [tasks, sortBy, collapsedTasks]);
+  }, [tasks, sortBy, collapsedTasks, filterStatus, filterPriority]);
 
   // Get task position
   const getTaskPosition = (task) => {
@@ -310,6 +321,34 @@ export const CustomGanttPro = () => {
       const timelineWidth = timelineEl.offsetWidth;
       const targetScrollLeft = Math.max(0, todayPosition - (timelineWidth / 2));
       timelineEl.scrollTo({ left: targetScrollLeft, behavior: 'smooth' });
+    }
+  };
+
+  const exportToPNG = async () => {
+    try {
+      const { default: html2canvas } = await import('html2canvas');
+      const ganttElement = document.querySelector('.gantt-export-area');
+      if (!ganttElement) {
+        toast.error('Gantt chart not found');
+        return;
+      }
+      
+      toast.loading('Exporting to PNG...');
+      const canvas = await html2canvas(ganttElement, {
+        backgroundColor: '#ffffff',
+        scale: 2
+      });
+      
+      const link = document.createElement('a');
+      link.download = `gantt-chart-${format(new Date(), 'yyyy-MM-dd')}.png`;
+      link.href = canvas.toDataURL();
+      link.click();
+      
+      toast.dismiss();
+      toast.success('Exported to PNG!');
+    } catch (error) {
+      console.error('Export error:', error);
+      toast.error('Failed to export');
     }
   };
 
@@ -739,9 +778,13 @@ export const CustomGanttPro = () => {
       <div className="flex-shrink-0 flex items-center justify-between p-3 border-b border-border-default">
         <div className="flex items-center gap-4">
           <h3 className="font-bold text-lg text-text-primary">Gantt Pro</h3>
+          <span className="text-sm text-text-tertiary">
+            {sortedTasks.length} tasks
+            {(filterStatus !== 'ALL' || filterPriority !== 'ALL') && ' (filtered)'}
+          </span>
         </div>
         
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-wrap">
           {/* View Mode */}
           <div className="flex items-center gap-1 border border-border-default rounded-md overflow-hidden">
             <button
@@ -766,16 +809,42 @@ export const CustomGanttPro = () => {
           
           <div className="border-l border-border-default h-6 mx-2"></div>
           
+          {/* Filters */}
+          <select 
+            value={filterStatus} 
+            onChange={e => setFilterStatus(e.target.value)} 
+            className="bg-background-primary border border-border-default rounded-md px-2 py-1 text-sm"
+            title="Filter by Status"
+          >
+            <option value="ALL">All Status</option>
+            <option value="PENDING">Pending</option>
+            <option value="IN_PROGRESS">In Progress</option>
+            <option value="DONE">Done</option>
+          </select>
+          
+          <select 
+            value={filterPriority} 
+            onChange={e => setFilterPriority(e.target.value)} 
+            className="bg-background-primary border border-border-default rounded-md px-2 py-1 text-sm"
+            title="Filter by Priority"
+          >
+            <option value="ALL">All Priority</option>
+            <option value="HIGH">High</option>
+            <option value="MEDIUM">Medium</option>
+            <option value="LOW">Low</option>
+          </select>
+          
           {/* Sort */}
           <select 
             value={sortBy} 
             onChange={e => setSortBy(e.target.value)} 
             className="bg-background-primary border border-border-default rounded-md px-2 py-1 text-sm"
+            title="Sort by"
           >
-            <option value="priority">Priority</option>
-            <option value="start">Start Date</option>
-            <option value="end">End Date</option>
-            <option value="duration">Duration</option>
+            <option value="priority">Sort: Priority</option>
+            <option value="start">Sort: Start Date</option>
+            <option value="end">Sort: End Date</option>
+            <option value="duration">Sort: Duration</option>
           </select>
           
           <div className="border-l border-border-default h-6 mx-2"></div>
@@ -811,11 +880,22 @@ export const CustomGanttPro = () => {
             />
             Baseline
           </label>
+          
+          <div className="border-l border-border-default h-6 mx-2"></div>
+          
+          {/* Export */}
+          <button 
+            onClick={exportToPNG}
+            className="px-3 py-1 rounded-md bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium"
+            title="Export to PNG"
+          >
+            📸 Export
+          </button>
         </div>
       </div>
       
       {/* Gantt Chart */}
-      <div className="flex-1 flex overflow-hidden relative">
+      <div className="flex-1 flex overflow-hidden relative gantt-export-area">
         {/* Left Panel - Tasks */}
         <div 
           ref={leftPanelRef}
