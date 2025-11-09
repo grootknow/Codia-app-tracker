@@ -23,16 +23,22 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
   const [localHighlightedTask, setLocalHighlightedTask] = useState(null);
   const [tooltip, setTooltip] = useState({ visible: false, content: null, x: 0, y: 0 });
   const [scrollTop, setScrollTop] = useState(0);
+  const [scrollLeft, setScrollLeft] = useState(0);
   const [draggedTask, setDraggedTask] = useState(null);
+  const [resizingTask, setResizingTask] = useState(null);
   const [linkingState, setLinkingState] = useState(null);
   const [dropTargetId, setDropTargetId] = useState(null);
   const highlightedTask = highlightedTaskFromPage ? highlightedTaskFromPage.task_id : localHighlightedTask;
 
   // --- Highlighting Logic ---
-  const getRelatedTaskIds = (taskId) => {
-    if (!taskId) return new Set();
-    const related = new Set([taskId]);
-    const checkDownstream = (id) => {
+  const highlightedIds = useMemo(() => {
+    if (!hoveredTask || !tasks.length) return new Set();
+    
+    const related = new Set([hoveredTask]);
+    const MAX_DEPTH = 50;
+    
+    const checkDownstream = (id, depth = 0) => {
+      if (depth > MAX_DEPTH) return;
       tasks.forEach(t => {
         if (t.blocking_dependencies) {
           const depIds = t.blocking_dependencies.map(d => 
@@ -40,87 +46,94 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
           );
           if (depIds.includes(id) && !related.has(t.id)) {
             related.add(t.id);
-            checkDownstream(t.id);
+            checkDownstream(t.id, depth + 1);
           }
         }
       });
     };
-    const checkUpstream = (id) => {
+    
+    const checkUpstream = (id, depth = 0) => {
+      if (depth > MAX_DEPTH) return;
       const task = tasks.find(t => t.id === id);
       if (task?.blocking_dependencies) {
         task.blocking_dependencies.forEach(depString => {
           const depId = typeof depString === 'string' ? parseInt(depString.split(':')[0]) : depString;
           if (!related.has(depId)) {
             related.add(depId);
-            checkUpstream(depId);
+            checkUpstream(depId, depth + 1);
           }
         });
       }
     };
-    checkDownstream(taskId);
-    checkUpstream(taskId);
+    
+    checkDownstream(hoveredTask);
+    checkUpstream(hoveredTask);
     return related;
-  };
-
-  const highlightedIds = useMemo(() => getRelatedTaskIds(hoveredTask), [hoveredTask, tasks]);
+  }, [hoveredTask, tasks]);
 
   // --- Critical Path Logic ---
   const criticalPathIds = useMemo(() => {
-    if (!tasks.length) return new Set();
+    if (!tasks || !tasks.length) return new Set();
 
-    const taskMap = new Map(tasks.map(t => [t.id, t]));
-    const memo = new Map();
+    try {
+      const taskMap = new Map(tasks.map(t => [t.id, t]));
+      const memo = new Map();
+      const MAX_DEPTH = 100; // Prevent infinite recursion
 
-    const getLongestPath = (taskId) => {
-      if (memo.has(taskId)) return memo.get(taskId);
+      const getLongestPath = (taskId, depth = 0) => {
+        if (depth > MAX_DEPTH) return { path: [], duration: 0 };
+        if (memo.has(taskId)) return memo.get(taskId);
 
-      const task = taskMap.get(taskId);
-      if (!task) return { path: [], duration: 0 };
+        const task = taskMap.get(taskId);
+        if (!task) return { path: [], duration: 0 };
 
-      const duration = task.estimated_hours ? Math.max(1, Math.ceil(task.estimated_hours / 8)) : 1;
+        const duration = task.estimated_hours ? Math.max(1, Math.ceil(task.estimated_hours / 8)) : 1;
 
-      const downstreamTasks = tasks.filter(t => {
-        if (!t.blocking_dependencies) return false;
-        const depIds = t.blocking_dependencies.map(d => 
-          typeof d === 'string' ? parseInt(d.split(':')[0]) : d
-        );
-        return depIds.includes(taskId);
-      });
+        const downstreamTasks = tasks.filter(t => {
+          if (!t.blocking_dependencies) return false;
+          const depIds = t.blocking_dependencies.map(d => 
+            typeof d === 'string' ? parseInt(d.split(':')[0]) : d
+          );
+          return depIds.includes(taskId);
+        });
 
-      if (downstreamTasks.length === 0) {
-        const result = { path: [taskId], duration };
+        if (downstreamTasks.length === 0) {
+          const result = { path: [taskId], duration };
+          memo.set(taskId, result);
+          return result;
+        }
+
+        let longestSubPath = { path: [], duration: 0 };
+        downstreamTasks.forEach(downstreamTask => {
+          const subPath = getLongestPath(downstreamTask.id, depth + 1);
+          if (subPath.duration > longestSubPath.duration) {
+            longestSubPath = subPath;
+          }
+        });
+
+        const result = { 
+          path: [taskId, ...longestSubPath.path], 
+          duration: duration + longestSubPath.duration 
+        };
         memo.set(taskId, result);
         return result;
-      }
+      };
 
-      let longestSubPath = { path: [], duration: 0 };
-      downstreamTasks.forEach(downstreamTask => {
-        const subPath = getLongestPath(downstreamTask.id);
-        if (subPath.duration > longestSubPath.duration) {
-          longestSubPath = subPath;
+      let criticalPath = { path: [], duration: -1 };
+      const rootTasks = tasks.filter(t => !t.blocking_dependencies || t.blocking_dependencies.length === 0);
+      
+      rootTasks.forEach(task => {
+        const pathInfo = getLongestPath(task.id);
+        if (pathInfo.duration > criticalPath.duration) {
+          criticalPath = pathInfo;
         }
       });
 
-      const result = { 
-        path: [taskId, ...longestSubPath.path], 
-        duration: duration + longestSubPath.duration 
-      };
-      memo.set(taskId, result);
-      return result;
-    };
-
-    let criticalPath = { path: [], duration: -1 };
-    const rootTasks = tasks.filter(t => !t.blocking_dependencies || t.blocking_dependencies.length === 0);
-    
-    rootTasks.forEach(task => {
-      const pathInfo = getLongestPath(task.id);
-      if (pathInfo.duration > criticalPath.duration) {
-        criticalPath = pathInfo;
-      }
-    });
-
-    return new Set(criticalPath.path);
-
+      return new Set(criticalPath.path);
+    } catch (error) {
+      console.error('Error calculating critical path:', error);
+      return new Set();
+    }
   }, [tasks]);
 
   const leftPanelRef = useRef(null);
@@ -128,20 +141,7 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
 
   const handleScroll = (e) => {
     setScrollTop(e.currentTarget.scrollTop);
-  };
-
-  const handleTaskClick = (task) => {
-    setSelectedTask(task);
-    const timelineEl = timelineRef.current;
-    if (timelineEl) {
-      const { left, width } = getTaskPosition(task);
-      const timelineWidth = timelineEl.offsetWidth;
-      const targetScrollLeft = left - (timelineWidth / 2) + (width / 2);
-      timelineEl.scrollTo({
-        left: targetScrollLeft,
-        behavior: 'smooth'
-      });
-    }
+    setScrollLeft(e.currentTarget.scrollLeft);
   };
 
   useEffect(() => {
@@ -152,6 +152,105 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
       timelineRef.current.scrollTop = scrollTop;
     }
   }, [scrollTop]);
+
+  // Handle resize mouse events
+  useEffect(() => {
+    if (!resizingTask) return;
+
+    const dayWidth = 30 * zoomLevel; // Calculate inside useEffect
+
+    const handleMouseMove = async (e) => {
+      const task = tasks.find(t => t.id === resizingTask.id);
+      if (!task) return;
+
+      const deltaX = e.clientX - resizingTask.startX;
+      const deltaDays = Math.round(deltaX / dayWidth);
+
+      if (resizingTask.side === 'left') {
+        // Resize from left (change start_date)
+        const currentStart = task.start_date ? new Date(task.start_date) : new Date(task.started_at);
+        const newStartDate = addDays(currentStart, deltaDays);
+        
+        // Don't allow start after end
+        const endDate = task.due_date ? new Date(task.due_date) : addDays(currentStart, 3);
+        if (newStartDate >= endDate) return;
+
+        setResizingTask(prev => ({ ...prev, previewDelta: deltaDays }));
+      } else {
+        // Resize from right (change due_date)
+        const currentEnd = task.due_date ? new Date(task.due_date) : addDays(new Date(task.start_date || task.started_at), 3);
+        const newEndDate = addDays(currentEnd, deltaDays);
+        
+        // Don't allow end before start
+        const startDate = task.start_date ? new Date(task.start_date) : new Date(task.started_at);
+        if (newEndDate <= startDate) return;
+
+        setResizingTask(prev => ({ ...prev, previewDelta: deltaDays }));
+      }
+    };
+
+    const handleMouseUp = async () => {
+      if (!resizingTask.previewDelta) {
+        setResizingTask(null);
+        return;
+      }
+
+      const task = tasks.find(t => t.id === resizingTask.id);
+      if (!task) {
+        setResizingTask(null);
+        return;
+      }
+
+      const deltaDays = resizingTask.previewDelta;
+
+      try {
+        if (resizingTask.side === 'left') {
+          const currentStart = task.start_date ? new Date(task.start_date) : new Date(task.started_at);
+          const newStartDate = addDays(currentStart, deltaDays);
+          
+          const { error } = await supabase
+            .from('tasks')
+            .update({ start_date: newStartDate.toISOString() })
+            .eq('id', task.id);
+
+          if (error) {
+            toast.error(`Failed to resize: ${error.message}`);
+          } else {
+            toast.success(`Start date updated to ${format(newStartDate, 'MMM d')}`);
+            loadData();
+          }
+        } else {
+          const currentEnd = task.due_date ? new Date(task.due_date) : addDays(new Date(task.start_date || task.started_at), 3);
+          const newEndDate = addDays(currentEnd, deltaDays);
+          
+          const { error } = await supabase
+            .from('tasks')
+            .update({ due_date: newEndDate.toISOString() })
+            .eq('id', task.id);
+
+          if (error) {
+            toast.error(`Failed to resize: ${error.message}`);
+          } else {
+            toast.success(`Due date updated to ${format(newEndDate, 'MMM d')}`);
+            loadData();
+          }
+        }
+      } catch (error) {
+        console.error('Resize error:', error);
+        toast.error('Failed to resize task');
+      }
+
+      setResizingTask(null);
+    };
+
+    document.addEventListener('mousemove', handleMouseMove);
+    document.addEventListener('mouseup', handleMouseUp);
+
+    return () => {
+      document.removeEventListener('mousemove', handleMouseMove);
+      document.removeEventListener('mouseup', handleMouseUp);
+    };
+  }, [resizingTask, tasks, zoomLevel]);
 
   useEffect(() => {
     loadData();
@@ -169,14 +268,27 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
         supabase.from('phases').select('*').order('order_index'),
         supabase.from('sprints').select('*').order('start_date')
       ]);
-      if (tasksRes.error) throw tasksRes.error;
-      if (phasesRes.error) throw phasesRes.error;
-      if (sprintsRes.error) throw sprintsRes.error;
+      if (tasksRes.error) {
+        console.error('Tasks error:', tasksRes.error);
+        toast.error(`Failed to load tasks: ${tasksRes.error.message}`);
+        throw tasksRes.error;
+      }
+      if (phasesRes.error) {
+        console.error('Phases error:', phasesRes.error);
+        toast.error(`Failed to load phases: ${phasesRes.error.message}`);
+        throw phasesRes.error;
+      }
+      if (sprintsRes.error) {
+        console.error('Sprints error:', sprintsRes.error);
+        toast.error(`Failed to load sprints: ${sprintsRes.error.message}`);
+        throw sprintsRes.error;
+      }
       setTasks(tasksRes.data || []);
       setPhases(phasesRes.data || []);
       setSprints(sprintsRes.data || []);
     } catch (error) {
-      console.error('Error:', error);
+      console.error('LoadData error:', error);
+      toast.error('Failed to load Gantt data');
     } finally {
       setLoading(false);
     }
@@ -184,59 +296,43 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
 
   // ✅ PERFORMANCE FIX: Memoize expensive calculations
   const projectDates = useMemo(() => {
-    if (tasks.length === 0) {
+    if (!tasks || tasks.length === 0) {
+      const now = new Date();
       return {
-        start: new Date(),
-        end: addDays(new Date(), 30)
+        start: now,
+        end: addDays(now, 30)
       };
     }
 
-    const tasksWithDates = tasks.filter(t => t.start_date || t.started_at);
-    const start = tasksWithDates.length > 0 
-      ? new Date(Math.min(...tasksWithDates.map(t => new Date(t.start_date || t.started_at))))
-      : new Date();
+    try {
+      const tasksWithDates = tasks.filter(t => t && (t.start_date || t.started_at));
+      const start = tasksWithDates.length > 0 
+        ? new Date(Math.min(...tasksWithDates.map(t => new Date(t.start_date || t.started_at).getTime())))
+        : new Date();
 
-    const tasksWithEndDates = tasks.filter(t => t.due_date || t.completed_at || t.start_date);
-    const end = tasksWithEndDates.length > 0
-      ? new Date(Math.max(...tasksWithEndDates.map(t => {
-          if (t.due_date) return new Date(t.due_date);
-          if (t.completed_at) return new Date(t.completed_at);
-          const taskStart = new Date(t.start_date);
-          const days = t.estimated_hours ? Math.max(1, Math.ceil(t.estimated_hours / 8)) : 3;
-          return addDays(taskStart, days);
-        })))
-      : addDays(new Date(), 30);
+      const tasksWithEndDates = tasks.filter(t => t && (t.due_date || t.completed_at || t.start_date));
+      const end = tasksWithEndDates.length > 0
+        ? new Date(Math.max(...tasksWithEndDates.map(t => {
+            if (t.due_date) return new Date(t.due_date).getTime();
+            if (t.completed_at) return new Date(t.completed_at).getTime();
+            if (t.start_date) {
+              const taskStart = new Date(t.start_date);
+              const days = t.estimated_hours ? Math.max(1, Math.ceil(t.estimated_hours / 8)) : 3;
+              return addDays(taskStart, days).getTime();
+            }
+            return new Date().getTime();
+          })))
+        : addDays(new Date(), 30);
 
-    return { start, end };
+      return { start, end };
+    } catch (error) {
+      console.error('Error calculating project dates:', error);
+      const now = new Date();
+      return { start: now, end: addDays(now, 30) };
+    }
   }, [tasks]);
 
-  const projectStart = projectDates.start;
-  const projectEnd = projectDates.end;
-
-  if (loading) {
-    return <div className="flex items-center justify-center h-full"><p className="text-text-tertiary">Loading Gantt...</p></div>;
-  }
-
-  const dayWidth = 30 * zoomLevel;
-  const ganttWidth = differenceInDays(projectEnd, projectStart) * dayWidth;
-  const taskPositions = new Map();
-
-  // ✅ PERFORMANCE FIX: Memoize month headers calculation
-  const monthHeaders = useMemo(() => {
-    return eachMonthOfInterval({ start: projectStart, end: projectEnd }).map(monthStart => {
-      const monthEnd = endOfMonth(monthStart);
-      const start = differenceInDays(monthStart, projectStart) * dayWidth;
-      const width = differenceInDays(monthEnd, monthStart) * dayWidth;
-      return { name: format(monthStart, 'MMMM yyyy'), left: start, width };
-    });
-  }, [projectStart, projectEnd, dayWidth]);
-
-  // ✅ PERFORMANCE FIX: Memoize today position
-  const todayPosition = useMemo(() => {
-    return differenceInDays(new Date(), projectStart) * dayWidth;
-  }, [projectStart, dayWidth]);
-
-  // ✅ PERFORMANCE FIX: Memoize sorted tasks
+  // ✅ PERFORMANCE FIX: Memoize sorted tasks - MUST be before any conditional returns
   const sortedTasks = useMemo(() => {
     return [...tasks].sort((a, b) => {
       if (sortBy === 'name') return a.name.localeCompare(b.name);
@@ -245,7 +341,11 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
     });
   }, [tasks, sortBy]);
 
-  // Define getTaskPosition after all dependencies are ready
+  const projectStart = projectDates.start;
+  const projectEnd = projectDates.end;
+  const dayWidth = 30 * zoomLevel;
+
+  // Define getTaskPosition before it's used
   const getTaskPosition = (task) => {
     const startDate = task.start_date ? new Date(task.start_date) : (task.started_at ? new Date(task.started_at) : addDays(new Date(), (task.order_index || 0) * 2));
     const durationDays = task.estimated_hours ? Math.max(1, Math.ceil(task.estimated_hours / 8)) : 3;
@@ -255,8 +355,40 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
     return { left, width, startDate, endDate };
   };
 
+  const handleTaskClick = (task) => {
+    setSelectedTask(task);
+    const timelineEl = timelineRef.current;
+    if (timelineEl) {
+      const { left, width } = getTaskPosition(task);
+      const timelineWidth = timelineEl.offsetWidth;
+      const targetScrollLeft = left - (timelineWidth / 2) + (width / 2);
+      timelineEl.scrollTo({
+        left: targetScrollLeft,
+        behavior: 'smooth'
+      });
+    }
+  };
+
+  if (loading) {
+    return <div className="flex items-center justify-center h-full"><p className="text-text-tertiary">Loading Gantt...</p></div>;
+  }
+
+  const ganttWidth = differenceInDays(projectEnd, projectStart) * dayWidth;
+  const taskPositions = new Map();
+
+  // Month headers - calculate directly without useMemo to avoid dependency issues
+  const monthHeaders = eachMonthOfInterval({ start: projectStart, end: projectEnd }).map(monthStart => {
+    const monthEnd = endOfMonth(monthStart);
+    const start = differenceInDays(monthStart, projectStart) * dayWidth;
+    const width = differenceInDays(monthEnd, monthStart) * dayWidth;
+    return { name: format(monthStart, 'MMMM yyyy'), left: start, width };
+  });
+
+  // Today position - calculate directly
+  const todayPosition = differenceInDays(new Date(), projectStart) * dayWidth;
+
   return (
-    <div className="h-full flex flex-col bg-background-secondary rounded-lg border border-border-default">
+    <div className="h-full flex flex-col bg-background-secondary rounded-lg border border-border-default" style={{ cursor: resizingTask ? 'ew-resize' : 'default' }}>
       <Tooltip visible={tooltip.visible} content={tooltip.content} x={tooltip.x} y={tooltip.y} />
       {selectedTask && <TaskDetailModal task={selectedTask} onClose={() => setSelectedTask(null)} onUpdate={loadData} />}
       {linkingState && <LinkingArrow from={linkingState.from} to={linkingState.to} />}
@@ -414,7 +546,7 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                       return (
                         <div key={`bar-${task.id}`} className="h-10 relative border-b border-border-default">
                           <div 
-                             style={{ left, width, top: 5, height: 30, cursor: 'pointer' }} 
+                             style={{ left, width, top: 5, height: 30, cursor: resizingTask ? 'ew-resize' : 'move' }} 
                              onClick={() => setSelectedTask(task)}
                              onMouseEnter={(e) => {
                                setImmediateHoveredTask(task.id);
@@ -424,9 +556,9 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                                setImmediateHoveredTask(null);
                                setTooltip({ visible: false, content: null, x: 0, y: 0 });
                              }}
-                             draggable={!linkingState}
+                             draggable={!linkingState && !resizingTask}
                              onDragStart={(e) => {
-                               if (linkingState) {
+                               if (linkingState || resizingTask) {
                                  e.preventDefault();
                                  return;
                                }
@@ -475,20 +607,42 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                                  }
                                }
                              }}
-                             className={`absolute rounded-md flex items-center px-2 text-white text-xs shadow-md cursor-pointer transition-all duration-200 ${
-                               draggedTask?.id === task.id ? 'opacity-50' :
+                             className={`absolute rounded-md flex items-center px-2 text-white text-xs font-semibold shadow-lg cursor-move transition-all duration-200 ${
+                               draggedTask?.id === task.id ? 'opacity-50 scale-105' :
                                showCriticalPath && criticalPathIds.has(task.id) 
-                                 ? 'bg-red-500'
+                                 ? 'bg-gradient-to-r from-red-600 to-red-500 ring-2 ring-red-300 shadow-red-500/50'
                                  : selectedTask?.id === task.id 
-                                   ? 'bg-orange-400 ring-2 ring-orange-200'
-                                   : 'bg-brand-primary'
+                                   ? 'bg-gradient-to-r from-orange-500 to-orange-400 ring-2 ring-orange-300'
+                                   : 'bg-gradient-to-r from-blue-600 to-blue-500'
                              } ${
-                               linkingState && dropTargetId === task.id ? 'ring-2 ring-green-500 ring-offset-2' : ''
+                               linkingState && dropTargetId === task.id ? 'ring-4 ring-green-400 ring-offset-2' : ''
                              } ${
-                               hoveredTask && !highlightedIds.has(task.id) ? 'opacity-30' : 'opacity-100'
+                               hoveredTask && !highlightedIds.has(task.id) ? 'opacity-20' : 'opacity-100'
                              }`}>
-                            <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-brand-primary rounded-full cursor-pointer"></div>
-                            <p className='truncate'>{task.name}</p>
+                            {/* Left Dependency Handle */}
+                            <div className="absolute -left-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-blue-500 rounded-full cursor-pointer hover:scale-125 transition-transform"></div>
+                            
+                            {/* Left Resize Handle */}
+                            <div 
+                              className="absolute -left-1 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-white/30 transition-colors"
+                              onMouseDown={(e) => {
+                                e.stopPropagation();
+                                setResizingTask({ id: task.id, side: 'left', startX: e.clientX, originalLeft: left, originalWidth: width });
+                              }}
+                            ></div>
+                            
+                            <p className='truncate flex-1'>{task.name}</p>
+                            
+                            {/* Right Resize Handle */}
+                            <div 
+                              className="absolute -right-1 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-white/30 transition-colors"
+                              onMouseDown={(e) => {
+                                e.stopPropagation();
+                                setResizingTask({ id: task.id, side: 'right', startX: e.clientX, originalWidth: width });
+                              }}
+                            ></div>
+                            
+                            {/* Right Dependency Handle */}
                             <div 
                               draggable 
                               onDragStart={(e) => {
@@ -516,7 +670,7 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                                 setLinkingState(null);
                                 setDropTargetId(null);
                               }}
-                              className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-brand-primary rounded-full cursor-pointer z-10"></div>
+                              className="absolute -right-2 top-1/2 -translate-y-1/2 w-4 h-4 bg-white border-2 border-blue-500 rounded-full cursor-pointer hover:scale-125 transition-transform z-10"></div>
                           </div>
                         </div>
                       );
@@ -531,6 +685,8 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                 highlightedIds={highlightedIds}
                 showCriticalPath={showCriticalPath}
                 criticalPathIds={criticalPathIds}
+                scrollLeft={scrollLeft}
+                scrollTop={scrollTop}
               />
               </div>
             </div>
@@ -541,7 +697,7 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
   );
 };
 
-const DependencyArrows = ({ tasks, taskPositions, hoveredTask, highlightedIds, showCriticalPath, criticalPathIds }) => {
+const DependencyArrows = ({ tasks, taskPositions, hoveredTask, highlightedIds, showCriticalPath, criticalPathIds, scrollLeft, scrollTop }) => {
   if (!taskPositions.size) return null;
 
   const arrows = [];
@@ -563,39 +719,70 @@ const DependencyArrows = ({ tasks, taskPositions, hoveredTask, highlightedIds, s
 
         const isHighlighted = hoveredTask && highlightedIds.has(depId) && highlightedIds.has(task.id);
         const isCritical = showCriticalPath && criticalPathIds.has(depId) && criticalPathIds.has(task.id);
-        const path = `M ${fromX} ${fromY} C ${fromX + 20} ${fromY} ${toX - 20} ${toY} ${toX} ${toY}`;
+        
+        // Create curved path with better control points
+        const midX = (fromX + toX) / 2;
+        const path = `M ${fromX} ${fromY} C ${midX} ${fromY}, ${midX} ${toY}, ${toX} ${toY}`;
+        
         arrows.push({ 
           id: `${depId}-${task.id}`,
           d: path, 
           isHighlighted,
-          isCritical
+          isCritical,
+          fromTask: depId,
+          toTask: task.id
         });
       });
     }
   });
 
   return (
-    <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 10 }}>
+    <svg className="absolute top-0 left-0 w-full h-full pointer-events-none" style={{ zIndex: 20 }}>
       <defs>
-                <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-          <polygon points="0 0, 10 3.5, 0 7" fill="#0ea5e9" />
+        <marker id="arrowhead" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto">
+          <polygon points="0 0, 12 5, 0 10" fill="#0ea5e9" />
         </marker>
-        <marker id="arrowhead-highlight" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-          <polygon points="0 0, 10 3.5, 0 7" fill="#fb923c" />
+        <marker id="arrowhead-highlight" markerWidth="12" markerHeight="10" refX="12" refY="5" orient="auto">
+          <polygon points="0 0, 12 5, 0 10" fill="#fb923c" />
         </marker>
-        <marker id="arrowhead-critical" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
-          <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" />
+        <marker id="arrowhead-critical" markerWidth="14" markerHeight="12" refX="14" refY="6" orient="auto">
+          <polygon points="0 0, 14 6, 0 12" fill="#ef4444" />
         </marker>
+        {/* Glow filters for critical path */}
+        <filter id="glow-critical">
+          <feGaussianBlur stdDeviation="2" result="coloredBlur"/>
+          <feMerge>
+            <feMergeNode in="coloredBlur"/>
+            <feMergeNode in="SourceGraphic"/>
+          </feMerge>
+        </filter>
       </defs>
       {arrows.map(arrow => (
-        <path key={arrow.id} d={arrow.d} 
-              stroke={arrow.isCritical ? '#ef4444' : arrow.isHighlighted ? '#fb923c' : '#0ea5e9'} 
-              strokeWidth={arrow.isCritical || arrow.isHighlighted ? 3 : 2} 
+        <g key={arrow.id}>
+          {/* Shadow/glow for critical path */}
+          {arrow.isCritical && (
+            <path 
+              d={arrow.d} 
+              stroke="#ef4444" 
+              strokeWidth="6" 
               fill="none" 
-              markerEnd={arrow.isCritical ? 'url(#arrowhead-critical)' : arrow.isHighlighted ? 'url(#arrowhead-highlight)' : 'url(#arrowhead)'} 
-              className={`transition-all duration-300 ${
-                hoveredTask && !arrow.isHighlighted ? 'opacity-20' : 'opacity-100'
-              }`} />
+              opacity="0.3"
+              filter="url(#glow-critical)"
+            />
+          )}
+          {/* Main arrow */}
+          <path 
+            d={arrow.d} 
+            stroke={arrow.isCritical ? '#ef4444' : arrow.isHighlighted ? '#fb923c' : '#0ea5e9'} 
+            strokeWidth={arrow.isCritical ? 4 : arrow.isHighlighted ? 3 : 2} 
+            fill="none" 
+            markerEnd={arrow.isCritical ? 'url(#arrowhead-critical)' : arrow.isHighlighted ? 'url(#arrowhead-highlight)' : 'url(#arrowhead)'} 
+            className={`transition-all duration-300 ${
+              hoveredTask && !arrow.isHighlighted ? 'opacity-10' : 'opacity-100'
+            }`}
+            strokeDasharray={arrow.isCritical ? '0' : '0'}
+          />
+        </g>
       ))}
     </svg>
   );
