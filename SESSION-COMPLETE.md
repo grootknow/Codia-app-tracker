@@ -220,4 +220,24 @@ https://tracker-47vunkbtd-kakaholigan-6270s-projects.vercel.app
 
 ---
 
-**🎉 SESSION COMPLETE! GANTT IS NOW MUCH MORE USABLE!** 🚀
+---
+
+## ⚠️ KNOWN ISSUES (For Next Session)
+
+### 🔴 CRITICAL - Drag/Resize Still Stuck at 300% Zoom
+- User tested: Kéo task "0.1.2 Cloudflare Account" at 300% zoom → KẸT CỨNG
+- Current fix (20px threshold) NOT ENOUGH
+- Need: Smaller threshold or adaptive based on zoom
+- **See: `NEXT-SESSION-CRITICAL-ISSUES.md` for details**
+
+### 🔴 CRITICAL - Dependency Warning Causes Reload
+- When drag task with dependencies → Popup warning → `loadData()` reload
+- User loses scroll position, doesn't know where they are
+- Need: Prevent drag OR revert locally without reload
+- **See: `NEXT-SESSION-CRITICAL-ISSUES.md` for solutions**
+
+---
+
+**🎉 SESSION COMPLETE! Visual improvements done, but drag/resize needs more work!** 🚀
+
+**👉 NEXT SESSION: Read `NEXT-SESSION-CRITICAL-ISSUES.md` first!**

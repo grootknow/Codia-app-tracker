@@ -596,37 +596,37 @@ export const CustomGanttPro = () => {
   };
 
   const handleMouseMove = (e) => {
-    if (!draggedTask && !resizingTask) return; // Early exit if not dragging
+    if (!draggedTask && !resizingTask) return;
     
-    e.preventDefault(); // Prevent text selection during drag
+    e.preventDefault();
     
     if (draggedTask) {
       const deltaX = e.clientX - dragStartX;
       const deltaDays = Math.round(deltaX / dayWidth);
       
-      // Always update cursor position, but only update dates if moved at least 1 day
-      if (Math.abs(deltaX) > dayWidth / 2) { // More responsive - trigger at half day
+      // FIXED: Use fixed 20px threshold instead of dayWidth-based
+      // Works at ALL zoom levels (50%-300%)
+      if (Math.abs(deltaX) > 20) {
         setHasDragged(true);
         const startDate = new Date(draggedTask.start_date || draggedTask.started_at);
         const newStartDate = addDays(startDate, deltaDays);
         const duration = draggedTask.estimated_hours ? Math.ceil(draggedTask.estimated_hours / 8) : 3;
         const newEndDate = addDays(newStartDate, duration);
         
-        // Optimistic update
         setTasks(prev => prev.map(t => 
           t.id === draggedTask.id 
             ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
             : t
         ));
         setDraggedTask({ ...draggedTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
-        setDragStartX(e.clientX); // Reset reference point
+        setDragStartX(e.clientX);
       }
     } else if (resizingTask && resizeEdge) {
       const deltaX = e.clientX - dragStartX;
       const deltaDays = Math.round(deltaX / dayWidth);
       
-      // More responsive - trigger at half day
-      if (Math.abs(deltaX) > dayWidth / 2) {
+      // FIXED: Use fixed 20px threshold
+      if (Math.abs(deltaX) > 20) {
         setHasDragged(true);
         const startDate = new Date(resizingTask.start_date || resizingTask.started_at);
         const endDate = new Date(resizingTask.due_date || resizingTask.completed_at);
@@ -646,14 +646,13 @@ export const CustomGanttPro = () => {
           }
         }
         
-        // Optimistic update
         setTasks(prev => prev.map(t => 
           t.id === resizingTask.id 
             ? { ...t, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') }
             : t
         ));
         setResizingTask({ ...resizingTask, start_date: format(newStartDate, 'yyyy-MM-dd'), due_date: format(newEndDate, 'yyyy-MM-dd') });
-        setDragStartX(e.clientX); // Reset reference point
+        setDragStartX(e.clientX);
       }
     }
   };
