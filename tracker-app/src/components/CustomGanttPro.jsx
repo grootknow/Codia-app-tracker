@@ -32,13 +32,13 @@ export const CustomGanttPro = () => {
   const [tasks, setTasks] = useState([]);
   const [phases, setPhases] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('day'); // 'hour' | 'day' | 'week' | 'month'
+  const [viewMode, setViewMode] = useState(() => localStorage.getItem('gantt_viewMode') || 'day');
   const [selectedTask, setSelectedTask] = useState(null);
   const [hoveredTask, setHoveredTask] = useState(null);
   const [sortBy, setSortBy] = useState('priority'); // 'priority' | 'start' | 'end' | 'duration'
-  const [showCriticalPath, setShowCriticalPath] = useState(false);
-  const [showDependencies, setShowDependencies] = useState(true);
-  const [showBaseline, setShowBaseline] = useState(false);
+  const [showCriticalPath, setShowCriticalPath] = useState(() => localStorage.getItem('gantt_showCriticalPath') === 'true');
+  const [showDependencies, setShowDependencies] = useState(() => localStorage.getItem('gantt_showDependencies') !== 'false');
+  const [showBaseline, setShowBaseline] = useState(() => localStorage.getItem('gantt_showBaseline') === 'true');
   const [collapsedPhases, setCollapsedPhases] = useState(new Set());
   const [collapsedTasks, setCollapsedTasks] = useState(new Set());
   const [draggedTask, setDraggedTask] = useState(null);
@@ -49,15 +49,65 @@ export const CustomGanttPro = () => {
   const [contextMenu, setContextMenu] = useState({ visible: false, task: null, x: 0, y: 0 });
   const [filterStatus, setFilterStatus] = useState('ALL');
   const [hasDragged, setHasDragged] = useState(false);
-  const [taskColumnCollapsed, setTaskColumnCollapsed] = useState(false);
+  const [taskColumnCollapsed, setTaskColumnCollapsed] = useState(() => localStorage.getItem('gantt_taskColumnCollapsed') === 'true');
   const [filterPriority, setFilterPriority] = useState('ALL');
   const [searchQuery, setSearchQuery] = useState('');
-  const [zoomLevel, setZoomLevel] = useState(1); // 0.5 to 2
+  const [zoomLevel, setZoomLevel] = useState(() => parseFloat(localStorage.getItem('gantt_zoomLevel')) || 1);
   const [highlightedTask, setHighlightedTask] = useState(null); // For visual highlight before modal
   
   const timelineRef = useRef(null);
   const leftPanelRef = useRef(null);
   const modalTimerRef = useRef(null);
+
+  // ==================== STATE PERSISTENCE ====================
+  // Save state to localStorage whenever it changes
+  useEffect(() => {
+    localStorage.setItem('gantt_viewMode', viewMode);
+  }, [viewMode]);
+
+  useEffect(() => {
+    localStorage.setItem('gantt_zoomLevel', zoomLevel.toString());
+  }, [zoomLevel]);
+
+  useEffect(() => {
+    localStorage.setItem('gantt_showCriticalPath', showCriticalPath.toString());
+  }, [showCriticalPath]);
+
+  useEffect(() => {
+    localStorage.setItem('gantt_showDependencies', showDependencies.toString());
+  }, [showDependencies]);
+
+  useEffect(() => {
+    localStorage.setItem('gantt_showBaseline', showBaseline.toString());
+  }, [showBaseline]);
+
+  useEffect(() => {
+    localStorage.setItem('gantt_taskColumnCollapsed', taskColumnCollapsed.toString());
+  }, [taskColumnCollapsed]);
+
+  // Restore scroll position after data loads
+  useEffect(() => {
+    if (!loading && timelineRef.current) {
+      const savedScrollLeft = localStorage.getItem('gantt_scrollLeft');
+      const savedScrollTop = localStorage.getItem('gantt_scrollTop');
+      if (savedScrollLeft) timelineRef.current.scrollLeft = parseInt(savedScrollLeft);
+      if (savedScrollTop) timelineRef.current.scrollTop = parseInt(savedScrollTop);
+    }
+  }, [loading]);
+
+  // Save scroll position on scroll
+  useEffect(() => {
+    const timeline = timelineRef.current;
+    if (!timeline) return;
+
+    const handleScroll = () => {
+      localStorage.setItem('gantt_scrollLeft', timeline.scrollLeft.toString());
+      localStorage.setItem('gantt_scrollTop', timeline.scrollTop.toString());
+    };
+
+    timeline.addEventListener('scroll', handleScroll);
+    return () => timeline.removeEventListener('scroll', handleScroll);
+  }, []);
 
   // ==================== DATA FETCHING ====================
   useEffect(() => {
@@ -257,11 +307,22 @@ export const CustomGanttPro = () => {
       case 'hour': baseWidth = 200; break; // 200px per day, show hours
       case 'day': baseWidth = 60; break;   // 60px per day
       case 'week': baseWidth = 20; break;  // 20px per day
-      case 'month': baseWidth = 10; break; // 10px per day (was 4, too small!)
+      case 'month': baseWidth = 15; break; // 15px per day (increased from 10 for better visibility)
       default: baseWidth = 60;
     }
     return baseWidth * zoomLevel;
   }, [viewMode, zoomLevel]);
+
+  // Calculate row height based on view mode (taller rows in month view to prevent overlap)
+  const rowHeight = useMemo(() => {
+    switch (viewMode) {
+      case 'hour': return 48; // Tall for detailed view
+      case 'day': return 40;  // Standard
+      case 'week': return 36; // Compact
+      case 'month': return 24; // Very compact but still visible
+      default: return 40;
+    }
+  }, [viewMode]);
 
   // Sort and flatten tasks with hierarchy
   const sortedTasks = useMemo(() => {
@@ -1517,7 +1578,8 @@ export const CustomGanttPro = () => {
                     <div 
                       key={task.id}
                       data-task-id={task.id}
-                      className={`h-10 flex items-center justify-between text-sm border-b border-border-default cursor-pointer transition-colors ${
+                      style={{ height: `${rowHeight}px` }}
+                      className={`flex items-center justify-between text-sm border-b border-border-default cursor-pointer transition-colors ${
                         highlightedTask?.id === task.id || selectedTask?.id === task.id ? 'bg-blue-100 dark:bg-blue-900/30 border-l-4 border-l-blue-500' :
                         hoveredTask === task.id ? 'bg-blue-50 dark:bg-blue-900/10' :
                         searchQuery && task.name?.toLowerCase().includes(searchQuery.toLowerCase()) ? 'bg-yellow-50 dark:bg-yellow-900/20' : 
@@ -1669,12 +1731,16 @@ export const CustomGanttPro = () => {
                     const { left, width } = getTaskPosition(task);
                     const progress = task.progress_percentage || 0;
                     
+                    // Calculate bar height based on row height
+                    const barHeight = Math.max(rowHeight - 10, 20); // Leave 10px padding, min 20px
+                    const barTop = (rowHeight - barHeight) / 2; // Center vertically
+                    
                     return (
-                      <div key={`bar-${task.id}`} className="h-10 relative border-b border-border-default">
+                      <div key={`bar-${task.id}`} className="relative border-b border-border-default" style={{ height: `${rowHeight}px` }}>
                         {task.is_milestone ? (
                           // Milestone Diamond
                           <div
-                            style={{ left: `${left}px`, top: '12px' }}
+                            style={{ left: `${left}px`, top: `${barTop}px` }}
                             className={`absolute w-6 h-6 bg-yellow-400 border-2 border-yellow-600 transform rotate-45 cursor-pointer transition-all z-10 ${
                               highlightedTask?.id === task.id || selectedTask?.id === task.id ? 'scale-125 ring-4 ring-blue-400' :
                               hoveredTask === task.id ? 'scale-110 ring-2 ring-blue-300' :
@@ -1689,7 +1755,7 @@ export const CustomGanttPro = () => {
                         ) : (
                           // Regular Task Bar
                           <div
-                            style={{ left: `${left}px`, width: `${width}px`, top: '5px', height: '30px' }}
+                            style={{ left: `${left}px`, width: `${width}px`, top: `${barTop}px`, height: `${barHeight}px` }}
                             className={`absolute rounded-md cursor-move transition-all duration-200 ${
                               calculateCriticalPath.has(task.id) ? 'bg-red-500 ring-2 ring-red-600' :
                               task.status === 'DONE' ? 'bg-green-500' :
