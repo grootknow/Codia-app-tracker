@@ -947,59 +947,56 @@ export const CustomGanttPro = () => {
     if (!showDependencies) return null;
     
     const arrows = [];
-    let currentY = 40; // Start after first phase header
+    
+    // Build a map of task ID to Y position
+    const taskYPositions = new Map();
+    let currentY = 40; // Start after first phase header (10px for phase header)
     
     phases.forEach(phase => {
       const phaseTasks = sortedTasks.filter(t => t.phase_id === phase.id);
       
       if (!collapsedPhases.has(phase.id)) {
         phaseTasks.forEach((task, idx) => {
-          const deps = getTaskDependencies(task);
-          deps.forEach(depTask => {
-            // Find depTask Y position
-            let depY = 40;
-            let found = false;
-            
-            phases.forEach(p => {
-              if (found) return;
-              const pTasks = sortedTasks.filter(t => t.phase_id === p.id);
-              if (!collapsedPhases.has(p.id)) {
-                const depIdx = pTasks.findIndex(t => t.id === depTask.id);
-                if (depIdx !== -1) {
-                  depY += depIdx * 40 + 20;
-                  found = true;
-                } else {
-                  depY += pTasks.length * 40;
-                }
-              }
-              depY += 40; // Phase header
-            });
-            
-            if (!found) return;
-            
-            const fromPos = getTaskPosition(depTask);
-            const toPos = getTaskPosition(task);
-            const taskY = currentY + idx * 40 + 20;
-            
-            arrows.push(
-              <g key={`arrow-${depTask.id}-${task.id}`}>
-                <line 
-                  x1={fromPos.left + fromPos.width} 
-                  y1={depY} 
-                  x2={toPos.left} 
-                  y2={taskY}
-                  stroke="#3b82f6" 
-                  strokeWidth="1"
-                  markerEnd="url(#arrowhead)"
-                  opacity="0.7"
-                />
-              </g>
-            );
-          });
+          // Center of the row
+          const taskCenterY = currentY + idx * rowHeight + rowHeight / 2;
+          taskYPositions.set(task.id, taskCenterY);
         });
-        currentY += phaseTasks.length * 40;
+        currentY += phaseTasks.length * rowHeight;
       }
-      currentY += 40; // Phase header
+      currentY += 40; // Phase header height
+    });
+    
+    // Now render arrows using the position map
+    sortedTasks.forEach(task => {
+      const deps = getTaskDependencies(task);
+      if (deps.length === 0) return;
+      
+      const toY = taskYPositions.get(task.id);
+      if (!toY) return; // Task is collapsed
+      
+      const toPos = getTaskPosition(task);
+      
+      deps.forEach(depTask => {
+        const fromY = taskYPositions.get(depTask.id);
+        if (!fromY) return; // Dependency task is collapsed
+        
+        const fromPos = getTaskPosition(depTask);
+        
+        arrows.push(
+          <g key={`arrow-${depTask.id}-${task.id}`}>
+            <line 
+              x1={fromPos.left + fromPos.width} 
+              y1={fromY} 
+              x2={toPos.left} 
+              y2={toY}
+              stroke="#3b82f6" 
+              strokeWidth="1"
+              markerEnd="url(#arrowhead)"
+              opacity="0.7"
+            />
+          </g>
+        );
+      });
     });
     
     return (
