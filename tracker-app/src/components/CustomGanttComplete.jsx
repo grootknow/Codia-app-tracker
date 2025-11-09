@@ -417,6 +417,22 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
     setSelectedTask(task);
   };
 
+  const scrollToToday = () => {
+    const timelineEl = timelineRef.current;
+    if (timelineEl) {
+      const today = new Date();
+      const daysFromStart = differenceInDays(today, projectStart);
+      const todayPosition = daysFromStart * dayWidth;
+      const timelineWidth = timelineEl.offsetWidth;
+      const targetScrollLeft = Math.max(0, todayPosition - (timelineWidth / 2));
+      
+      timelineEl.scrollTo({
+        left: targetScrollLeft,
+        behavior: 'smooth'
+      });
+    }
+  };
+
   if (loading) {
     return <div className="flex items-center justify-center h-full"><p className="text-text-tertiary">Loading Gantt...</p></div>;
   }
@@ -472,6 +488,15 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
           <span className="text-sm font-semibold">{(zoomLevel * 100).toFixed(0)}%</span>
           <button onClick={() => setZoomLevel(z => Math.min(2, z + 0.1))} className="p-2 rounded-md hover:bg-background-tertiary">+</button>
           <div className="border-l border-border-default h-6 mx-2"></div>
+          <button 
+            onClick={scrollToToday}
+            className="px-3 py-1 rounded-md bg-blue-500 hover:bg-blue-600 text-white text-sm font-medium flex items-center gap-1"
+            title="Jump to Today"
+          >
+            <Calendar className="w-4 h-4" />
+            Today
+          </button>
+          <div className="border-l border-border-default h-6 mx-2"></div>
           <label className="flex items-center gap-2 cursor-pointer text-sm">
             <input type="checkbox" checked={showCriticalPath} onChange={() => setShowCriticalPath(!showCriticalPath)} />
             Critical Path
@@ -499,7 +524,7 @@ export const CustomGanttComplete = ({ selectedTask: highlightedTaskFromPage }) =
                            ? 'bg-brand-secondary text-text-onPrimary' 
                            : 'hover:bg-background-tertiary'
                        } ${
-                         hoveredTask && !highlightedIds.has(task.id) ? 'opacity-30' : 'opacity-100'
+                         hoveredTask && !highlightedIds.has(task.id) && localHighlightedTask !== task.id ? 'opacity-30' : 'opacity-100'
                        }`}
                        onClick={() => {
                          handleTaskClick(task);

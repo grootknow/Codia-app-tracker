@@ -93,7 +93,7 @@ export const TaskDetailModal = ({ task, onClose, onUpdate }) => {
         onClick={(e) => e.stopPropagation()}
       >
         {/* Header */}
-        <div className={`p-6 ${task.is_milestone ? 'bg-gradient-to-r from-milestone-light to-milestone-bg' : 'bg-gradient-to-r from-info-50 to-ai-light'} border-b-4 ${task.is_milestone ? 'border-milestone-border' : 'border-info-500'}`}>
+        <div className={`p-6 bg-white/95 border-b-2 ${task.is_milestone ? 'border-yellow-400' : 'border-blue-400'}`}>
           <div className="flex items-start justify-between gap-4">
             <div className="flex-grow">
               {/* Title Row */}
