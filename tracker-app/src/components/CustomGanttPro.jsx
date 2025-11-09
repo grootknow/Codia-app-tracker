@@ -287,13 +287,13 @@ export const CustomGanttPro = () => {
   
   // ==================== CALCULATIONS ====================
   
-  // Calculate project date range
+  // Calculate project date range - use actual dates, not month boundaries
   const projectDates = useMemo(() => {
     if (!tasks.length) {
-      const today = new Date();
+      const today = startOfDay(new Date());
       return {
-        start: startOfMonth(today),
-        end: endOfMonth(addDays(today, 90))
+        start: addDays(today, -30), // 30 days before today
+        end: addDays(today, 90)     // 90 days after today
       };
     }
 
@@ -312,9 +312,10 @@ export const CustomGanttPro = () => {
     const minDate = new Date(Math.min(...allStarts));
     const maxDate = new Date(Math.max(...allEnds));
 
+    // Add padding: 7 days before earliest, 30 days after latest
     return {
-      start: startOfMonth(minDate),
-      end: endOfMonth(addDays(maxDate, 30))
+      start: startOfDay(addDays(minDate, -7)),
+      end: startOfDay(addDays(maxDate, 30))
     };
   }, [tasks]);
 
