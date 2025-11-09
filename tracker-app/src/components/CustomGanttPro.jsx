@@ -1332,16 +1332,19 @@ export const CustomGanttPro = () => {
             {days.map((day, dayIdx) => (
               <div key={dayIdx} className="flex" style={{ width: `${dayWidth}px` }}>
                 {showMinutes ? (
-                  // High zoom: Show ALL 24 hours
-                  Array.from({ length: 24 }, (_, hourIdx) => (
-                    <div
-                      key={hourIdx}
-                      style={{ width: `${hourWidth}px`, minWidth: `${hourWidth}px` }}
-                      className="border-r border-border-default text-center text-[10px] flex items-center justify-center"
-                    >
-                      {`${hourIdx}h`}
-                    </div>
-                  ))
+                  // High zoom with minutes: Show every 2 hours (0h, 2h, 4h, 6h, 8h, 10h, 12h, 14h, 16h, 18h, 20h, 22h)
+                  Array.from({ length: 12 }, (_, idx) => {
+                    const hourIdx = idx * 2;
+                    return (
+                      <div
+                        key={hourIdx}
+                        style={{ width: `${hourWidth * 2}px`, minWidth: `${hourWidth * 2}px` }}
+                        className="border-r border-border-default text-center text-[10px] flex items-center justify-center"
+                      >
+                        {`${hourIdx}h`}
+                      </div>
+                    );
+                  })
                 ) : (
                   // Low zoom: Show only every 4 hours (0h, 4h, 8h, 12h, 16h, 20h)
                   Array.from({ length: 6 }, (_, idx) => {
