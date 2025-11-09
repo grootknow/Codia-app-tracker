@@ -1169,6 +1169,9 @@ export const CustomGanttPro = () => {
     if (!showDependencies) return null;
     if (!tasks.length || !phases.length) return null; // Wait for data
     
+    // Hide arrows at very low zoom (Month/Week view) - too cluttered
+    if (zoomLevel < 0.7) return null;
+    
     const arrows = [];
     
     // Calculate total gantt width with zoom
@@ -1224,6 +1227,9 @@ export const CustomGanttPro = () => {
         const baseWidth = isCritical ? 4 : 3;
         const scaledWidth = Math.max(1, Math.min(baseWidth * zoomLevel, baseWidth * 2));
         
+        // Fade arrows at low zoom to reduce clutter
+        const arrowOpacity = zoomLevel < 1.0 ? 0.3 : 0.7;
+        
         arrows.push(
           <g key={`arrow-${depTask.id}-${task.id}`}>
             <line 
@@ -1234,7 +1240,7 @@ export const CustomGanttPro = () => {
               stroke={isCritical ? "#dc2626" : "#3b82f6"} 
               strokeWidth={scaledWidth}
               markerEnd={isCritical ? "url(#arrowhead-critical)" : "url(#arrowhead)"}
-              opacity="0.9"
+              opacity={arrowOpacity}
               className="transition-all hover:opacity-100"
             />
           </g>
