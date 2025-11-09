@@ -83,6 +83,38 @@ export const CustomGanttPro = () => {
     }
   }, [viewMode]);
 
+  // Auto-scroll to Today when view mode changes (after dayWidth is calculated)
+  useEffect(() => {
+    if (!loading && timelineRef.current && tasks.length > 0 && projectDates) {
+      // Small delay to ensure dayWidth is calculated
+      setTimeout(() => {
+        if (!timelineRef.current) return;
+        
+        // Calculate today's position
+        const today = startOfDay(new Date());
+        const daysFromStart = differenceInDays(today, projectDates.start);
+        
+        // Calculate dayWidth inline to avoid dependency issues
+        let baseWidth;
+        switch (viewMode) {
+          case 'hour': baseWidth = 200; break;
+          case 'day': baseWidth = 60; break;
+          case 'week': baseWidth = 20; break;
+          case 'month': baseWidth = 15; break;
+          default: baseWidth = 60;
+        }
+        const currentDayWidth = baseWidth * zoomLevel;
+        const todayX = daysFromStart * currentDayWidth;
+        
+        // Scroll to center today in viewport
+        const viewportWidth = timelineRef.current.clientWidth;
+        const scrollLeft = Math.max(0, todayX - viewportWidth / 2);
+        
+        timelineRef.current.scrollLeft = scrollLeft;
+      }, 100);
+    }
+  }, [viewMode, zoomLevel, loading, tasks.length]); // Re-center when view mode or zoom changes
+
   useEffect(() => {
     localStorage.setItem('gantt_zoomLevel', zoomLevel.toString());
   }, [zoomLevel]);
@@ -1479,13 +1511,26 @@ export const CustomGanttPro = () => {
           </label>
           
           {/* Baseline */}
-          <label className="flex items-center gap-2 cursor-pointer text-sm">
+          <label className="flex items-center gap-2 cursor-pointer text-sm" title="Compare planned vs actual dates">
             <input 
               type="checkbox" 
               checked={showBaseline} 
-              onChange={() => setShowBaseline(!showBaseline)} 
+              onChange={(e) => {
+                const enabled = e.target.checked;
+                setShowBaseline(enabled);
+                if (enabled) {
+                  // Check if any task has baseline data
+                  const hasBaseline = tasks.some(t => t.baseline_start_date && t.baseline_end_date);
+                  if (!hasBaseline) {
+                    toast.error('⚠️ No baseline data found! Run SQL migration to add baseline columns.', { duration: 5000 });
+                  }
+                }
+              }} 
             />
             Baseline
+            {showBaseline && !tasks.some(t => t.baseline_start_date && t.baseline_end_date) && (
+              <span className="text-xs text-red-500">⚠️ No data</span>
+            )}
           </label>
           
           {/* Critical Path */}
