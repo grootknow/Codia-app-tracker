@@ -89,6 +89,31 @@ export const CustomGanttPro = () => {
     }
   }, [contextMenu.visible]);
 
+  // Sync scroll between left panel and timeline
+  useEffect(() => {
+    const leftPanel = leftPanelRef.current;
+    const timeline = timelineRef.current;
+    
+    if (!leftPanel || !timeline) return;
+    
+    const syncScroll = (source, target) => {
+      return () => {
+        target.scrollTop = source.scrollTop;
+      };
+    };
+    
+    const leftToTimeline = syncScroll(leftPanel, timeline);
+    const timelineToLeft = syncScroll(timeline, leftPanel);
+    
+    leftPanel.addEventListener('scroll', leftToTimeline);
+    timeline.addEventListener('scroll', timelineToLeft);
+    
+    return () => {
+      leftPanel.removeEventListener('scroll', leftToTimeline);
+      timeline.removeEventListener('scroll', timelineToLeft);
+    };
+  }, []);
+
   const loadData = async () => {
     try {
       setLoading(true);
@@ -1246,8 +1271,11 @@ export const CustomGanttPro = () => {
                     <div 
                       key={task.id}
                       data-task-id={task.id}
-                      className={`h-10 flex items-center justify-between text-sm border-b border-border-default cursor-pointer hover:bg-background-tertiary ${
-                        searchQuery && task.name?.toLowerCase().includes(searchQuery.toLowerCase()) ? 'bg-yellow-50 dark:bg-yellow-900/20' : ''
+                      className={`h-10 flex items-center justify-between text-sm border-b border-border-default cursor-pointer transition-colors ${
+                        selectedTask?.id === task.id ? 'bg-blue-100 dark:bg-blue-900/30 border-l-4 border-l-blue-500' :
+                        hoveredTask === task.id ? 'bg-blue-50 dark:bg-blue-900/10' :
+                        searchQuery && task.name?.toLowerCase().includes(searchQuery.toLowerCase()) ? 'bg-yellow-50 dark:bg-yellow-900/20' : 
+                        'hover:bg-background-tertiary'
                       }`}
                       onClick={() => handleTaskClick(task)}
                       onMouseEnter={(e) => {
@@ -1376,9 +1404,15 @@ export const CustomGanttPro = () => {
                           // Milestone Diamond
                           <div
                             style={{ left: `${left}px`, top: '12px' }}
-                            className="absolute w-6 h-6 bg-yellow-400 border-2 border-yellow-600 transform rotate-45 cursor-pointer hover:scale-110 transition-transform z-10"
+                            className={`absolute w-6 h-6 bg-yellow-400 border-2 border-yellow-600 transform rotate-45 cursor-pointer transition-all z-10 ${
+                              selectedTask?.id === task.id ? 'scale-125 ring-4 ring-blue-400' :
+                              hoveredTask === task.id ? 'scale-110 ring-2 ring-blue-300' :
+                              'hover:scale-110'
+                            }`}
                             onClick={(e) => handleBarClick(task, e)}
                             onContextMenu={(e) => handleBarRightClick(task, e)}
+                            onMouseEnter={() => setHoveredTask(task.id)}
+                            onMouseLeave={() => setHoveredTask(null)}
                             title={task.name}
                           ></div>
                         ) : (
@@ -1390,10 +1424,17 @@ export const CustomGanttPro = () => {
                               task.status === 'DONE' ? 'bg-green-500' :
                               task.status === 'IN_PROGRESS' ? 'bg-blue-500' :
                               'bg-gray-400'
-                            } ${draggedTask?.id === task.id ? 'opacity-50 scale-105' : 'hover:opacity-80'} shadow-md group`}
+                            } ${
+                              selectedTask?.id === task.id ? 'ring-4 ring-blue-400 ring-offset-2 scale-105' :
+                              draggedTask?.id === task.id ? 'opacity-50 scale-105' : 
+                              hoveredTask === task.id ? 'ring-2 ring-blue-300' :
+                              'hover:opacity-80'
+                            } shadow-md group`}
                             onMouseDown={(e) => handleBarMouseDown(e, task)}
                             onClick={(e) => handleBarClick(task, e)}
                             onContextMenu={(e) => handleBarRightClick(task, e)}
+                            onMouseEnter={() => setHoveredTask(task.id)}
+                            onMouseLeave={() => setHoveredTask(null)}
                           >
                             {/* Baseline (if enabled) */}
                             {showBaseline && task.baseline_start_date && task.baseline_end_date && (
