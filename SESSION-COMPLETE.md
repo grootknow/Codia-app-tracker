@@ -290,7 +290,7 @@ https://tracker-47vunkbtd-kakaholigan-6270s-projects.vercel.app
 
 **🎉 ALL CRITICAL ISSUES RESOLVED!** 🚀
 
-**Production URL:** https://tracker-ktub1ghgo-kakaholigan-6270s-projects.vercel.app
+**Production URL:** https://tracker-h4dg2gby9-kakaholigan-6270s-projects.vercel.app
 
 **Test Now:**
 1. Zoom to 300%
@@ -319,5 +319,40 @@ https://tracker-47vunkbtd-kakaholigan-6270s-projects.vercel.app
 **Solution:** 
 - Set `hasDragged = true` on ANY movement > 1px
 - Separate from position update logic (which needs `deltaDays !== 0`)
+
+### 🔴 Resize No Real-Time Visual Update
+**Problem:** Khi resize, chỉ có ring vàng, bar KHÔNG MOVE real-time!
+**Root Cause:** 
+- `getTaskPosition(task)` tính từ task trong array, không phải từ `resizingTask` state
+- Mouse listeners chỉ trên timeline container, không global
+- Component không re-render khi resize
+**Solution:**
+- Use `displayTask = resizingTask?.id === task.id ? resizingTask : task`
+- Attach global `document` listeners on mousedown
+- Remove listeners on mouseup
+- Disable transition during drag/resize for instant feedback
+
+---
+
+## 📚 LESSON LEARNED
+
+### ⚠️ ALWAYS TEST LOCAL FIRST!
+
+**Critical Workflow:**
+1. ✅ Make changes
+2. ✅ Test with `npm run dev` (localhost:3001)
+3. ✅ Use Puppeteer MCP to automate testing
+4. ✅ Verify fixes work locally
+5. ✅ THEN commit + push + deploy
+
+**Why:**
+- Saves tokens (no wasted deployments)
+- Catches bugs early (infinite loops, visual issues)
+- Faster iteration (no wait for Vercel)
+
+**Tools:**
+- `npm run dev` - Local dev server
+- Puppeteer MCP - Automated browser testing
+- Browser Preview - Manual testing
 
 ---
