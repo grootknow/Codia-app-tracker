@@ -1391,10 +1391,15 @@ export const CustomGanttPro = () => {
               {renderDependencyArrows()}
               
               {/* Task Bars */}
-              {phases.map(phase => (
+              {phases.map(phase => {
+                const phaseTasks = sortedTasks.filter(t => t.phase_id === phase.id);
+                return (
                 <React.Fragment key={`phase-bars-${phase.id}`}>
+                  {/* Phase header row */}
                   <div className="h-10 bg-background-tertiary/30 border-b border-t border-border-default"></div>
-                  {!collapsedPhases.has(phase.id) && sortedTasks.filter(t => t.phase_id === phase.id).map(task => {
+                  
+                  {/* Task rows */}
+                  {!collapsedPhases.has(phase.id) && phaseTasks.map((task) => {
                     const { left, width } = getTaskPosition(task);
                     const progress = task.progress_percentage || 0;
                     
@@ -1478,7 +1483,8 @@ export const CustomGanttPro = () => {
                     );
                   })}
                 </React.Fragment>
-              ))}
+                );
+              })}
             </div>
           </div>
         </div>
