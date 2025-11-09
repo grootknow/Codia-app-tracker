@@ -523,7 +523,12 @@ export const CustomGanttPro = () => {
         .eq('id', taskId);
       
       if (error) throw error;
-      // No reload - already updated optimistically
+      
+      // Show success notification
+      toast.success('✅ Task dates updated', {
+        duration: 2000,
+        position: 'bottom-right'
+      });
     } catch (error) {
       console.error('Error updating task dates:', error);
       toast.error('Failed to update task dates');
@@ -583,8 +588,8 @@ export const CustomGanttPro = () => {
       
       const taskDuration = task.estimated_hours ? Math.ceil(task.estimated_hours / 8) : 3;
       
-      // Support both field names
-      const deps = task.dependencies || task.blocking_dependencies;
+      // Support multiple field names
+      const deps = task.blocking_dependencies || task.depends_on || task.blocked_by;
       
       // If no dependencies, duration is just task duration
       if (!deps || deps.length === 0) {
@@ -622,7 +627,7 @@ export const CustomGanttPro = () => {
         criticalTasks.add(task.id);
         
         // Add critical dependencies
-        const deps = task.dependencies || task.blocking_dependencies;
+        const deps = task.blocking_dependencies || task.depends_on || task.blocked_by;
         if (deps) {
           deps.forEach(depId => {
             const depTask = taskMap.get(depId);
@@ -657,8 +662,8 @@ export const CustomGanttPro = () => {
       const getEarliestStart = (task) => {
         if (scheduled.has(task.id)) return scheduled.get(task.id);
         
-        // Support both field names
-        const deps = task.dependencies || task.blocking_dependencies;
+        // Support multiple field names
+        const deps = task.blocking_dependencies || task.depends_on || task.blocked_by;
         
         // If no dependencies, start today
         if (!deps || deps.length === 0) {
@@ -721,10 +726,14 @@ export const CustomGanttPro = () => {
 
   // Get task dependencies
   const getTaskDependencies = (task) => {
-    // Support both 'dependencies' and 'blocking_dependencies' fields
-    const deps = task.dependencies || task.blocking_dependencies;
+    // Support multiple field names: blocking_dependencies (new), depends_on (DB), blocked_by (DB)
+    const deps = task.blocking_dependencies || task.depends_on || task.blocked_by;
     if (!deps || deps.length === 0) return [];
-    return deps
+    
+    // Handle both array and single ID
+    const depArray = Array.isArray(deps) ? deps : [deps];
+    
+    return depArray
       .map(depId => tasks.find(t => t.id === depId))
       .filter(Boolean);
   };
