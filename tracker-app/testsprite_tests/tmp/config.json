@@ -1,0 +1,20 @@
+{
+  "status": "commited",
+  "type": "frontend",
+  "scope": "codebase",
+  "localEndpoint": "http://localhost:3000",
+  "executionArgs": {
+    "projectName": "tracker-app",
+    "projectPath": "c:\\Users\\TRM CEO\\Desktop\\codia-app-tracker-\\Codia-app-tracker\\tracker-app",
+    "testIds": [
+      "TC003",
+      "TC006",
+      "TC010"
+    ],
+    "additionalInstruction": "CRITICAL FOCUS: Test Gantt Chart Pro dependencies features thoroughly:\n1. TC003: Zoom 50%-300% and verify dependency arrows stay connected and aligned at ALL zoom levels\n2. TC006: Drag/drop tasks and verify dependency arrows update correctly, resize tasks and verify arrows adjust\n3. TC010: Open task detail modal and verify it shows BOTH predecessors (depends_on) AND successors (blocks) with full details\n\nFor EVERY task tested, verify:\n- Tooltip shows dependencies when hovering (⬅️ Depends on, ➡️ Blocks)\n- Modal shows full dependency details with task names and statuses\n- Dependencies are CONSISTENT across tooltip and modal\n- No \"chỗ có chỗ không\" - either ALL tasks show dependencies or NONE (must be consistent)\n\nTest specifically these tasks that SHOULD have dependencies:\n- \"2. Basic Setup (All VPS)\" - should have dependencies\n- \"0.2.3 Create DNS Records\" - check if has dependencies\n- \"4.1 Deploy Grafana\" - should have dependencies\n\nReport ANY inconsistencies where some tasks show dependencies and others don't!",
+    "envs": {
+      "API_KEY": "sk-user-gFIrn_hlPXiIeAjA6SFpSQ5Xi9mh29ywbHx5EbWLpugCcn93kpn1CEJryHgbGB_sHYSaI7kHk6FazrgnXWpCns6tPFx4jhh6LmvittY8RApdjLj2sFw2DczDIFp3AtOqEZs"
+    }
+  },
+  "proxy": "http://97afeb81-48e5-4fbf-81e4-fa611941182a:0tNbdPeYRCDlJTmePptNxnioYoAP2QhJ@tun.testsprite.com:8080"
+}

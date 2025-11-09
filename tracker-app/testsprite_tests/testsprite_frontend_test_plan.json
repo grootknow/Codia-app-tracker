@@ -1,0 +1,407 @@
+[
+  {
+    "id": "TC001",
+    "title": "Dashboard Landing Page Loads Successfully with Real-Time Data",
+    "description": "Verify that the dashboard landing page loads correctly and displays a real-time updated overview of project progress including phases and task statuses without manual refresh.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the dashboard landing page"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the overall project progress and phase statuses are displayed correctly"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that data updates in real-time without manual page refresh"
+      }
+    ]
+  },
+  {
+    "id": "TC002",
+    "title": "Task Status Update Reflects Across All Views Immediately",
+    "description": "Check that when a user updates a task status (Pending, In Progress, Done), the change persists to the database and is instantly reflected in Gantt Chart, Kanban Board, Workflow Dashboard, and Activity Logs.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to a specific task in Kanban Board"
+      },
+      {
+        "type": "action",
+        "description": "Update the task status to 'In Progress'"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the updated status is saved in the backend database"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that task status updates are reflected instantly in Kanban Board, Gantt Chart Pro, Workflow Dashboard, and Activity Logs"
+      }
+    ]
+  },
+  {
+    "id": "TC003",
+    "title": "Gantt Chart Pro Zoom Functionality",
+    "description": "Test the zoom feature of the Gantt Chart Pro, verifying zoom levels from 50% to 300%, ensuring proper scaling of tasks and dependency arrows with no UI distortion.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Gantt Chart Pro view"
+      },
+      {
+        "type": "action",
+        "description": "Change zoom level progressively from 50% to 300%"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the chart scales appropriately and all tasks and dependency arrows remain visible and correctly aligned"
+      }
+    ]
+  },
+  {
+    "id": "TC004",
+    "title": "Drag-and-Drop Task Reordering in Kanban Board",
+    "description": "Ensure tasks can be dragged and dropped between columns to update status, and that blocker counts dynamically update accordingly and changes persist to backend.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the Kanban Board view"
+      },
+      {
+        "type": "action",
+        "description": "Drag a task from 'Pending' column to 'In Progress' column"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify task status is updated in the UI and backend"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify blocker counts update dynamically after drag and drop"
+      }
+    ]
+  },
+  {
+    "id": "TC005",
+    "title": "Task Dependency Visualization in Master Map",
+    "description": "Verify that the Master Map displays all tasks as nodes with correct dependency edges, dynamically updates with changes, and visually indicates blockers and predecessors accurately.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Master Map view"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all tasks are displayed as nodes with dependency arrows connecting them"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify blockers and predecessors are correctly highlighted or indicated visually"
+      }
+    ]
+  },
+  {
+    "id": "TC006",
+    "title": "Drag-and-Drop and Resize Functionality in Gantt Chart Pro",
+    "description": "Ensure tasks can be dragged to change dates and resized to adjust durations in the Gantt Chart Pro, and that these updates persist to the backend and update dependent tasks visually.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Gantt Chart Pro"
+      },
+      {
+        "type": "action",
+        "description": "Drag a task to a new start date"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the new task dates are saved in the backend"
+      },
+      {
+        "type": "action",
+        "description": "Resize a task to change its duration"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the updated duration is saved and dependency arrows are updated accordingly"
+      }
+    ]
+  },
+  {
+    "id": "TC007",
+    "title": "Activity Logs Capture All Task Updates in Real-Time",
+    "description": "Validate the Activity Logs feed shows all task changes including status updates, notes additions, blocker assignments, and that entries appear immediately after the action.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Perform task status update or add a blocker on any task"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify an entry representing the change appears instantly in the Activity Logs feed"
+      }
+    ]
+  },
+  {
+    "id": "TC008",
+    "title": "Setup Wizard Successfully Guides New User",
+    "description": "Verify that the setup wizard runs through all onboarding steps, enabling new users to configure project phases and tasks, and saves initial project data correctly.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access the Setup Wizard as a new user"
+      },
+      {
+        "type": "action",
+        "description": "Go through each step completing required fields and configurations"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that the wizard completes successfully and initial data is saved to backend"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the user is redirected to the main dashboard after completion"
+      }
+    ]
+  },
+  {
+    "id": "TC009",
+    "title": "Responsive UI Renders Correctly on Desktop, Tablet, and Mobile",
+    "description": "Test the platform UI on various device screen sizes to confirm the interface adapts correctly, all features remain accessible, and no layout breakage occurs.",
+    "category": "ui",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Access the platform with desktop screen size"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify all UI elements are displayed correctly and functional"
+      },
+      {
+        "type": "action",
+        "description": "Resize or access the platform with tablet screen size"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify layout adapts appropriately without loss of usability"
+      },
+      {
+        "type": "action",
+        "description": "Resize or access the platform with mobile screen size"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the mobile UI is usable, navigation accessible, and content readable"
+      }
+    ]
+  },
+  {
+    "id": "TC010",
+    "title": "Task Detail Modal Shows Full Task Information and Dependencies",
+    "description": "Ensure the Task Detail Modal displays comprehensive information including status, priority, description, notes, and dynamically calculated predecessors and blockers.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open a task detail modal from any task view"
+      },
+      {
+        "type": "assertion",
+        "description": "Check that all task details including status, priority, description, and notes are displayed"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify listed dependencies (predecessors) and blockers (successors) are accurate and reflect current task state"
+      }
+    ]
+  },
+  {
+    "id": "TC011",
+    "title": "GAP Dashboard Identifies Next Executable Tasks Correctly",
+    "description": "Confirm that the GAP Dashboard highlights tasks that have zero blocking dependencies, and updates this list dynamically as blockers are resolved or added.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the GAP Dashboard view"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tasks listed have no blocking dependencies (blocker count = 0)"
+      },
+      {
+        "type": "action",
+        "description": "Add a blocker to an executable task"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify the task is removed from the list dynamically"
+      }
+    ]
+  },
+  {
+    "id": "TC012",
+    "title": "API Integration with Supabase MCP for Data Operations",
+    "description": "Verify that all Supabase backend operations including reading, updating, and subscribing to task and phase data tables work without errors during platform use.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Perform CRUD operations on tasks and phases through the UI"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that operations succeed without errors and data is consistent in Supabase backend"
+      },
+      {
+        "type": "action",
+        "description": "Observe real-time data subscription features for updates from other clients"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify live sync updates are delivered without lag or data loss"
+      }
+    ]
+  },
+  {
+    "id": "TC013",
+    "title": "Founder Guide Accessibility and Content Verification",
+    "description": "Check that the Founder Guide is accessible from the dashboard and displays comprehensive guidance content relevant to founders managing the project.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Navigate to the Founder Guide section"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that guide content is visible, well-formatted, and easy to read"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify navigation links or sections within the guide function correctly"
+      }
+    ]
+  },
+  {
+    "id": "TC014",
+    "title": "Error Handling When Supabase Connection is Lost",
+    "description": "Simulate loss of connectivity to the Supabase backend and verify that the UI shows appropriate error messages, prevents data loss, and attempts reconnection where applicable.",
+    "category": "error handling",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Disconnect network or simulate Supabase service unavailability"
+      },
+      {
+        "type": "action",
+        "description": "Attempt to update a task status or add a note"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that a clear error notification is displayed to the user"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify that data integrity is maintained and that changes are either queued or safely blocked"
+      }
+    ]
+  },
+  {
+    "id": "TC015",
+    "title": "Performance Testing with Large Numbers of Tasks and Dependencies",
+    "description": "Load the platform with a large dataset of tasks and complex dependencies and ensure no significant UI lag or backend errors occur, especially in Master Map, Gantt Chart Pro, and Kanban Board.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Import or seed a dataset with hundreds of tasks and complex dependencies"
+      },
+      {
+        "type": "assertion",
+        "description": "Monitor platform responsiveness and UI rendering times across multiple views"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify no failures or errors occur during interaction and real-time sync"
+      }
+    ]
+  },
+  {
+    "id": "TC016",
+    "title": "Blocker Count Accuracy in Kanban and Workflow Dashboard",
+    "description": "Verify that the blocker count displayed on tasks in the Kanban Board and Workflow Dashboard accurately reflects the number of active blocking dependencies.",
+    "category": "functional",
+    "priority": "High",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open Kanban Board and Workflow Dashboard views"
+      },
+      {
+        "type": "assertion",
+        "description": "Check blocker counts for several tasks and cross-verify with dependency data"
+      },
+      {
+        "type": "action",
+        "description": "Add and remove blockers on tasks"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify blocker counts update immediately to reflect changes"
+      }
+    ]
+  },
+  {
+    "id": "TC017",
+    "title": "Timeline View Displays Tasks and Milestones Chronologically",
+    "description": "Ensure that tasks and milestones are plotted along a chronological timeline with correct dates, that zoom and navigation controls function properly.",
+    "category": "functional",
+    "priority": "Medium",
+    "steps": [
+      {
+        "type": "action",
+        "description": "Open the Timeline View"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify tasks and milestones are presented with correct chronological ordering"
+      },
+      {
+        "type": "action",
+        "description": "Use timeline navigation controls (zoom, pan)"
+      },
+      {
+        "type": "assertion",
+        "description": "Verify controls work smoothly without distortion or data loss"
+      }
+    ]
+  }
+]

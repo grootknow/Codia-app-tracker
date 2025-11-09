@@ -41,9 +41,11 @@ export const AIAnalysisPanel = ({ tasks, onRecommendationApply }) => {
       if (!task) return { path: [], duration: 0 };
       
       const duration = task.estimated_hours || 1;
-      const downstreamTasks = tasks.filter(t => 
-        t.blocking_dependencies?.includes(taskId)
-      );
+      // Find tasks that depend on this one (successors)
+      const downstreamTasks = tasks.filter(t => {
+        const deps = t.depends_on || [];
+        return deps.includes(taskId);
+      });
       
       if (downstreamTasks.length === 0) {
         const result = { path: [taskId], duration };
@@ -67,10 +69,10 @@ export const AIAnalysisPanel = ({ tasks, onRecommendationApply }) => {
       return result;
     };
 
-    // Find critical path from root tasks
+    // Find critical path from root tasks (tasks with no dependencies)
     let criticalPath = { path: [], duration: -1 };
     const rootTasks = tasks.filter(t => 
-      !t.blocking_dependencies || t.blocking_dependencies.length === 0
+      !t.depends_on || t.depends_on.length === 0
     );
     
     rootTasks.forEach(task => {
@@ -193,11 +195,11 @@ export const AIAnalysisPanel = ({ tasks, onRecommendationApply }) => {
     // Recommendation 2: Unblock dependencies
     const blockedRisk = risks.find(r => r.type === 'BLOCKED_TASKS');
     if (blockedRisk) {
-      // Find tasks that are blocking others
+      // Find tasks that are blocking others (tasks that have successors waiting)
       const blockingTasks = new Set();
       tasks.forEach(t => {
-        if (t.execution_status === 'BLOCKED' && t.blocking_dependencies) {
-          t.blocking_dependencies.forEach(depId => blockingTasks.add(depId));
+        if (t.execution_status === 'BLOCKED' && t.depends_on) {
+          t.depends_on.forEach(depId => blockingTasks.add(depId));
         }
       });
       

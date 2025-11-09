@@ -2,7 +2,7 @@ import React, { useState } from 'react';
 import { List, Columns, Calendar, BarChart3 } from 'lucide-react';
 import { WorkflowDashboard } from './WorkflowDashboard';
 import { KanbanView } from './KanbanView';
-import { CustomGanttComplete } from './CustomGanttComplete';
+import { CustomGanttPro } from './CustomGanttPro';
 import { TimelineView } from './TimelineView';
 
 export const TasksView = () => {
@@ -11,7 +11,7 @@ export const TasksView = () => {
   const views = [
     { id: 'list', name: 'List', icon: List, component: WorkflowDashboard },
     { id: 'kanban', name: 'Board', icon: Columns, component: KanbanView },
-    { id: 'gantt', name: 'Gantt', icon: BarChart3, component: CustomGanttComplete },
+    { id: 'gantt', name: 'Gantt', icon: BarChart3, component: CustomGanttPro },
     { id: 'timeline', name: 'Timeline', icon: Calendar, component: TimelineView }
   ];
 

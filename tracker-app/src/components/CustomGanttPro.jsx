@@ -878,8 +878,8 @@ export const CustomGanttPro = () => {
       if (taskDuration === maxDuration || criticalTasks.size > 0) {
         criticalTasks.add(task.id);
         
-        // Add critical dependencies - prioritize depends_on (actual DB field)
-        const deps = task.depends_on || task.blocked_by || task.blocking_dependencies;
+        // Use ONLY depends_on (actual DB field)
+        const deps = task.depends_on;
         if (deps) {
           deps.forEach(depId => {
             const depTask = taskMap.get(depId);
@@ -914,8 +914,8 @@ export const CustomGanttPro = () => {
       const getEarliestStart = (task) => {
         if (scheduled.has(task.id)) return scheduled.get(task.id);
         
-        // Support multiple field names - prioritize depends_on (actual DB field)
-        const deps = task.depends_on || task.blocked_by || task.blocking_dependencies;
+        // Use ONLY depends_on (actual DB field)
+        const deps = task.depends_on;
         
         // If no dependencies, start today
         if (!deps || deps.length === 0) {

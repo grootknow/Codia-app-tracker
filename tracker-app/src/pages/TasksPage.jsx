@@ -2,7 +2,6 @@ import React, { useState } from 'react';
 import { List, Columns, Calendar, BarChart3, Zap } from 'lucide-react';
 import { WorkflowDashboard } from '../components/WorkflowDashboard';
 import { KanbanView } from '../components/KanbanView';
-import { CustomGanttComplete } from '../components/CustomGanttComplete';
 import { CustomGanttPro } from '../components/CustomGanttPro';
 import { TimelineView } from '../components/TimelineView';
 import { SprintPlanning } from '../components/SprintPlanning';

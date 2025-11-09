@@ -1,0 +1,84 @@
+{
+  "tech_stack": [
+    "React 18",
+    "JavaScript",
+    "Vite",
+    "Supabase (PostgreSQL)",
+    "TailwindCSS",
+    "date-fns",
+    "lucide-react",
+    "react-hot-toast"
+  ],
+  "features": [
+    {
+      "name": "Gantt Chart Pro",
+      "description": "Professional Gantt chart with zoom (50%-300%), dependency arrows, drag/drop tasks, resize tasks, tooltip with dependencies, modal with full task details including predecessors and successors",
+      "files": [
+        "src/components/CustomGanttPro.jsx"
+      ]
+    },
+    {
+      "name": "Task Detail Modal",
+      "description": "Modal showing full task details including dependencies (predecessors), blockers (successors), status, priority, description, notes. Calculates dependencies dynamically from depends_on field",
+      "files": [
+        "src/components/TaskDetailModal.jsx"
+      ]
+    },
+    {
+      "name": "Kanban Board",
+      "description": "Drag and drop Kanban board with task status updates, shows blocker count calculated from depends_on field",
+      "files": [
+        "src/components/KanbanView.jsx"
+      ]
+    },
+    {
+      "name": "Workflow Dashboard",
+      "description": "Dashboard showing workflow with task dependencies, calculates blocker count from depends_on field",
+      "files": [
+        "src/components/WorkflowDashboard.jsx"
+      ]
+    },
+    {
+      "name": "GAP Dashboard",
+      "description": "Dashboard showing gap analysis with next tasks ready to execute (no blocking dependencies)",
+      "files": [
+        "src/components/GapDashboard.jsx"
+      ]
+    },
+    {
+      "name": "Master Map",
+      "description": "Network visualization of all tasks and dependencies",
+      "files": [
+        "src/components/MasterMap.jsx"
+      ]
+    },
+    {
+      "name": "Timeline View",
+      "description": "Chronological timeline view of tasks and milestones",
+      "files": [
+        "src/components/TimelineView.jsx"
+      ]
+    },
+    {
+      "name": "Activity Logs",
+      "description": "Real-time activity feed showing task updates",
+      "files": [
+        "src/components/ActivityLogs.jsx"
+      ]
+    },
+    {
+      "name": "Setup Wizard",
+      "description": "Onboarding wizard for initial project setup",
+      "files": [
+        "src/components/SetupWizard.jsx"
+      ]
+    },
+    {
+      "name": "Founder Guide",
+      "description": "Guide sections for founders",
+      "files": [
+        "src/components/FounderGuide.jsx"
+      ]
+    }
+  ]
+}
