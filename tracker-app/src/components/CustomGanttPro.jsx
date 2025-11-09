@@ -1340,21 +1340,21 @@ export const CustomGanttPro = () => {
             )}
             {/* Dependencies Info */}
             {(() => {
-              const predecessors = getTaskDependencies(tooltip.task);
-              const successors = tasks.filter(t => getTaskDependencies(t).includes(tooltip.task.id));
+              const predecessors = getTaskDependencies(tooltip.task); // Returns task objects
+              const successors = tasks.filter(t => {
+                const deps = getTaskDependencies(t); // Returns task objects
+                return deps.some(dep => dep.id === tooltip.task.id);
+              });
               return (
                 <>
                   {predecessors.length > 0 && (
                     <div className="pt-1 border-t border-gray-700">
                       <div className="text-yellow-400 font-semibold">⬅️ Depends on:</div>
-                      {predecessors.map(depId => {
-                        const depTask = tasks.find(t => t.id === depId);
-                        return depTask ? (
-                          <div key={depId} className="ml-2 text-xs">
-                            • {depTask.name} ({depTask.status})
-                          </div>
-                        ) : null;
-                      })}
+                      {predecessors.map(depTask => (
+                        <div key={depTask.id} className="ml-2 text-xs">
+                          • {depTask.name} ({depTask.status})
+                        </div>
+                      ))}
                     </div>
                   )}
                   {successors.length > 0 && (
@@ -1899,8 +1899,8 @@ export const CustomGanttPro = () => {
                               <span className="truncate text-sm">{task.name}</span>
                               {/* Show if this task blocks others */}
                               {tasks.filter(t => {
-                                const deps = getTaskDependencies(t);
-                                return deps.includes(task.id);
+                                const deps = getTaskDependencies(t); // Returns task objects
+                                return deps.some(dep => dep.id === task.id);
                               }).length > 0 && (
                                 <span className="ml-1 text-xs opacity-90" title="Blocks other tasks">
                                   ➡️
