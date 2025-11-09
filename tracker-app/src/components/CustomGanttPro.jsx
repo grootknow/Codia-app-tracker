@@ -715,7 +715,7 @@ export const CustomGanttPro = () => {
 
       // AUTO-CASCADE: Find tasks that depend on this one (successors)
       const successors = tasks.filter(t => {
-        const taskDeps = t.blocking_dependencies || t.depends_on || t.blocked_by;
+        const taskDeps = t.depends_on; // ONLY use depends_on (actual DB field)
         if (!taskDeps) return false;
         const depArray = Array.isArray(taskDeps) ? taskDeps : [taskDeps];
         return depArray.includes(taskId);
@@ -777,7 +777,7 @@ export const CustomGanttPro = () => {
     try {
       // Check if other tasks depend on this one
       const dependents = tasks.filter(t => {
-        const taskDeps = t.blocking_dependencies || t.depends_on || t.blocked_by;
+        const taskDeps = t.depends_on; // ONLY use depends_on (actual DB field)
         if (!taskDeps) return false;
         const depArray = Array.isArray(taskDeps) ? taskDeps : [taskDeps];
         return depArray.includes(taskId);
@@ -840,8 +840,8 @@ export const CustomGanttPro = () => {
       
       const taskDuration = task.estimated_hours ? Math.ceil(task.estimated_hours / 8) : 3;
       
-      // Support multiple field names - prioritize depends_on (actual DB field)
-      const deps = task.depends_on || task.blocked_by || task.blocking_dependencies;
+      // Use ONLY depends_on (actual DB field)
+      const deps = task.depends_on;
       
       // If no dependencies, duration is just task duration
       if (!deps || deps.length === 0) {

@@ -116,12 +116,19 @@ export const WorkflowDashboard = () => {
             <span className="font-semibold">{task.estimated_hours}h</span>
           </span>
         )}
-        {task.blocking_dependencies && task.blocking_dependencies.length > 0 && (
-          <span className="flex items-center gap-1 text-warning-600">
-            <AlertCircle className="w-3 h-3" />
-            <span className="font-semibold">Blocks {task.blocking_dependencies.length} tasks</span>
-          </span>
-        )}
+        {(() => {
+          // Calculate how many tasks depend on this one (successors)
+          const blockedTasks = tasks.filter(t => {
+            const deps = t.depends_on || [];
+            return deps.includes(task.id);
+          });
+          return blockedTasks.length > 0 && (
+            <span className="flex items-center gap-1 text-warning-600">
+              <AlertCircle className="w-3 h-3" />
+              <span className="font-semibold">Blocks {blockedTasks.length} tasks</span>
+            </span>
+          );
+        })()}
       </div>
       
       {task.status === 'IN_PROGRESS' && task.current_step && (

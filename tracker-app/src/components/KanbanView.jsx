@@ -300,11 +300,18 @@ export const KanbanView = () => {
                           ⏱️ {task.estimated_hours}h
                         </span>
                       )}
-                      {task.blocking_dependencies && task.blocking_dependencies.length > 0 && (
-                        <span className="px-2 py-0.5 rounded-md bg-warning-background text-warning-text flex items-center gap-1">
-                          <Link2 className="w-3 h-3" /> {task.blocking_dependencies.length}
-                        </span>
-                      )}
+                      {(() => {
+                        // Calculate how many tasks depend on this one (successors)
+                        const blockedCount = tasks.filter(t => {
+                          const deps = t.depends_on || [];
+                          return deps.includes(task.id);
+                        }).length;
+                        return blockedCount > 0 && (
+                          <span className="px-2 py-0.5 rounded-md bg-warning-background text-warning-text flex items-center gap-1">
+                            <Link2 className="w-3 h-3" /> {blockedCount}
+                          </span>
+                        );
+                      })()}
                     </div>
 
                     {/* Progress Bar */}
