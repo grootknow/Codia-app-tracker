@@ -1033,15 +1033,17 @@ export const CustomGanttPro = () => {
       if (deps.length === 0) return;
       
       const toY = taskYPositions.get(task.id);
-      if (!toY) return; // Task is collapsed
+      if (!toY) return; // Task is collapsed or filtered out
       
       const toPos = getTaskPosition(task);
+      if (!toPos) return; // Position calculation failed
       
       deps.forEach(depTask => {
         const fromY = taskYPositions.get(depTask.id);
-        if (!fromY) return; // Dependency task is collapsed
+        if (!fromY) return; // Dependency task is collapsed or filtered out
         
         const fromPos = getTaskPosition(depTask);
+        if (!fromPos) return; // Position calculation failed
         
         arrows.push(
           <g key={`arrow-${depTask.id}-${task.id}`}>
@@ -1059,6 +1061,8 @@ export const CustomGanttPro = () => {
         );
       });
     });
+    
+    console.log(`🔍 Arrows Debug: ${arrows.length} arrows rendered, ${taskYPositions.size} tasks positioned`);
     
     return (
       <svg 
