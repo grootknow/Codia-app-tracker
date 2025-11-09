@@ -397,6 +397,7 @@ export const SprintPlanning = () => {
       {selectedTask && (
         <TaskDetailModal
           task={selectedTask}
+          allTasks={tasks}
           onClose={() => setSelectedTask(null)}
           onUpdate={loadData}
         />

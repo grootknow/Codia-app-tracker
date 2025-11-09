@@ -599,6 +599,7 @@ export const GapDashboard = () => {
       {selectedTask && (
         <TaskDetailModal
           task={selectedTask}
+          allTasks={allTasks}
           onClose={() => setSelectedTask(null)}
           onUpdate={loadStats}
         />

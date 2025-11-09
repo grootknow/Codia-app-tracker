@@ -329,6 +329,7 @@ export const WorkflowDashboard = () => {
       {showModal && selectedTask && (
         <TaskDetailModal
           task={selectedTask}
+          allTasks={[...humanTasks, ...aiTasks]}
           onClose={() => {
             setShowModal(false);
             setSelectedTask(null);

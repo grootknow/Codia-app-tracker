@@ -360,6 +360,7 @@ export const KanbanView = () => {
       {selectedTask && (
         <TaskDetailModal 
           task={selectedTask} 
+          allTasks={tasks}
           onClose={() => setSelectedTask(null)} 
           onUpdate={loadTasks}
         />

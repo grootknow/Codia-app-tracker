@@ -378,6 +378,7 @@ export const TimelineView = () => {
       {selectedTask && (
         <TaskDetailModal 
           task={selectedTask} 
+          allTasks={tasks}
           onClose={() => setSelectedTask(null)} 
           onUpdate={loadData}
         />
