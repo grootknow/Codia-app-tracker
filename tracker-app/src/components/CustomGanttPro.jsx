@@ -1471,8 +1471,29 @@ export const CustomGanttPro = () => {
                             onMouseDown={(e) => handleBarMouseDown(e, task)}
                             onClick={(e) => handleBarClick(task, e)}
                             onContextMenu={(e) => handleBarRightClick(task, e)}
-                            onMouseEnter={() => setHoveredTask(task.id)}
-                            onMouseLeave={() => setHoveredTask(null)}
+                            onMouseEnter={(e) => {
+                              setHoveredTask(task.id);
+                              setTooltip({
+                                visible: true,
+                                task,
+                                x: e.clientX,
+                                y: e.clientY
+                              });
+                            }}
+                            onMouseLeave={() => {
+                              setHoveredTask(null);
+                              setTooltip({ visible: false, task: null, x: 0, y: 0 });
+                            }}
+                            onMouseMove={(e) => {
+                              if (tooltip.visible && tooltip.task?.id === task.id) {
+                                setTooltip({
+                                  visible: true,
+                                  task,
+                                  x: e.clientX,
+                                  y: e.clientY
+                                });
+                              }
+                            }}
                           >
                             {/* Baseline (if enabled) */}
                             {showBaseline && task.baseline_start_date && task.baseline_end_date && (
@@ -1485,15 +1506,21 @@ export const CustomGanttPro = () => {
                               ></div>
                             )}
                             
-                            {/* Resize Handles */}
+                            {/* Resize Handles - More visible */}
                             <div 
-                              className="absolute left-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-white/30 opacity-0 group-hover:opacity-100"
+                              className="absolute left-0 top-0 bottom-0 w-3 cursor-ew-resize hover:bg-white/50 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"
                               onMouseDown={(e) => handleBarMouseDown(e, task, 'left')}
-                            ></div>
+                              title="Drag to change start date"
+                            >
+                              <div className="absolute left-0.5 top-1/2 -translate-y-1/2 w-1 h-4 bg-white/60 rounded"></div>
+                            </div>
                             <div 
-                              className="absolute right-0 top-0 bottom-0 w-2 cursor-ew-resize hover:bg-white/30 opacity-0 group-hover:opacity-100"
+                              className="absolute right-0 top-0 bottom-0 w-3 cursor-ew-resize hover:bg-white/50 bg-white/20 opacity-0 group-hover:opacity-100 transition-opacity"
                               onMouseDown={(e) => handleBarMouseDown(e, task, 'right')}
-                            ></div>
+                              title="Drag to change end date"
+                            >
+                              <div className="absolute right-0.5 top-1/2 -translate-y-1/2 w-1 h-4 bg-white/60 rounded"></div>
+                            </div>
                             
                             {/* Progress Bar */}
                             {progress > 0 && (
@@ -1503,11 +1530,11 @@ export const CustomGanttPro = () => {
                               ></div>
                             )}
                             
-                            {/* Task Name + Resource */}
-                            <div className="absolute inset-0 flex items-center px-2 text-white text-xs font-semibold truncate">
-                              <span className="truncate">{task.name}</span>
-                              {task.assigned_to && width > 100 && (
-                                <span className="ml-auto text-xs opacity-80 flex-shrink-0">@{task.assigned_to.split('@')[0]}</span>
+                            {/* Task Name + Resource - Larger text */}
+                            <div className="absolute inset-0 flex items-center px-3 text-white font-semibold truncate pointer-events-none">
+                              <span className="truncate text-sm">{task.name}</span>
+                              {task.assigned_to && width > 120 && (
+                                <span className="ml-auto text-xs opacity-90 flex-shrink-0">@{task.assigned_to.split('@')[0]}</span>
                               )}
                             </div>
                           </div>
