@@ -370,6 +370,10 @@ export const CustomGanttPro = () => {
     }
   };
 
+  const handlePrint = () => {
+    window.print();
+  };
+
   // Drag & Drop handlers
   const handleBarMouseDown = (e, task, edge = null) => {
     e.stopPropagation();
@@ -854,6 +858,53 @@ export const CustomGanttPro = () => {
 
   return (
     <div className="h-full flex flex-col bg-background-secondary rounded-lg border border-border-default">
+      {/* Print Styles */}
+      <style>{`
+        @media print {
+          @page {
+            size: landscape;
+            margin: 0.5cm;
+          }
+          
+          body * {
+            visibility: hidden;
+          }
+          
+          .gantt-export-area,
+          .gantt-export-area * {
+            visibility: visible;
+          }
+          
+          .gantt-export-area {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            background: white;
+          }
+          
+          /* Hide interactive elements */
+          button, input[type="range"], input[type="checkbox"], label {
+            display: none !important;
+          }
+          
+          /* Optimize colors for print */
+          .bg-blue-500 { background-color: #3b82f6 !important; }
+          .bg-green-500 { background-color: #22c55e !important; }
+          .bg-red-500 { background-color: #ef4444 !important; }
+          .bg-gray-400 { background-color: #9ca3af !important; }
+          .bg-purple-500 { background-color: #a855f7 !important; }
+          
+          /* Clean borders */
+          .border-border-default { border-color: #e5e7eb !important; }
+          
+          /* Page breaks */
+          .phase-section {
+            page-break-inside: avoid;
+          }
+        }
+      `}</style>
+      
       <Toaster position="top-right" />
       
       {/* Tooltip */}
@@ -1098,6 +1149,15 @@ export const CustomGanttPro = () => {
             title="Export to PNG"
           >
             📸 Export
+          </button>
+          
+          {/* Print */}
+          <button 
+            onClick={handlePrint}
+            className="px-3 py-1 rounded-md bg-gray-600 hover:bg-gray-700 text-white text-sm font-medium"
+            title="Print Gantt Chart"
+          >
+            🖨️ Print
           </button>
           
           <div className="border-l border-border-default h-6 mx-2"></div>
