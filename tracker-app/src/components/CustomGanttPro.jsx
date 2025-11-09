@@ -32,7 +32,7 @@ export const CustomGanttPro = () => {
   const [tasks, setTasks] = useState([]);
   const [phases, setPhases] = useState([]);
   const [loading, setLoading] = useState(true);
-  const [viewMode, setViewMode] = useState('day'); // 'day' | 'week' | 'month'
+  const [viewMode, setViewMode] = useState('day'); // 'hour' | 'day' | 'week' | 'month'
   const [selectedTask, setSelectedTask] = useState(null);
   const [hoveredTask, setHoveredTask] = useState(null);
   const [sortBy, setSortBy] = useState('priority'); // 'priority' | 'start' | 'end' | 'duration'
@@ -123,6 +123,24 @@ export const CustomGanttPro = () => {
       leftPanel.removeEventListener('scroll', leftToTimeline);
       timeline.removeEventListener('scroll', timelineToLeft);
     };
+  }, []);
+
+  // Mouse wheel zoom (Ctrl/Cmd + Wheel)
+  useEffect(() => {
+    const timeline = timelineRef.current;
+    if (!timeline) return;
+
+    const handleWheel = (e) => {
+      // Only zoom if Ctrl or Cmd is pressed
+      if (e.ctrlKey || e.metaKey) {
+        e.preventDefault();
+        const delta = e.deltaY > 0 ? -0.1 : 0.1;
+        setZoomLevel(prev => Math.max(0.5, Math.min(2, prev + delta)));
+      }
+    };
+
+    timeline.addEventListener('wheel', handleWheel, { passive: false });
+    return () => timeline.removeEventListener('wheel', handleWheel);
   }, []);
 
   const loadData = async () => {
@@ -236,10 +254,11 @@ export const CustomGanttPro = () => {
   const dayWidth = useMemo(() => {
     let baseWidth;
     switch (viewMode) {
-      case 'day': baseWidth = 60; break;
-      case 'week': baseWidth = 20; break;
-      case 'month': baseWidth = 4; break;
-      default: baseWidth = 20;
+      case 'hour': baseWidth = 200; break; // 200px per day, show hours
+      case 'day': baseWidth = 60; break;   // 60px per day
+      case 'week': baseWidth = 20; break;  // 20px per day
+      case 'month': baseWidth = 10; break; // 10px per day (was 4, too small!)
+      default: baseWidth = 60;
     }
     return baseWidth * zoomLevel;
   }, [viewMode, zoomLevel]);
@@ -1131,6 +1150,13 @@ export const CustomGanttPro = () => {
         <div className="flex items-center gap-2 flex-wrap">
           {/* View Mode */}
           <div className="flex items-center gap-1 border border-border-default rounded-md overflow-hidden">
+            <button
+              onClick={() => setViewMode('hour')}
+              className={`px-3 py-1 text-sm ${viewMode === 'hour' ? 'bg-blue-500 text-white' : 'bg-background-primary hover:bg-background-tertiary'}`}
+              title="Hour view - Most detailed"
+            >
+              Hour
+            </button>
             <button
               onClick={() => setViewMode('day')}
               className={`px-3 py-1 text-sm ${viewMode === 'day' ? 'bg-blue-500 text-white' : 'bg-background-primary hover:bg-background-tertiary'}`}
