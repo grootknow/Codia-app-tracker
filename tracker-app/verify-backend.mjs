@@ -90,7 +90,7 @@ async function testDatabaseAccess() {
   try {
     const { data, error } = await supabase
       .from('tasks')
-      .select('id, status, title')
+      .select('id, status, name')
       .limit(5);
 
     if (error) {
@@ -137,7 +137,7 @@ async function testDatabaseAccess() {
   try {
     const { data, error } = await supabase
       .from('tracker_app_data')
-      .select('id, title, status')
+      .select('id, name, status')
       .limit(5);
 
     if (error) {
@@ -169,7 +169,7 @@ async function testTaskStatusUpdate() {
     // Get a test task
     const { data: testTasks, error: fetchError } = await supabase
       .from('tasks')
-      .select('id, status, title')
+      .select('id, status, name')
       .limit(1);
 
     if (fetchError || !testTasks || testTasks.length === 0) {
@@ -182,7 +182,7 @@ async function testTaskStatusUpdate() {
     }
 
     const testTask = testTasks[0];
-    console.log(`   Testing with task: "${testTask.title}" (ID: ${testTask.id})`);
+    console.log(`   Testing with task: "${testTask.name}" (ID: ${testTask.id})`);
     console.log(`   Current status: ${testTask.status}`);
 
     // Test update (just update updated_at to avoid side effects)
@@ -214,7 +214,7 @@ async function testTaskStatusUpdate() {
     } else {
       results.passed.push('Task Status Update - Working');
       console.log('✅ PASSED: Can update tasks successfully');
-      console.log(`   Updated task confirmed: ${updateData[0].title}\n`);
+      console.log(`   Updated task confirmed: ${updateData[0].name}\n`);
       return true;
     }
   } catch (err) {
